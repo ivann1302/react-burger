@@ -1,7 +1,7 @@
 import React from 'react';
 import { Tab } from '@ya.praktikum/react-developer-burger-ui-components';
 import styles from './burger-ingredients.module.scss';
-import IngredientsGroup from './ingredients-group/ingredients-group.module.scss';
+import IngredientsGroup from './ingredients-group/ingredients-group.jsx';
 
 export default function BurgerIngredients() {
 	return (
