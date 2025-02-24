@@ -15,7 +15,7 @@ export default function ConstructorItems() {
 				marginTop: '0',
 				display: 'flex',
 				flexDirection: 'column',
-				gap: '16px',
+				gap: '8px',
 				listStyle: 'none',
 			}}>
 			<li>
@@ -30,11 +30,12 @@ export default function ConstructorItems() {
 			<li>
 				<ul
 					style={{
+						width: '568px',
 						listStyle: 'none',
 						padding: '0 16px 0 0',
 						position: 'relative',
 						right: '30px',
-						maxHeight: '408px',
+						maxHeight: '480px',
 						overflowY: 'auto',
 					}}>
 					<li className={styles.unlocked}>
