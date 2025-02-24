@@ -14,3 +14,10 @@
 	font-style: normal;
 	src: url('./fonts/jet-brains-mono/JetBrainsMono-Regular.ttf');
 }
+
+@font-face {
+	font-weight: 400;
+	font-family: 'Iceland';
+	font-style: normal;
+	src: url('./fonts/Iceland/Iceland-Regular.ttf');
+}

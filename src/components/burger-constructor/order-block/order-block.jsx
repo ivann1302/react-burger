@@ -22,7 +22,11 @@ export default function OrderBlock() {
 					marginRight: '40px',
 					gap: '8px',
 				}}>
-				<p className='text text_type_main-large ml-1'>610</p>
+				<p
+					className='text text_type_main-large ml-1 ${styles.price'
+					style={{ fontFamily: 'Iceland' }}>
+					610
+				</p>
 				<CurrencyIcon className={styles.icon} />
 			</div>
 			<Button htmlType='button' type='primary' size='medium'>
