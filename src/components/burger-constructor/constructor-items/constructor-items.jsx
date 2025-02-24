@@ -14,7 +14,7 @@ export default function ConstructorItems() {
 			style={{
 				display: 'flex',
 				flexDirection: 'column',
-				gap: '10px',
+				gap: '16px',
 				listStyle: 'none',
 			}}>
 			<li>
@@ -30,9 +30,9 @@ export default function ConstructorItems() {
 				<ul
 					style={{
 						listStyle: 'none',
-						padding: '0',
+						padding: '0 16px 0 0',
 						position: 'relative',
-						right: '32px',
+						right: '30px',
 						maxHeight: '408px',
 						overflowY: 'auto',
 					}}>
