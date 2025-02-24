@@ -12,6 +12,7 @@ export default function ConstructorItems() {
 	return (
 		<ul
 			style={{
+				marginTop: '0',
 				display: 'flex',
 				flexDirection: 'column',
 				gap: '16px',

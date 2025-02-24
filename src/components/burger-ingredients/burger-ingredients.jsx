@@ -8,7 +8,9 @@ export default function BurgerIngredients() {
 
 	return (
 		<section className={styles.ingredients}>
-			<div style={{ display: 'flex' }} className={`${styles.container} mt-5`}>
+			<div
+				style={{ display: 'flex', marginTop: '0' }}
+				className={`${styles.container} mt-5`}>
 				<Tab
 					value='Булки'
 					active={current === 'Булки'}
