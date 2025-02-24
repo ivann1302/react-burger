@@ -9,8 +9,11 @@ export default function App() {
 		<>
 			<AppHeader />
 			<main className={styles.main}>
-				<BurgerIngredients />
-				<BurgerConstructor />
+				<h2 className='text text_type_main-large mb-5'>Соберите бургер</h2>
+				<section className={styles.container}>
+					<BurgerIngredients />
+					<BurgerConstructor />
+				</section>
 			</main>
 		</>
 	);

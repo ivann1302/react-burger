@@ -8,7 +8,6 @@ export default function BurgerIngredients() {
 
 	return (
 		<section className={styles.ingredients}>
-			<h2 className='text text_type_main-large'>Соберите бургер</h2>
 			<div style={{ display: 'flex' }} className={`${styles.container} mt-5`}>
 				<Tab
 					value='Булки'

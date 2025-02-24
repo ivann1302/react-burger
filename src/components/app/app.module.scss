@@ -1,8 +1,13 @@
 .main {
 	display: flex;
 	flex-direction: column;
-	align-items: center;
 	justify-content: center;
-	margin-top: 56px;
+	margin: 56px auto 0;
 	max-width: 1260px;
+
+	.container {
+		display: flex;
+		flex-direction: row;
+		gap: 60px;
+	}
 }
