@@ -1,16 +1,36 @@
-import React from 'react';
+// import React, { useState } from 'react';
 import { Tab } from '@ya.praktikum/react-developer-burger-ui-components';
 import styles from './burger-ingredients.module.scss';
 import IngredientsGroup from './ingredients-group/ingredients-group.jsx';
 
 export default function BurgerIngredients() {
+	const [current, setCurrent] = React.useState(['Булки']);
+
 	return (
 		<section className={styles.ingredients}>
-			<h2>Соберите бургер</h2>
-			<div className={styles.tabs}>
-				<Tab title='Булки' />
-				<Tab title='Соусы' />
-				<Tab title='Начинки' />
+			<h2 className='text text_type_main-large'>Соберите бургер</h2>
+			<div style={{ display: 'flex' }} className={`${styles.container} mt-5`}>
+				<Tab
+					value='Булки'
+					active={current === 'one'}
+					onClick={setCurrent}
+					className={styles.tabs}>
+					Булки
+				</Tab>
+				<Tab
+					value='Соусы'
+					active={current === 'two'}
+					onClick={setCurrent}
+					className={styles.tabs}>
+					Соусы
+				</Tab>
+				<Tab
+					value='Начинки'
+					active={current === 'three'}
+					onClick={setCurrent}
+					className={styles.tabs}>
+					Начинки
+				</Tab>
 			</div>
 			<div className={styles.groups}>
 				<IngredientsGroup />
