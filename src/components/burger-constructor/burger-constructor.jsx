@@ -1,7 +1,13 @@
 import React from 'react';
-import {} from '@ya.praktikum/react-developer-burger-ui-components';
-// import styles from './burger-constructor.module.scss';
+import styles from './burger-constructor.module.scss';
+import ConstructorItems from './constructor-items/constructor-items';
 
-export default function BurgerIngredients() {
-	return <></>;
+export default function BurgerConstructor() {
+	return (
+		<>
+			<section className={styles.constructor}>
+				<ConstructorItems />
+			</section>
+		</>
+	);
 }

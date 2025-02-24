@@ -1,10 +1,10 @@
-// import React, { useState } from 'react';
+import { useState } from 'react';
 import { Tab } from '@ya.praktikum/react-developer-burger-ui-components';
 import styles from './burger-ingredients.module.scss';
 import IngredientsGroup from './ingredients-group/ingredients-group.jsx';
 
 export default function BurgerIngredients() {
-	const [current, setCurrent] = React.useState(['Булки']);
+	const [current, setCurrent] = useState(['Булки']);
 
 	return (
 		<section className={styles.ingredients}>
