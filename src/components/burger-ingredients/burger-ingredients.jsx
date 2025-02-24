@@ -4,28 +4,28 @@ import styles from './burger-ingredients.module.scss';
 import IngredientsGroup from './ingredients-group/ingredients-group.jsx';
 
 export default function BurgerIngredients() {
-	const [current, setCurrent] = useState(['Булки']);
+	const [current, setCurrent] = useState('Булки');
 
 	return (
 		<section className={styles.ingredients}>
 			<div style={{ display: 'flex' }} className={`${styles.container} mt-5`}>
 				<Tab
 					value='Булки'
-					active={current === 'one'}
+					active={current === 'Булки'}
 					onClick={setCurrent}
 					className={styles.tabs}>
 					Булки
 				</Tab>
 				<Tab
 					value='Соусы'
-					active={current === 'two'}
+					active={current === 'Соусы'}
 					onClick={setCurrent}
 					className={styles.tabs}>
 					Соусы
 				</Tab>
 				<Tab
 					value='Начинки'
-					active={current === 'three'}
+					active={current === 'Начинки'}
 					onClick={setCurrent}
 					className={styles.tabs}>
 					Начинки
