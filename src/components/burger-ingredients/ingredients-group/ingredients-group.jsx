@@ -6,7 +6,7 @@ import styles from './ingredients-group.module.scss';
 export default function IngredientsGroup({ type, groupName }) {
 	return (
 		<>
-			<h3 className='ext text_type_main-medium mt-10'>{groupName}</h3>
+			<h3 className='ext text_type_main-medium mt-0'>{groupName}</h3>
 			<ul className={styles.gridContainer}>
 				{type.map((ingredient) => (
 					<li key={ingredient.id} className={styles.container}>

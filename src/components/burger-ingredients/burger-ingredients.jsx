@@ -36,7 +36,7 @@ export default function BurgerIngredients() {
 					Начинки
 				</Tab>
 			</div>
-			<div style={{ height: '600px', overflowY: 'auto' }}>
+			<div style={{ height: '600px', overflowY: 'auto', marginTop: '40px' }}>
 				<IngredientsGroup type={sauces} groupName='Соусы' />
 				<IngredientsGroup type={main} groupName='Начинки' />
 				<IngredientsGroup type={buns} groupName='Булки' />
