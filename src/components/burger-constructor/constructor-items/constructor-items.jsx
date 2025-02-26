@@ -4,14 +4,18 @@ import {
 	DragIcon,
 } from '@ya.praktikum/react-developer-burger-ui-components';
 import styles from './constructor-items.module.scss';
-import data from './../../../utils/data';
 
-export default function ConstructorItems({ bunId }) {
+export default function ConstructorItems({ ingredients }) {
+	if (!Array.isArray(ingredients) || ingredients.length === 0) {
+		return <div>Загрузка ингредиентов...</div>;
+	}
+
 	// Находим булку по её ID
-	const bun = data.find((item) => item._id === bunId);
+	const bun = ingredients[0];
+	if (!bun) return <div>Булка не найдена</div>;
 
 	// Фильтруем ингредиенты, исключая булки
-	const inner = data.filter((item) => item.type !== 'bun');
+	const inner = ingredients.filter((item) => item.type !== 'bun');
 
 	return (
 		<ul

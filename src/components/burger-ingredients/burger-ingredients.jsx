@@ -2,12 +2,17 @@ import { useState } from 'react';
 import { Tab } from '@ya.praktikum/react-developer-burger-ui-components';
 import styles from './burger-ingredients.module.scss';
 import IngredientsGroup from './ingredients-group/ingredients-group.jsx';
-import data from '../../utils/data';
-export default function BurgerIngredients() {
+export default function BurgerIngredients({ ingredients }) {
 	const [current, setCurrent] = useState('Булки');
-	const sauces = data.filter((item) => item.type === 'sauce');
-	const main = data.filter((item) => item.type === 'main');
-	const buns = data.filter((item) => item.type === 'bun');
+	const sauces = Array.isArray(ingredients)
+		? ingredients.filter((item) => item.type === 'sauce')
+		: [];
+	const main = Array.isArray(ingredients)
+		? ingredients.filter((item) => item.type === 'main')
+		: [];
+	const buns = Array.isArray(ingredients)
+		? ingredients.filter((item) => item.type === 'bun')
+		: [];
 
 	return (
 		<section className={styles.ingredients}>
