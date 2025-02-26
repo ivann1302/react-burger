@@ -6,9 +6,13 @@ import {
 import styles from './constructor-items.module.scss';
 import data from './../../../utils/data';
 
-const ingredients = data;
+export default function ConstructorItems({ bunId }) {
+	// Находим булку по её ID
+	const bun = data.find((item) => item._id === bunId);
 
-export default function ConstructorItems() {
+	// Фильтруем ингредиенты, исключая булки
+	const inner = data.filter((item) => item.type !== 'bun');
+
 	return (
 		<ul
 			style={{
@@ -17,92 +21,52 @@ export default function ConstructorItems() {
 				flexDirection: 'column',
 				gap: '8px',
 				listStyle: 'none',
+				padding: '0',
 			}}>
-			<li>
+			{/* Верхняя булка */}
+			<li style={{ marginLeft: '32px' }}>
 				<ConstructorElement
 					type='top'
 					isLocked={true}
-					text={ingredients[0].name}
-					price={ingredients[0].price}
-					thumbnail={ingredients[0].image}
+					text={`${bun.name} (верх)`}
+					price={bun.price}
+					thumbnail={bun.image}
 				/>
 			</li>
+
+			{/* Основные ингредиенты */}
 			<li>
 				<ul
 					style={{
-						width: '568px',
 						listStyle: 'none',
-						padding: '0 16px 0 0',
-						position: 'relative',
-						right: '30px',
-						maxHeight: '480px',
+						padding: '0',
+						display: 'flex',
+						flexDirection: 'column',
 						overflowY: 'auto',
+						maxHeight: '450px',
+						paddingRight: '16px',
 					}}>
-					<li className={styles.unlocked}>
-						<DragIcon />
-						<ConstructorElement
-							text={ingredients[5].name}
-							price={ingredients[5].price}
-							thumbnail={ingredients[5].image}
-						/>
-					</li>
-					<li className={styles.unlocked}>
-						<DragIcon />
-						<ConstructorElement
-							text={ingredients[4].name}
-							price={ingredients[4].price}
-							thumbnail={ingredients[4].image}
-						/>
-					</li>
-					<li className={styles.unlocked}>
-						<DragIcon />
-						<ConstructorElement
-							text={ingredients[7].name}
-							price={ingredients[7].price}
-							thumbnail={ingredients[7].image}
-						/>
-					</li>
-					<li className={styles.unlocked}>
-						<DragIcon />
-						<ConstructorElement
-							text={ingredients[8].name}
-							price={ingredients[8].price}
-							thumbnail={ingredients[8].image}
-						/>
-					</li>
-					<li className={styles.unlocked}>
-						<DragIcon />
-						<ConstructorElement
-							text={ingredients[8].name}
-							price={ingredients[8].price}
-							thumbnail={ingredients[8].image}
-						/>
-					</li>
-					<li className={styles.unlocked}>
-						<DragIcon />
-						<ConstructorElement
-							text={ingredients[8].name}
-							price={ingredients[8].price}
-							thumbnail={ingredients[8].image}
-						/>
-					</li>
-					<li className={styles.unlocked}>
-						<DragIcon />
-						<ConstructorElement
-							text={ingredients[8].name}
-							price={ingredients[8].price}
-							thumbnail={ingredients[8].image}
-						/>
-					</li>
+					{inner.map((ingredient) => (
+						<li key={ingredient._id} className={styles.unlocked}>
+							<DragIcon type='primary' />
+							<ConstructorElement
+								text={ingredient.name}
+								price={ingredient.price}
+								thumbnail={ingredient.image}
+							/>
+						</li>
+					))}
 				</ul>
 			</li>
-			<li>
+
+			{/* Нижняя булка */}
+			<li style={{ marginLeft: '32px' }}>
 				<ConstructorElement
 					type='bottom'
 					isLocked={true}
-					text={ingredients[0].name}
-					price={ingredients[0].price}
-					thumbnail={ingredients[0].image}
+					text={`${bun.name} (низ)`}
+					price={bun.price}
+					thumbnail={bun.image}
 				/>
 			</li>
 		</ul>
