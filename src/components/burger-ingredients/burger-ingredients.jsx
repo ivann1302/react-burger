@@ -38,7 +38,7 @@ export default function BurgerIngredients() {
 			</div>
 			<div style={{ height: '600px', overflowY: 'auto' }}>
 				<IngredientsGroup type={sauces} groupName='Соусы' />
-				<IngredientsGroup type={main} groupName='Основа' />
+				<IngredientsGroup type={main} groupName='Начинки' />
 				<IngredientsGroup type={buns} groupName='Булки' />
 			</div>
 		</section>
