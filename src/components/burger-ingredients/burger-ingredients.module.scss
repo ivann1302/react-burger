@@ -1,5 +1,22 @@
 .ingredients {
-	.container {
+	.section {
 		width: 600px;
+	}
+}
+
+.gridContainer {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 32px;
+	list-style: none;
+	padding: 0;
+	height: max-content;
+
+	.container {
+		overflow-y: auto;
+		height: max-content;
+		width: max-content;
+		width: 277px;
+		list-style: none;
 	}
 }

@@ -1,18 +1,23 @@
 import React from 'react';
 import IngredientItem from './../ingredient-item/ingredient-item';
 import IngredientDetails from './../ingredient-details/ingredient-details';
-import data from '../../../utils/data';
 import styles from './ingredients-group.module.scss';
 
-export default function IngredientsGroup() {
+export default function IngredientsGroup({ type, groupName }) {
 	return (
-		<ul className={styles.gridContainer}>
-			{data.map((ingredient) => (
-				<li key={ingredient.id} className={styles.container}>
-					<IngredientItem img={ingredient.image} />
-					<IngredientDetails name={ingredient.name} price={ingredient.price} />
-				</li>
-			))}
-		</ul>
+		<>
+			<h3 className='ext text_type_main-medium'>{groupName}</h3>
+			<ul className={styles.gridContainer}>
+				{type.map((ingredient) => (
+					<li key={ingredient.id} className={styles.container}>
+						<IngredientItem img={ingredient.image} />
+						<IngredientDetails
+							name={ingredient.name}
+							price={ingredient.price}
+						/>
+					</li>
+				))}
+			</ul>
+		</>
 	);
 }

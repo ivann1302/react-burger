@@ -4,10 +4,10 @@
 	gap: 32px;
 	list-style: none;
 	padding: 0;
-	height: 600px;
-	overflow-y: auto;
+	height: max-content;
 
 	.container {
+		overflow-y: auto;
 		height: max-content;
 		width: max-content;
 		width: 277px;
