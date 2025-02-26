@@ -1,10 +1,11 @@
 .gridContainer {
 	display: grid;
 	grid-template-columns: repeat(2, 1fr);
-	gap: 32px;
+	gap: 24px;
 	list-style: none;
 	padding: 0;
 	height: max-content;
+	padding-r: 8px;
 
 	.container {
 		overflow-y: auto;
@@ -12,5 +13,6 @@
 		width: max-content;
 		width: 277px;
 		list-style: none;
+		position: relative;
 	}
 }
