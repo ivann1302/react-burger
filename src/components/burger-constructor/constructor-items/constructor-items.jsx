@@ -12,7 +12,6 @@ export default function ConstructorItems({ ingredients }) {
 
 	// Находим булку по её ID
 	const bun = ingredients[0];
-	if (!bun) return <div>Булка не найдена</div>;
 
 	// Фильтруем ингредиенты, исключая булки
 	const inner = ingredients.filter((item) => item.type !== 'bun');

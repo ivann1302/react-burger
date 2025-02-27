@@ -3,14 +3,17 @@ import AppHeader from './../app-header/app-header';
 import BurgerIngredients from '../burger-ingredients/burger-ingredients';
 import BurgerConstructor from '../burger-constructor/burger-constructor';
 import styles from './app.module.scss';
+import Modal from '../modal/modal';
 
 const API_URL = 'https://norma.nomoreparties.space/api/ingredients';
 
 export default function App() {
+	// хуки для сохранения состояния запроса и получения данных
 	const [ingredients, setIngredients] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
 
+	// юзэффект пре рендеринге компонента App
 	useEffect(() => {
 		setError(null);
 
@@ -35,6 +38,19 @@ export default function App() {
 		fetchIngredients();
 	}, []);
 
+	// Модальное окно
+	const [isModalOpen, setIsModalOpen] = useState(true);
+
+	//const handleOpenModal = () => {
+	// setIsModalOpen(true);
+	//};
+
+	const handleModalClose = () => {
+		setIsModalOpen(false);
+	};
+
+	// обработка загрузки и ошибок
+
 	if (loading) {
 		return <div>Идет загрузка...</div>;
 	}
@@ -42,6 +58,7 @@ export default function App() {
 	if (error) {
 		return <div>Ошибка: {error}</div>;
 	}
+
 	return (
 		<>
 			<AppHeader />
@@ -52,6 +69,11 @@ export default function App() {
 					<BurgerConstructor ingredients={ingredients} />
 				</section>
 			</main>
+			{isModalOpen && (
+				<Modal onClose={handleModalClose} header=''>
+					<p>Содержимое модального окна</p>
+				</Modal>
+			)}
 		</>
 	);
 }
