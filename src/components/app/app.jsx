@@ -50,7 +50,6 @@ export default function App() {
 	};
 
 	// обработка загрузки и ошибок
-
 	if (loading) {
 		return <div>Идет загрузка...</div>;
 	}

@@ -9,7 +9,7 @@ export default function IngredientsGroup({ type, groupName }) {
 			<h3 className='ext text_type_main-medium mt-0'>{groupName}</h3>
 			<ul className={styles.gridContainer}>
 				{type.map((ingredient) => (
-					<li key={ingredient.id} className={styles.container}>
+					<li key={ingredient._id} className={styles.container}>
 						<IngredientItem img={ingredient.image} />
 						<IngredientDetails
 							name={ingredient.name}

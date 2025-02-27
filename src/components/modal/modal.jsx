@@ -19,7 +19,7 @@ const Modal = ({ onClose, header, children }) => {
 		<>
 			<ModalOverlay />
 			<div className={`${styles.modal} p-0`}>
-				<ModalHeader onCLose={onClose} name={header}></ModalHeader>
+				<ModalHeader onClose={onClose} name={header}></ModalHeader>
 				{children}
 			</div>
 		</>,
