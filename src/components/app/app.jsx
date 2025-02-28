@@ -4,14 +4,19 @@ import BurgerIngredients from '../burger-ingredients/burger-ingredients';
 import BurgerConstructor from '../burger-constructor/burger-constructor';
 import styles from './app.module.scss';
 import Modal from '../modal/modal';
+import OrderDetails from '../burger-constructor/order-items/oreder-items';
 
 const API_URL = 'https://norma.nomoreparties.space/api/ingredients';
 
 export default function App() {
-	// хуки для сохранения состояния запроса и получения данных
+	// состояние для ингредиентов, загрузки и ошибок
 	const [ingredients, setIngredients] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
+
+	// состояние для модального окна и данных заказа
+	const [orderData, setOrderData] = useState({ name: '0345366' });
+	const [isModalOpen, setIsModalOpen] = useState(false);
 
 	// юзэффект пре рендеринге компонента App
 	useEffect(() => {
@@ -39,14 +44,14 @@ export default function App() {
 	}, []);
 
 	// Модальное окно
-	const [isModalOpen, setIsModalOpen] = useState(true);
-
-	//const handleOpenModal = () => {
-	// setIsModalOpen(true);
-	//};
+	const handleOrderClick = (data) => {
+		setOrderData(data); // Сохраняем данные заказа
+		setIsModalOpen(true); // Открываем модальное окно
+	};
 
 	const handleModalClose = () => {
-		setIsModalOpen(false);
+		setIsModalOpen(false); // Закрываем модальное окно
+		setOrderData(null); // Сбрасываем данные заказа
 	};
 
 	// обработка загрузки и ошибок
@@ -65,12 +70,15 @@ export default function App() {
 				<h2 className='text text_type_main-large mb-5'>Соберите бургер</h2>
 				<section className={styles.container}>
 					<BurgerIngredients ingredients={ingredients} />
-					<BurgerConstructor ingredients={ingredients} />
+					<BurgerConstructor
+						ingredients={ingredients}
+						onOrderClick={handleOrderClick}
+					/>
 				</section>
 			</main>
 			{isModalOpen && (
 				<Modal onClose={handleModalClose} header=''>
-					<p>Содержимое модального окна</p>
+					{orderData && <OrderDetails orderData={orderData} />}
 				</Modal>
 			)}
 		</>
