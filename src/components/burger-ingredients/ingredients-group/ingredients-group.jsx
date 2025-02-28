@@ -10,7 +10,9 @@ export default function IngredientsGroup({
 }) {
 	return (
 		<>
-			<h3 className='ext text_type_main-medium mt-10'>{groupName}</h3>
+			<h3 className='ext text_type_main-medium' style={{ marginTop: '0' }}>
+				{groupName}
+			</h3>
 			<ul className={styles.gridContainer}>
 				{type.map((ingredient) => (
 					// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions

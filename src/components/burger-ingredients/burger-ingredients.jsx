@@ -17,9 +17,7 @@ export default function BurgerIngredients({ ingredients, onIngredientClick }) {
 
 	return (
 		<section className={styles.ingredients}>
-			<div
-				style={{ display: 'flex', marginTop: '0' }}
-				className={`${styles.section} mt-5`}>
+			<div style={{ display: 'flex' }} className={`${styles.section} mt-5`}>
 				<Tab
 					value='Булки'
 					active={current === 'Булки'}
@@ -42,7 +40,9 @@ export default function BurgerIngredients({ ingredients, onIngredientClick }) {
 					Начинки
 				</Tab>
 			</div>
-			<div style={{ height: '680px', overflowY: 'auto' }}>
+			<div
+				style={{ height: '680px', overflowY: 'auto' }}
+				className='mt-10 mb-10'>
 				<IngredientsGroup
 					type={buns}
 					groupName='Булки'

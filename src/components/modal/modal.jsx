@@ -17,7 +17,7 @@ const Modal = ({ onClose, header, children }) => {
 
 	return createPortal(
 		<>
-			<ModalOverlay />
+			<ModalOverlay onClose={onClose} />
 			<div className={`${styles.modal} p-0`}>
 				<ModalHeader onClose={onClose} name={header}></ModalHeader>
 				{children}
