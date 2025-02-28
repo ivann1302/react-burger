@@ -25,6 +25,7 @@ export default function ConstructorItems({ ingredients }) {
 				gap: '8px',
 				listStyle: 'none',
 				padding: '0',
+				height: '656px',
 			}}>
 			{/* Верхняя булка */}
 			<li style={{ marginLeft: '32px' }}>
