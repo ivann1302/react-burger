@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { Tab } from '@ya.praktikum/react-developer-burger-ui-components';
 import styles from './burger-ingredients.module.scss';
 import IngredientsGroup from './ingredients-group/ingredients-group.jsx';
-export default function BurgerIngredients({ ingredients }) {
+
+export default function BurgerIngredients({ ingredients, onIngredientClick }) {
 	const [current, setCurrent] = useState('Булки');
 	const sauces = Array.isArray(ingredients)
 		? ingredients.filter((item) => item.type === 'sauce')
@@ -42,9 +43,21 @@ export default function BurgerIngredients({ ingredients }) {
 				</Tab>
 			</div>
 			<div style={{ height: '680px', overflowY: 'auto' }}>
-				<IngredientsGroup type={buns} groupName='Булки' />
-				<IngredientsGroup type={sauces} groupName='Соусы' />
-				<IngredientsGroup type={main} groupName='Начинки' />
+				<IngredientsGroup
+					type={buns}
+					groupName='Булки'
+					onIngredientClick={onIngredientClick}
+				/>
+				<IngredientsGroup
+					type={sauces}
+					groupName='Соусы'
+					onIngredientClick={onIngredientClick}
+				/>
+				<IngredientsGroup
+					type={main}
+					groupName='Начинки'
+					onIngredientClick={onIngredientClick}
+				/>
 			</div>
 		</section>
 	);
