@@ -47,7 +47,7 @@ export default function ConstructorItems({ ingredients }) {
 						display: 'flex',
 						flexDirection: 'column',
 						overflowY: 'auto',
-						maxHeight: '450px',
+						maxHeight: '480px',
 						paddingRight: '16px',
 					}}>
 					{inner.map((ingredient) => (
