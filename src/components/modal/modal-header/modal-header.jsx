@@ -1,6 +1,7 @@
 import React from 'react';
 import { CloseIcon } from '@ya.praktikum/react-developer-burger-ui-components';
 import styles from './modal-header.module.scss';
+import PropTypes from 'prop-types';
 
 // eslint-disable-next-line import/export
 function ModalHeader({ name, onClose }) {
@@ -17,5 +18,10 @@ function ModalHeader({ name, onClose }) {
 		</div>
 	);
 }
+
+ModalHeader.propTypes = {
+	name: PropTypes.string.isRequired,
+	onClose: PropTypes.func.isRequired,
+};
 
 export default ModalHeader;

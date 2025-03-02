@@ -1,5 +1,6 @@
 import React from 'react';
 import doneImage from './../../../images/done.svg';
+import PropTypes from 'prop-types';
 
 const OrderDetails = ({ orderData }) => {
 	return (
@@ -37,6 +38,14 @@ const OrderDetails = ({ orderData }) => {
 			</p>
 		</div>
 	);
+};
+
+OrderDetails.propTypes = {
+	orderData: PropTypes.shape({
+		number: PropTypes.number.isRequired,
+		status: PropTypes.string.isRequired,
+		message: PropTypes.string.isRequired,
+	}).isRequired,
 };
 
 export default OrderDetails;

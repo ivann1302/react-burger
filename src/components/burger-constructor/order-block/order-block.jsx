@@ -4,6 +4,7 @@ import {
 	CurrencyIcon,
 } from '@ya.praktikum/react-developer-burger-ui-components';
 import styles from './order-block.module.scss';
+import PropTypes from 'prop-types';
 
 export default function OrderBlock({ onOrderClick }) {
 	const orderData = {
@@ -46,3 +47,7 @@ export default function OrderBlock({ onOrderClick }) {
 		</div>
 	);
 }
+
+OrderBlock.propTypes = {
+	onOrderClick: PropTypes.func.isRequired,
+};

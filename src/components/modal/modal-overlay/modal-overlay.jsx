@@ -1,6 +1,7 @@
 import React from 'react';
 import { createPortal } from 'react-dom';
 import styles from './modal-overlay.module.scss';
+import PropTypes from 'prop-types';
 
 const modalRoot = document.getElementById('react-modals');
 
@@ -23,6 +24,10 @@ const ModalOverlay = ({ onClose }) => {
 		></div>,
 		modalRoot
 	);
+};
+
+ModalOverlay.propTypes = {
+	onClose: PropTypes.func.isRequired,
 };
 
 export default ModalOverlay;

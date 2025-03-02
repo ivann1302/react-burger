@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Tab } from '@ya.praktikum/react-developer-burger-ui-components';
 import styles from './burger-ingredients.module.scss';
 import IngredientsGroup from './ingredients-group/ingredients-group.jsx';
+import PropTypes from 'prop-types';
 
 export default function BurgerIngredients({ ingredients, onIngredientClick }) {
 	const [current, setCurrent] = useState('Булки');
@@ -62,3 +63,20 @@ export default function BurgerIngredients({ ingredients, onIngredientClick }) {
 		</section>
 	);
 }
+
+BurgerIngredients.propTypes = {
+	ingredients: PropTypes.arrayOf(
+		PropTypes.shape({
+			_id: PropTypes.string.isRequired,
+			name: PropTypes.string.isRequired,
+			type: PropTypes.oneOf(['bun', 'sauce', 'main']).isRequired,
+			price: PropTypes.number.isRequired,
+			image: PropTypes.string.isRequired,
+			calories: PropTypes.number,
+			proteins: PropTypes.number,
+			fat: PropTypes.number,
+			carbohydrates: PropTypes.number,
+		})
+	).isRequired,
+	onIngredientClick: PropTypes.func.isRequired,
+};

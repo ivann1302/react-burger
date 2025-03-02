@@ -14,7 +14,7 @@ export default function AppHeader() {
 				<div className={styles.container}>
 					<a
 						href='./../../index.tsx'
-						className={`${styles.ref} ${styles.active} mt-4 mr-4 mb-4 ml-5`}>
+						className={`${styles.ref} ${styles.active} mt-4 mr-4 mb-4`}>
 						<BurgerIcon type='primary' />
 						<p
 							className={`${styles.paragraph} ${styles.active} text text_type_main-medium"`}>
@@ -31,9 +31,7 @@ export default function AppHeader() {
 					</a>
 				</div>
 				<Logo className={styles.logo} />
-				<a
-					href='./../../index.tsx'
-					className={`${styles.ref} mt-4 mr-4 mb-4 ml-5`}>
+				<a href='./../../index.tsx' className={`${styles.ref} mt-4 mb-4 ml-5`}>
 					<ProfileIcon type='secondary' />
 					<p className={`${styles.paragraph} text text_type_main-medium"`}>
 						Личный кабинет

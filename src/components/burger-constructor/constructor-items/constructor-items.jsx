@@ -4,6 +4,7 @@ import {
 	DragIcon,
 } from '@ya.praktikum/react-developer-burger-ui-components';
 import styles from './constructor-items.module.scss';
+import PropTypes from 'prop-types';
 
 export default function ConstructorItems({ ingredients }) {
 	if (!Array.isArray(ingredients) || ingredients.length === 0) {
@@ -76,3 +77,15 @@ export default function ConstructorItems({ ingredients }) {
 		</ul>
 	);
 }
+
+ConstructorItems.propTypes = {
+	ingredients: PropTypes.arrayOf(
+		PropTypes.shape({
+			_id: PropTypes.string.isRequired,
+			name: PropTypes.string.isRequired,
+			type: PropTypes.string.isRequired,
+			price: PropTypes.number.isRequired,
+			image: PropTypes.string.isRequired,
+		})
+	).isRequired,
+};

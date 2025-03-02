@@ -1,5 +1,6 @@
 import React from 'react';
 import { Counter } from '@ya.praktikum/react-developer-burger-ui-components';
+import PropTypes from 'prop-types';
 
 export default function IngredientItem(props) {
 	return (
@@ -9,3 +10,7 @@ export default function IngredientItem(props) {
 		</>
 	);
 }
+
+IngredientItem.propTypes = {
+	img: PropTypes.string.isRequired,
+};

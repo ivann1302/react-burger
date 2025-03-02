@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import ModalHeader from './modal-header/modal-header';
 import ModalOverlay from './modal-overlay/modal-overlay';
 import styles from './modal.module.scss';
+import PropTypes from 'prop-types';
 
 const modalRoot = document.getElementById('react-modals');
 const Modal = ({ onClose, header, children }) => {
@@ -25,6 +26,12 @@ const Modal = ({ onClose, header, children }) => {
 		</>,
 		modalRoot
 	);
+};
+
+Modal.propTypes = {
+	onClose: PropTypes.func.isRequired,
+	header: PropTypes.string.isRequired,
+	children: PropTypes.node.isRequired,
 };
 
 export default Modal;

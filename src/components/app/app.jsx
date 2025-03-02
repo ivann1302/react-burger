@@ -5,7 +5,7 @@ import BurgerConstructor from '../burger-constructor/burger-constructor';
 import styles from './app.module.scss';
 import Modal from '../modal/modal';
 import OrderDetails from '../burger-constructor/order-items/oreder-items';
-import IngredientDetailsModal from './../burger-ingredients/ingredient-details/ingredient-details'; // Импортируем компонент
+import IngredientDetailsModal from './../burger-ingredients/ingredient-details/ingredient-details';
 
 const API_URL = 'https://norma.nomoreparties.space/api/ingredients';
 

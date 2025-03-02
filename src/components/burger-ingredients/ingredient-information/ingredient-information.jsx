@@ -1,6 +1,7 @@
 import React from 'react';
 import { CurrencyIcon } from '@ya.praktikum/react-developer-burger-ui-components';
 import styles from './ingredient-information.module.scss';
+import PropTypes from 'prop-types';
 
 export default function IngredientInformation(props) {
 	return (
@@ -13,3 +14,8 @@ export default function IngredientInformation(props) {
 		</div>
 	);
 }
+
+IngredientInformation.propTypes = {
+	price: PropTypes.number.isRequired,
+	name: PropTypes.string.isRequired,
+};

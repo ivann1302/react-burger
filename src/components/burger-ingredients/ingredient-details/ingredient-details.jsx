@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from './ingredient-details.module.scss';
+import PropTypes from 'prop-types';
 
 const IngredientDetailsModal = ({ ingredient }) => {
 	if (!ingredient) return null;
@@ -44,6 +45,17 @@ const IngredientDetailsModal = ({ ingredient }) => {
 			</div>
 		</div>
 	);
+};
+
+IngredientDetailsModal.propTypes = {
+	ingredient: PropTypes.shape({
+		image_large: PropTypes.string.isRequired,
+		name: PropTypes.string.isRequired,
+		calories: PropTypes.number.isRequired,
+		proteins: PropTypes.number.isRequired,
+		fat: PropTypes.number.isRequired,
+		carbohydrates: PropTypes.number.isRequired,
+	}),
 };
 
 export default IngredientDetailsModal;
