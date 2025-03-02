@@ -5,6 +5,7 @@ import {
 } from '@ya.praktikum/react-developer-burger-ui-components';
 import styles from './constructor-items.module.scss';
 import PropTypes from 'prop-types';
+import { IngredientType } from './../../../utils/types';
 
 export default function ConstructorItems({ ingredients }) {
 	if (!Array.isArray(ingredients) || ingredients.length === 0) {
@@ -18,18 +19,9 @@ export default function ConstructorItems({ ingredients }) {
 	const inner = ingredients.filter((item) => item.type !== 'bun');
 
 	return (
-		<ul
-			style={{
-				marginTop: '0',
-				display: 'flex',
-				flexDirection: 'column',
-				gap: '8px',
-				listStyle: 'none',
-				padding: '0',
-				height: '656px',
-			}}>
+		<ul className={styles.listContainer}>
 			{/* Верхняя булка */}
-			<li style={{ marginLeft: '32px' }}>
+			<li className={styles.locked}>
 				<ConstructorElement
 					type='top'
 					isLocked={true}
@@ -41,16 +33,7 @@ export default function ConstructorItems({ ingredients }) {
 
 			{/* Основные ингредиенты */}
 			<li>
-				<ul
-					style={{
-						listStyle: 'none',
-						padding: '0',
-						display: 'flex',
-						flexDirection: 'column',
-						overflowY: 'auto',
-						maxHeight: '480px',
-						paddingRight: '16px',
-					}}>
+				<ul className={styles.innerContainer}>
 					{inner.map((ingredient) => (
 						<li key={ingredient._id} className={styles.unlocked}>
 							<DragIcon type='primary' />
@@ -65,7 +48,7 @@ export default function ConstructorItems({ ingredients }) {
 			</li>
 
 			{/* Нижняя булка */}
-			<li style={{ marginLeft: '32px' }}>
+			<li className={styles.locked}>
 				<ConstructorElement
 					type='bottom'
 					isLocked={true}
@@ -79,13 +62,5 @@ export default function ConstructorItems({ ingredients }) {
 }
 
 ConstructorItems.propTypes = {
-	ingredients: PropTypes.arrayOf(
-		PropTypes.shape({
-			_id: PropTypes.string.isRequired,
-			name: PropTypes.string.isRequired,
-			type: PropTypes.string.isRequired,
-			price: PropTypes.number.isRequired,
-			image: PropTypes.string.isRequired,
-		})
-	).isRequired,
+	ingredients: PropTypes.arrayOf(IngredientType).isRequired,
 };

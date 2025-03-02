@@ -1,23 +1,12 @@
 import React from 'react';
+import styles from './order-items.module.scss';
 import doneImage from './../../../images/done.svg';
 import PropTypes from 'prop-types';
 
 const OrderDetails = ({ orderData }) => {
 	return (
-		<div
-			style={{
-				display: 'flex',
-				flexDirection: 'column',
-				alignItems: 'center',
-				justifyContent: 'center',
-			}}>
-			<p
-				className='text text_type_digits-large mt-4 mb-0'
-				style={{
-					WebkitTextStroke: '2px #4C4CFF',
-					textShadow:
-						'0 0 5px #4C4CFF, 0 0 10px #4C4CFF, 0 0 5px #4C4CFF, 0 0 0 #4C4CFF',
-				}}>
+		<div className={styles.orderContainer}>
+			<p className={`${styles.text} text text_type_digits-large mt-4 mb-0`}>
 				{orderData.number}
 			</p>
 			<p className='text text_type_main-medium mt-8 mb-0'>
@@ -25,10 +14,9 @@ const OrderDetails = ({ orderData }) => {
 			</p>
 
 			<img
-				className='mt-15 mb-0'
+				className={`${styles.doneImage} mt-15 mb-0`}
 				src={doneImage}
 				alt='done'
-				style={{ width: '120px', height: '120px', background: 'none' }}
 			/>
 			<p className='text text_type_main-default mt-15 mb-0'>
 				{orderData.status}
@@ -42,7 +30,7 @@ const OrderDetails = ({ orderData }) => {
 
 OrderDetails.propTypes = {
 	orderData: PropTypes.shape({
-		number: PropTypes.number.isRequired,
+		number: PropTypes.string.isRequired,
 		status: PropTypes.string.isRequired,
 		message: PropTypes.string.isRequired,
 	}).isRequired,

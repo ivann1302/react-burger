@@ -11,7 +11,7 @@ const API_URL = 'https://norma.nomoreparties.space/api/ingredients';
 
 export default function App() {
 	// состояние для ингредиентов, загрузки и ошибок
-	const [ingredients, setIngredients] = useState(false);
+	const [ingredients, setIngredients] = useState([]);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
 
@@ -37,9 +37,9 @@ export default function App() {
 
 				const data = await response.json();
 				setIngredients(data.data);
-				setLoading(false);
 			} catch (err) {
 				setError(err.message);
+			} finally {
 				setLoading(false);
 			}
 		};

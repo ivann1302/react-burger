@@ -15,24 +15,9 @@ export default function OrderBlock({ onOrderClick }) {
 	};
 
 	return (
-		<div
-			className='mt-10'
-			style={{
-				display: 'flex',
-				justifyContent: 'flex-end',
-				paddingRight: '24px',
-			}}>
-			<div
-				style={{
-					display: 'flex',
-					alignItems: 'center',
-					justifyContent: 'center',
-					marginRight: '40px',
-					gap: '8px',
-				}}>
-				<p
-					className='text text_type_main-large ml-1 ${styles.price'
-					style={{ fontFamily: 'Iceland' }}>
+		<div className={`${styles.orderContainer} mt-10`}>
+			<div className={styles.priceContainer}>
+				<p className={`text text_type_main-large ml-1 ${styles.price}`}>
 					{orderData.price}
 				</p>
 				<CurrencyIcon className={styles.icon} />

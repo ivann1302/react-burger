@@ -1,6 +1,7 @@
 import React from 'react';
 import styles from './ingredient-details.module.scss';
 import PropTypes from 'prop-types';
+import { IngredientType } from './../../../utils/types';
 
 const IngredientDetailsModal = ({ ingredient }) => {
 	if (!ingredient) return null;
@@ -9,8 +10,7 @@ const IngredientDetailsModal = ({ ingredient }) => {
 			<img
 				src={ingredient.image_large}
 				alt={ingredient.name}
-				style={{ width: '520px', height: '240px' }}
-				className='mb-4'
+				className={`${styles.image} mb-4`}
 			/>
 			<h2 className='text text_type_main-medium mt-0 mb-8'>
 				{ingredient.name}
@@ -48,14 +48,7 @@ const IngredientDetailsModal = ({ ingredient }) => {
 };
 
 IngredientDetailsModal.propTypes = {
-	ingredient: PropTypes.shape({
-		image_large: PropTypes.string.isRequired,
-		name: PropTypes.string.isRequired,
-		calories: PropTypes.number.isRequired,
-		proteins: PropTypes.number.isRequired,
-		fat: PropTypes.number.isRequired,
-		carbohydrates: PropTypes.number.isRequired,
-	}),
+	ingredients: PropTypes.arrayOf(IngredientType),
 };
 
 export default IngredientDetailsModal;

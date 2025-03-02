@@ -10,7 +10,7 @@ export default function IngredientsGroup({
 }) {
 	return (
 		<>
-			<h3 className='ext text_type_main-medium' style={{ marginTop: '0' }}>
+			<h3 className={`${styles.title} ext text_type_main-medium`}>
 				{groupName}
 			</h3>
 			<ul className={styles.gridContainer}>

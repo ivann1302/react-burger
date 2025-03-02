@@ -6,12 +6,8 @@ import PropTypes from 'prop-types';
 // eslint-disable-next-line import/export
 function ModalHeader({ name, onClose }) {
 	return (
-		<div
-			className={`${styles.container} mt-10 ml-10 mr-10}`}
-			style={{ marginBottom: '0' }}>
-			<h3 className='text text_type_main-large' style={{ marginBottom: '0' }}>
-				{name}
-			</h3>
+		<div className={`${styles.container} mt-10 ml-10 mr-10}`}>
+			<h3 className={`${styles.title} text text_type_main-large`}>{name}</h3>
 			<button onClick={onClose}>
 				<CloseIcon type='primary' />
 			</button>

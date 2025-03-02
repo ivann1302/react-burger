@@ -1,3 +1,28 @@
+@font-face {
+	font-family: 'Iceland';
+	src: url('./../../../fonts/Iceland/Iceland-Regular.ttf');
+	font-weight: normal;
+	font-style: normal;
+}
+
+.orderContainer {
+	display: flex;
+	justify-content: flex-end;
+	padding-right: 24px;
+
+	.priceContainer {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		margin-right: 40px;
+		gap: 8px;
+
+		.price {
+			font-family: 'Iceland' sans-serif;
+		}
+	}
+}
+
 .icon {
 	width: 36px;
 	height: 36px;

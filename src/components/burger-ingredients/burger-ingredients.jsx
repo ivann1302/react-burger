@@ -3,6 +3,7 @@ import { Tab } from '@ya.praktikum/react-developer-burger-ui-components';
 import styles from './burger-ingredients.module.scss';
 import IngredientsGroup from './ingredients-group/ingredients-group.jsx';
 import PropTypes from 'prop-types';
+import { IngredientType } from './../../utils/types';
 
 export default function BurgerIngredients({ ingredients, onIngredientClick }) {
 	const [current, setCurrent] = useState('Булки');
@@ -18,7 +19,7 @@ export default function BurgerIngredients({ ingredients, onIngredientClick }) {
 
 	return (
 		<section className={styles.ingredients}>
-			<div style={{ display: 'flex' }} className={`${styles.section} mt-5`}>
+			<div className={`${styles.section} mt-5`}>
 				<Tab
 					value='Булки'
 					active={current === 'Булки'}
@@ -41,9 +42,7 @@ export default function BurgerIngredients({ ingredients, onIngredientClick }) {
 					Начинки
 				</Tab>
 			</div>
-			<div
-				style={{ height: '680px', overflowY: 'auto' }}
-				className='mt-10 mb-10'>
+			<div className={` ${styles.blocks} mt-10 mb-10`}>
 				<IngredientsGroup
 					type={buns}
 					groupName='Булки'
@@ -65,18 +64,6 @@ export default function BurgerIngredients({ ingredients, onIngredientClick }) {
 }
 
 BurgerIngredients.propTypes = {
-	ingredients: PropTypes.arrayOf(
-		PropTypes.shape({
-			_id: PropTypes.string.isRequired,
-			name: PropTypes.string.isRequired,
-			type: PropTypes.oneOf(['bun', 'sauce', 'main']).isRequired,
-			price: PropTypes.number.isRequired,
-			image: PropTypes.string.isRequired,
-			calories: PropTypes.number,
-			proteins: PropTypes.number,
-			fat: PropTypes.number,
-			carbohydrates: PropTypes.number,
-		})
-	).isRequired,
+	ingredients: PropTypes.arrayOf(IngredientType),
 	onIngredientClick: PropTypes.func.isRequired,
 };

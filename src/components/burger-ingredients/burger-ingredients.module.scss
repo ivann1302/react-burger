@@ -1,5 +1,6 @@
 .ingredients {
 	.section {
+		display: flex;
 		margin-top: 0;
 		width: 600px;
 	}
@@ -20,4 +21,9 @@
 		width: 277px;
 		list-style: none;
 	}
+}
+
+.blocks {
+	height: 680px;
+	overflow-y: auto;
 }
