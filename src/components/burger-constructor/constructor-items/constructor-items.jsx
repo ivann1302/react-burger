@@ -13,7 +13,7 @@ export default function ConstructorItems({ ingredients }) {
 			<>
 				<ul className={styles.listContainer}>
 					{/* Верхняя булка */}
-					<li className={styles.locked}>
+					<li className={`${styles.locked} ${styles.noOrder}`}>
 						<ConstructorElement
 							type='top'
 							isLocked={true}
@@ -22,11 +22,10 @@ export default function ConstructorItems({ ingredients }) {
 							thumbnail=''
 						/>
 					</li>
-					<li key={'1'} className={styles.unlocked}>
-						<DragIcon type='primary' />
+					<li key={'1'} className={`${styles.locked} ${styles.noOrder}`}>
 						<ConstructorElement text='' price='' thumbnail='' />
 					</li>
-					<li className={styles.locked}>
+					<li className={`${styles.locked} ${styles.noOrder}`}>
 						<ConstructorElement
 							type='bottom'
 							isLocked={true}

@@ -12,7 +12,7 @@ export default function OrderBlock() {
 	const dispatch = useDispatch();
 	const { bun, ingredients } = useSelector((state) => state.constructor);
 
-	// Проверяем, что ingredients не undefined
+	// Проверяем, что ingredients не равен undefined
 	const totalPrice =
 		(ingredients || []).reduce((sum, item) => sum + item.price, 0) +
 		(bun ? bun.price * 2 : 0);
