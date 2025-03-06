@@ -1,4 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import { Provider, useDispatch, useSelector } from 'react-redux';
+import { createStore, applyMiddleware, compose } from 'redux';
+import { thunk } from 'redux-thunk'; // Исправленный импорт
+import { rootReducer } from './../../services/reducers/root-reducer';
 import AppHeader from './../app-header/app-header';
 import BurgerIngredients from '../burger-ingredients/burger-ingredients';
 import BurgerConstructor from '../burger-constructor/burger-constructor';
@@ -6,69 +10,61 @@ import styles from './app.module.scss';
 import Modal from '../modal/modal';
 import OrderDetails from '../burger-constructor/order-items/oreder-items';
 import IngredientDetailsModal from './../burger-ingredients/ingredient-details/ingredient-details';
+import { fetchIngredients } from '../../services/actions/ingredients-actions';
 
-const API_URL = 'https://norma.nomoreparties.space/api/ingredients';
+// Настройка хранилища с Redux DevTools и redux-thunk
+const composeEnhancers =
+	typeof window === 'object' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
+		? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({})
+		: compose;
 
-export default function App() {
-	// состояние для ингредиентов, загрузки и ошибок
-	const [ingredients, setIngredients] = useState([]);
-	const [loading, setLoading] = useState(false);
-	const [error, setError] = useState(null);
+const enhancer = composeEnhancers(applyMiddleware(thunk)); // Используем thunk
 
-	// состояние для модального окна и данных заказа
-	const [orderData, setOrderData] = useState({ name: '0345366' });
+const store = createStore(rootReducer, enhancer); // Создаем хранилище
+
+// Основной компонент приложения
+function AppContent() {
+	const dispatch = useDispatch();
+
+	// Получаем состояние из Redux
+	const { ingredients, loading, error } = useSelector(
+		(state) => state.ingredients
+	);
+	const { selectedIngredient } = useSelector(
+		(state) => state.ingredientDetails
+	);
+	const { orderData } = useSelector((state) => state.order);
+
 	const [isModalOpen, setIsModalOpen] = useState(false);
-
-	const [selectedIngredient, setSelectedIngredient] = useState(null);
 	const [isIngredientDetailsOpen, setIsIngredientDetailsOpen] = useState(false);
 
-	// юзэффект пре рендеринге компонента App
+	// Загрузка ингредиентов при монтировании компонента
 	useEffect(() => {
-		setError(null);
-
-		const fetchIngredients = async () => {
-			try {
-				setLoading(true);
-				const response = await fetch(API_URL);
-
-				if (!response.ok) {
-					throw new Error(`Ошибка: ${response.status}`);
-				}
-
-				const data = await response.json();
-				setIngredients(data.data);
-			} catch (err) {
-				setError(err.message);
-			} finally {
-				setLoading(false);
-			}
-		};
-
-		fetchIngredients();
-	}, []);
+		dispatch(fetchIngredients()); // Используем асинхронное действие
+	}, [dispatch]);
 
 	// Модальное окно
 	const handleOrderClick = (data) => {
-		setOrderData(data); // Сохраняем данные заказа
+		dispatch({ type: 'SET_ORDER_DATA', payload: data }); // Сохраняем данные заказа
 		setIsModalOpen(true); // Открываем модальное окно
 	};
 
 	const handleModalClose = () => {
 		setIsModalOpen(false); // Закрываем модальное окно
-		setOrderData(null); // Сбрасываем данные заказа
+		dispatch({ type: 'CLEAR_ORDER_DATA' }); // Сбрасываем данные заказа
 	};
 
 	const handleIngredientClick = (ingredient) => {
-		setSelectedIngredient(ingredient);
-		setIsIngredientDetailsOpen(true);
+		dispatch({ type: 'SET_SELECTED_INGREDIENT', payload: ingredient }); // Сохраняем выбранный ингредиент
+		setIsIngredientDetailsOpen(true); // Открываем модальное окно с деталями ингредиента
 	};
 
 	const handleIngredientModalClose = () => {
 		setIsIngredientDetailsOpen(false); // Закрываем модальное окно с деталями ингредиента
-		setSelectedIngredient(null); // Сбрасываем данные ингредиента
+		dispatch({ type: 'CLEAR_SELECTED_INGREDIENT' }); // Сбрасываем данные ингредиента
 	};
 
-	// обработка загрузки и ошибок
+	// Обработка загрузки и ошибок
 	if (loading) {
 		return <div>Идет загрузка...</div>;
 	}
@@ -111,5 +107,13 @@ export default function App() {
 				</Modal>
 			)}
 		</>
+	);
+}
+
+export default function App() {
+	return (
+		<Provider store={store}>
+			<AppContent />
+		</Provider>
 	);
 }
