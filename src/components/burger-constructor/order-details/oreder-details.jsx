@@ -1,9 +1,18 @@
 import React from 'react';
-import styles from './order-items.module.scss';
+import { useSelector } from 'react-redux';
+import styles from './order-details.module.scss';
 import doneImage from './../../../images/done.svg';
 import PropTypes from 'prop-types';
 
-const OrderDetails = ({ orderData }) => {
+const OrderDetails = () => {
+	// Получаем данные заказа из Redux
+	const { orderData } = useSelector((state) => state.order);
+
+	// Если данных о заказе нет, возвращаем null
+	if (!orderData) {
+		return null;
+	}
+
 	return (
 		<div className={styles.orderContainer}>
 			<p className={`${styles.text} text text_type_digits-large mt-4 mb-0`}>

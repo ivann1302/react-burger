@@ -9,7 +9,35 @@ import { IngredientType } from './../../../utils/types';
 
 export default function ConstructorItems({ ingredients }) {
 	if (!Array.isArray(ingredients) || ingredients.length === 0) {
-		return <div>Загрузка ингредиентов...</div>;
+		return (
+			<>
+				<ul className={styles.listContainer}>
+					{/* Верхняя булка */}
+					<li className={styles.locked}>
+						<ConstructorElement
+							type='top'
+							isLocked={true}
+							text=''
+							price=''
+							thumbnail=''
+						/>
+					</li>
+					<li key={'1'} className={styles.unlocked}>
+						<DragIcon type='primary' />
+						<ConstructorElement text='' price='' thumbnail='' />
+					</li>
+					<li className={styles.locked}>
+						<ConstructorElement
+							type='bottom'
+							isLocked={true}
+							text=''
+							price=''
+							thumbnail=''
+						/>
+					</li>
+				</ul>
+			</>
+		);
 	}
 
 	// Находим булку по её ID

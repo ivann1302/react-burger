@@ -1,10 +1,19 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
 import styles from './ingredient-details.module.scss';
+import { clearSelectedIngredient } from './../../../services/actions/ingredient-details-action';
 import PropTypes from 'prop-types';
 import { IngredientType } from './../../../utils/types';
 
 const IngredientDetailsModal = ({ ingredient }) => {
+	const dispatch = useDispatch();
+
 	if (!ingredient) return null;
+
+	const handleClose = () => {
+		dispatch(clearSelectedIngredient()); // Очищаем выбранный ингредиент при закрытии модального окна
+	};
+
 	return (
 		<div className={styles.container}>
 			<img
@@ -43,6 +52,7 @@ const IngredientDetailsModal = ({ ingredient }) => {
 					</p>
 				</div>
 			</div>
+			<button onClick={handleClose}>Закрыть</button>
 		</div>
 	);
 };

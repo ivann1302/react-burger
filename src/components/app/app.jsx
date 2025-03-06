@@ -8,7 +8,7 @@ import BurgerIngredients from '../burger-ingredients/burger-ingredients';
 import BurgerConstructor from '../burger-constructor/burger-constructor';
 import styles from './app.module.scss';
 import Modal from '../modal/modal';
-import OrderDetails from '../burger-constructor/order-items/oreder-items';
+import OrderDetails from '../burger-constructor/order-details/oreder-details';
 import IngredientDetailsModal from './../burger-ingredients/ingredient-details/ingredient-details';
 import { fetchIngredients } from '../../services/actions/ingredients-actions';
 
