@@ -7,6 +7,7 @@ import {
 	addIngredient,
 	addBun,
 	removeIngredient,
+	moveIngredient,
 } from '../../services/actions/constructor-actions';
 import styles from './burger-constructor.module.scss';
 
@@ -14,21 +15,29 @@ export default function BurgerConstructor() {
 	const dispatch = useDispatch();
 	const { bun, ingredients = [] } = useSelector((state) => state.constructor);
 
-	const handleRemoveIngredient = (ingredient, index) => {
-		dispatch(removeIngredient({ ...ingredient, index }));
+	const handleRemoveIngredient = (index) => {
+		dispatch(removeIngredient(index));
+	};
+
+	const handleMoveIngredient = (fromIndex, toIndex) => {
+		if (fromIndex === toIndex || fromIndex < 0 || toIndex < 0) return;
+		dispatch(moveIngredient(fromIndex, toIndex));
 	};
 
 	const [{ isOver }, drop] = useDrop({
-		accept: 'INGREDIENT', // Тип элемента, который можно сбросить
-		drop: (item) => {
+		accept: 'INGREDIENT',
+		drop: (item, monitor) => {
+			const isDroppedInsideConstructor = monitor.didDrop();
+			if (isDroppedInsideConstructor) return;
+
 			if (item.type === 'bun') {
-				dispatch(addBun(item)); // Добавляем булку
+				dispatch(addBun(item));
 			} else {
-				dispatch(addIngredient(item)); // Добавляем ингредиент
+				dispatch(addIngredient(item));
 			}
 		},
 		collect: (monitor) => ({
-			isOver: monitor.isOver(), // Находится ли элемент над целью
+			isOver: monitor.isOver(),
 		}),
 	});
 
@@ -40,6 +49,7 @@ export default function BurgerConstructor() {
 			<ConstructorItems
 				ingredients={ingredients}
 				onRemove={handleRemoveIngredient}
+				moveIngredient={handleMoveIngredient}
 			/>
 			{bun && <ConstructorItems ingredient={bun} isBunTop={false} />}
 			<OrderBlock />

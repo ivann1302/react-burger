@@ -8,10 +8,20 @@ export const addBun = (bun) => ({
 	payload: bun,
 });
 
-export const removeIngredient = (ingredient) => ({
+export const removeIngredient = (index) => ({
 	type: 'REMOVE_INGREDIENT',
-	payload: ingredient,
+	payload: index,
 });
+
+export const moveIngredient = (fromIndex, toIndex) => {
+	if (typeof fromIndex !== 'number' || typeof toIndex !== 'number') {
+		return { type: 'NO_ACTION' }; // Безопасный пустой экшен
+	}
+	return {
+		type: 'MOVE_INGREDIENT',
+		payload: { fromIndex, toIndex },
+	};
+};
 
 export const clearConstructor = () => ({
 	type: 'CLEAR_CONSTRUCTOR',

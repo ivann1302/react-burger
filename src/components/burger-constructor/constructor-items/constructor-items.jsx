@@ -1,6 +1,7 @@
 import React from 'react';
-import { ConstructorElement } from '@ya.praktikum/react-developer-burger-ui-components';
 import PropTypes from 'prop-types';
+import { ConstructorElement } from '@ya.praktikum/react-developer-burger-ui-components';
+import Ingredient from './../ingredient/ingredient';
 import styles from './constructor-items.module.scss';
 
 export default function ConstructorItems({
@@ -8,6 +9,7 @@ export default function ConstructorItems({
 	ingredients,
 	isBunTop,
 	onRemove,
+	moveIngredient,
 }) {
 	if (ingredient) {
 		return (
@@ -25,21 +27,25 @@ export default function ConstructorItems({
 
 	return (
 		<div className={styles.container}>
-			{ingredients.map((item, index) => (
-				<ConstructorElement
-					key={index}
-					text={item.name}
-					price={item.price}
-					thumbnail={item.image}
-					handleClose={() => onRemove(item, index)} // Передаём index для удаления
-				/>
-			))}
+			{ingredients
+				.filter((item) => item) // Убираем `undefined` элементы
+				.map((item, index) => (
+					<Ingredient
+						key={item._id + '-' + index} // Уникальный `key`, предотвращает дубликаты
+						ingredient={item}
+						index={index}
+						onRemove={onRemove}
+						moveIngredient={moveIngredient}
+					/>
+				))}
 		</div>
 	);
 }
 
 ConstructorItems.propTypes = {
 	ingredient: PropTypes.object,
-	ingredients: PropTypes.array,
+	ingredients: PropTypes.array.isRequired,
 	isBunTop: PropTypes.bool,
+	onRemove: PropTypes.func.isRequired,
+	moveIngredient: PropTypes.func.isRequired,
 };
