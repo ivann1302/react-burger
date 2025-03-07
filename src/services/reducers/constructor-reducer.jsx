@@ -1,31 +1,29 @@
 const initialState = {
-	bun: null, // Булочка
-	ingredients: [], // Остальные ингредиенты
+	bun: null,
+	ingredients: [], // Инициализируем как пустой массив
 };
 
 const constructorReducer = (state = initialState, action) => {
 	switch (action.type) {
 		case 'ADD_INGREDIENT':
-			if (action.payload.type === 'bun') {
-				return {
-					...state,
-					bun: action.payload, // Обновляем булочку
-				};
-			} else {
-				return {
-					...state,
-					ingredients: [...state.ingredients, action.payload], // Добавляем ингредиент
-				};
-			}
+			return {
+				...state,
+				ingredients: [...(state.ingredients || []), action.payload], // Гарантируем, что это массив
+			};
+		case 'ADD_BUN':
+			return {
+				...state,
+				bun: action.payload, // Обновляем булку
+			};
 		case 'REMOVE_INGREDIENT':
 			return {
 				...state,
-				ingredients: state.ingredients.filter(
+				ingredients: (state.ingredients || []).filter(
 					(item) => item.id !== action.payload.id
-				), // Удаляем ингредиент
+				),
 			};
 		case 'CLEAR_CONSTRUCTOR':
-			return initialState; // Очищаем конструктор
+			return initialState;
 		default:
 			return state;
 	}

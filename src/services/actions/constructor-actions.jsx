@@ -3,6 +3,11 @@ export const addIngredient = (ingredient) => ({
 	payload: ingredient,
 });
 
+export const addBun = (bun) => ({
+	type: 'ADD_BUN',
+	payload: bun,
+});
+
 export const removeIngredient = (ingredient) => ({
 	type: 'REMOVE_INGREDIENT',
 	payload: ingredient,

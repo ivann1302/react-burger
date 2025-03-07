@@ -1,33 +1,40 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-// import styles from './burger-constructor.module.scss';
+import { useDrop } from 'react-dnd';
 import ConstructorItems from './constructor-items/constructor-items';
 import OrderBlock from './order-block/order-block';
-import { createOrder } from './../../services/actions/order-actions';
-import { clearConstructor } from './../../services/actions/constructor-actions';
-
-import PropTypes from 'prop-types';
-import { IngredientType } from './../../utils/types';
+import {
+	addIngredient,
+	addBun,
+} from '../../services/actions/constructor-actions';
+import styles from './burger-constructor.module.scss';
 
 export default function BurgerConstructor() {
 	const dispatch = useDispatch();
-	const { bun, ingredients } = useSelector((state) => state.constructor);
+	const { bun, ingredients = [] } = useSelector((state) => state.constructor);
 
-	const handleOrderClick = () => {
-		const orderIngredients = [bun, ...ingredients, bun].map((item) => item._id); // Формируем список ингредиентов для заказа
-		dispatch(createOrder(orderIngredients)); // Создаем заказ
-		dispatch(clearConstructor()); // Очищаем конструктор после заказа
-	};
+	const [{ isOver }, drop] = useDrop({
+		accept: 'INGREDIENT', // Тип элемента, который можно сбросить
+		drop: (item) => {
+			if (item.type === 'bun') {
+				dispatch(addBun(item)); // Добавляем булку
+			} else {
+				dispatch(addIngredient(item)); // Добавляем ингредиент
+			}
+		},
+		collect: (monitor) => ({
+			isOver: monitor.isOver(), // Находится ли элемент над целью
+		}),
+	});
 
 	return (
-		<section>
-			<ConstructorItems ingredients={ingredients} bun={bun} />
-			<OrderBlock onOrderClick={handleOrderClick} />
+		<section
+			ref={drop}
+			className={`${styles.container} ${isOver ? styles.hover : ''}`}>
+			{bun && <ConstructorItems ingredient={bun} isBunTop={true} />}
+			<ConstructorItems ingredients={ingredients} />
+			{bun && <ConstructorItems ingredient={bun} isBunTop={false} />}
+			<OrderBlock />
 		</section>
 	);
 }
-
-BurgerConstructor.propTypes = {
-	ingredients: PropTypes.arrayOf(IngredientType),
-	onOrderClick: PropTypes.func.isRequired,
-};
