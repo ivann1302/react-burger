@@ -7,6 +7,7 @@ export default function ConstructorItems({
 	ingredient,
 	ingredients,
 	isBunTop,
+	onRemove,
 }) {
 	if (ingredient) {
 		return (
@@ -24,12 +25,13 @@ export default function ConstructorItems({
 
 	return (
 		<div className={styles.container}>
-			{(ingredients || []).map((item, index) => (
+			{ingredients.map((item, index) => (
 				<ConstructorElement
 					key={index}
 					text={item.name}
 					price={item.price}
 					thumbnail={item.image}
+					handleClose={() => onRemove(item, index)} // Передаём index для удаления
 				/>
 			))}
 		</div>

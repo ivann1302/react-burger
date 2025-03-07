@@ -15,13 +15,21 @@ const constructorReducer = (state = initialState, action) => {
 				...state,
 				bun: action.payload, // Обновляем булку
 			};
-		case 'REMOVE_INGREDIENT':
+		case 'REMOVE_INGREDIENT': {
+			const ingredientsCopy = [...state.ingredients];
+			const indexToRemove = ingredientsCopy.findIndex(
+				(item) => item._id === action.payload._id
+			);
+
+			if (indexToRemove !== -1) {
+				ingredientsCopy.splice(indexToRemove, 1); // Удаляем один элемент по индексу
+			}
+
 			return {
 				...state,
-				ingredients: (state.ingredients || []).filter(
-					(item) => item.id !== action.payload.id
-				),
+				ingredients: ingredientsCopy,
 			};
+		}
 		case 'CLEAR_CONSTRUCTOR':
 			return initialState;
 		default:

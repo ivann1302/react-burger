@@ -6,12 +6,17 @@ import OrderBlock from './order-block/order-block';
 import {
 	addIngredient,
 	addBun,
+	removeIngredient,
 } from '../../services/actions/constructor-actions';
 import styles from './burger-constructor.module.scss';
 
 export default function BurgerConstructor() {
 	const dispatch = useDispatch();
 	const { bun, ingredients = [] } = useSelector((state) => state.constructor);
+
+	const handleRemoveIngredient = (ingredient, index) => {
+		dispatch(removeIngredient({ ...ingredient, index }));
+	};
 
 	const [{ isOver }, drop] = useDrop({
 		accept: 'INGREDIENT', // Тип элемента, который можно сбросить
@@ -32,7 +37,10 @@ export default function BurgerConstructor() {
 			ref={drop}
 			className={`${styles.container} ${isOver ? styles.hover : ''}`}>
 			{bun && <ConstructorItems ingredient={bun} isBunTop={true} />}
-			<ConstructorItems ingredients={ingredients} />
+			<ConstructorItems
+				ingredients={ingredients}
+				onRemove={handleRemoveIngredient}
+			/>
 			{bun && <ConstructorItems ingredient={bun} isBunTop={false} />}
 			<OrderBlock />
 		</section>
