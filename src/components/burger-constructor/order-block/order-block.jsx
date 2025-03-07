@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { createOrder } from './../../../services/actions/order-actions';
 import {
@@ -12,9 +12,14 @@ export default function OrderBlock() {
 	const { bun, ingredients = [] } = useSelector((state) => state.constructor); // Добавляем значение по умолчанию для ingredients
 
 	// Рассчитываем итоговую стоимость
-	const totalPrice =
-		(bun ? bun.price * 2 : 0) +
-		ingredients.reduce((sum, item) => sum + item.price, 0);
+	const totalPrice = useMemo(() => {
+		const bunPrice = bun ? bun.price * 2 : 0; // Булка учитывается дважды
+		const ingredientsPrice = ingredients.reduce(
+			(sum, item) => sum + item.price,
+			0
+		);
+		return bunPrice + ingredientsPrice;
+	}, [bun, ingredients]); // Пересчёт только при изменении булки или ингредиентов
 
 	// Обработчик клика для оформления заказа
 	const handleOrderClick = () => {
