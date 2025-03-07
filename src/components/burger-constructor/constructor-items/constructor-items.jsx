@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { IngredientType } from './../../../utils/types';
 import { ConstructorElement } from '@ya.praktikum/react-developer-burger-ui-components';
 import Ingredient from './../ingredient/ingredient';
 import styles from './constructor-items.module.scss';
@@ -41,9 +42,13 @@ export default function ConstructorItems({
 }
 
 ConstructorItems.propTypes = {
-	ingredient: PropTypes.object,
-	ingredients: PropTypes.array.isRequired,
+	ingredient: IngredientType,
+	ingredients: PropTypes.arrayOf(IngredientType).isRequired,
 	isBunTop: PropTypes.bool,
 	onRemove: PropTypes.func.isRequired,
 	moveIngredient: PropTypes.func.isRequired,
+};
+
+ConstructorItems.defaultProps = {
+	ingredients: [],
 };

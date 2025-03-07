@@ -1,4 +1,4 @@
-import API_URL from './../../utils/api';
+const API_URL = 'https://norma.nomoreparties.space/api/orders';
 
 export const setOrderData = (data) => ({
 	type: 'SET_ORDER_DATA',

@@ -1,10 +1,9 @@
 import { useSelector } from 'react-redux';
 import styles from './order-details.module.scss';
 import doneImage from './../../../images/done.svg';
-import PropTypes from 'prop-types';
 
 const OrderDetails = () => {
-	const { orderData } = useSelector((state) => state.order);
+	const { orderData = null } = useSelector((state) => state.order ?? {}); // Теперь `orderData` всегда определён
 
 	if (!orderData) {
 		return null;
@@ -13,7 +12,7 @@ const OrderDetails = () => {
 	return (
 		<div className={styles.orderContainer}>
 			<p className={`${styles.text} text text_type_digits-large mt-4 mb-0`}>
-				{orderData.order.number}
+				{orderData?.order?.number ?? '—'}
 			</p>
 			<p className='text text_type_main-medium mt-8 mb-0'>
 				Идентификатор заказа
@@ -32,14 +31,6 @@ const OrderDetails = () => {
 			</p>
 		</div>
 	);
-};
-
-OrderDetails.propTypes = {
-	orderData: PropTypes.shape({
-		order: PropTypes.shape({
-			number: PropTypes.number.isRequired,
-		}).isRequired,
-	}),
 };
 
 export default OrderDetails;

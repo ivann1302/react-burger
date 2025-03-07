@@ -5,6 +5,7 @@ import {
 	DragIcon,
 } from '@ya.praktikum/react-developer-burger-ui-components';
 import PropTypes from 'prop-types';
+import { IngredientType } from './../../../utils/types';
 import styles from './ingredient.module.scss';
 
 const Ingredient = ({ ingredient, index, onRemove, moveIngredient }) => {
@@ -54,10 +55,14 @@ const Ingredient = ({ ingredient, index, onRemove, moveIngredient }) => {
 };
 
 Ingredient.propTypes = {
-	ingredient: PropTypes.object.isRequired,
+	ingredient: IngredientType.isRequired,
 	index: PropTypes.number.isRequired,
 	onRemove: PropTypes.func.isRequired,
 	moveIngredient: PropTypes.func.isRequired,
+};
+
+Ingredient.defaultProps = {
+	ingredient: null,
 };
 
 export default Ingredient;

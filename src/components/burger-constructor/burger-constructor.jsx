@@ -9,6 +9,8 @@ import {
 	removeIngredient,
 	moveIngredient,
 } from '../../services/actions/constructor-actions';
+import { IngredientType } from '@utils/types';
+import PropTypes from 'prop-types';
 import styles from './burger-constructor.module.scss';
 
 export default function BurgerConstructor() {
@@ -67,3 +69,19 @@ export default function BurgerConstructor() {
 		</section>
 	);
 }
+
+BurgerConstructor.propTypes = {
+	bun: IngredientType,
+	ingredients: PropTypes.arrayOf(IngredientType),
+	handleRemoveIngredient: PropTypes.func,
+	handleMoveIngredient: PropTypes.func,
+};
+
+BurgerConstructor.defaultProps = {
+	bun: null,
+	ingredients: [],
+	// eslint-disable-next-line @typescript-eslint/no-empty-function
+	handleRemoveIngredient: () => {},
+	// eslint-disable-next-line @typescript-eslint/no-empty-function
+	handleMoveIngredient: () => {},
+};

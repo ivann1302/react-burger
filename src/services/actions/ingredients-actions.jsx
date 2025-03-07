@@ -1,4 +1,5 @@
-import API_URL from './../../utils/api';
+const API_URL = 'https://norma.nomoreparties.space/api/ingredients';
+
 // запрос
 export const fetchIngredientsRequest = () => ({
 	type: 'FETCH_INGREDIENTS_REQUEST',
