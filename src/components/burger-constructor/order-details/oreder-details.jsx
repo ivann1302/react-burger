@@ -5,10 +5,8 @@ import doneImage from './../../../images/done.svg';
 import PropTypes from 'prop-types';
 
 const OrderDetails = () => {
-	// Получаем данные заказа из Redux
 	const { orderData } = useSelector((state) => state.order);
 
-	// Если данных о заказе нет, возвращаем null
 	if (!orderData) {
 		return null;
 	}
@@ -16,7 +14,7 @@ const OrderDetails = () => {
 	return (
 		<div className={styles.orderContainer}>
 			<p className={`${styles.text} text text_type_digits-large mt-4 mb-0`}>
-				{orderData.number}
+				{orderData.order.number}
 			</p>
 			<p className='text text_type_main-medium mt-8 mb-0'>
 				Идентификатор заказа
@@ -28,10 +26,10 @@ const OrderDetails = () => {
 				alt='done'
 			/>
 			<p className='text text_type_main-default mt-15 mb-0'>
-				{orderData.status}
+				Ваш заказ начали готовить
 			</p>
 			<p className='text text_type_main-default text_color_inactive mt-2 mb-30'>
-				{orderData.message}
+				Дождитесь готовности на орбитальной станции
 			</p>
 		</div>
 	);
@@ -39,10 +37,10 @@ const OrderDetails = () => {
 
 OrderDetails.propTypes = {
 	orderData: PropTypes.shape({
-		number: PropTypes.string.isRequired,
-		status: PropTypes.string.isRequired,
-		message: PropTypes.string.isRequired,
-	}).isRequired,
+		order: PropTypes.shape({
+			number: PropTypes.number.isRequired,
+		}).isRequired,
+	}),
 };
 
 export default OrderDetails;

@@ -1,6 +1,6 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { createOrder } from './../../../services/actions/order-actions';
+import { createOrder } from '../../../services/actions/order-actions';
 import {
 	Button,
 	CurrencyIcon,
@@ -9,17 +9,13 @@ import styles from './order-block.module.scss';
 
 export default function OrderBlock() {
 	const dispatch = useDispatch();
-	const { bun, ingredients = [] } = useSelector((state) => state.constructor); // Добавляем значение по умолчанию для ingredients
+	const { bun, ingredients = [] } = useSelector((state) => state.constructor);
+	const { loading, error } = useSelector((state) => state.order);
 
 	// Рассчитываем итоговую стоимость
-	const totalPrice = useMemo(() => {
-		const bunPrice = bun ? bun.price * 2 : 0; // Булка учитывается дважды
-		const ingredientsPrice = ingredients.reduce(
-			(sum, item) => sum + item.price,
-			0
-		);
-		return bunPrice + ingredientsPrice;
-	}, [bun, ingredients]); // Пересчёт только при изменении булки или ингредиентов
+	const totalPrice =
+		(bun ? bun.price * 2 : 0) +
+		ingredients.reduce((sum, item) => sum + item.price, 0);
 
 	// Обработчик клика для оформления заказа
 	const handleOrderClick = () => {
@@ -51,9 +47,13 @@ export default function OrderBlock() {
 				onClick={handleOrderClick}
 				htmlType='button'
 				type='primary'
-				size='medium'>
+				size='medium'
+				disabled={loading} // Блокируем кнопку во время загрузки
+			>
 				Сделать заказ
 			</Button>
+			{error && <p className='text text_type_main-default mt-4'>{error}</p>}{' '}
+			{/* Отображаем ошибку */}
 		</div>
 	);
 }

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 import { createStore, applyMiddleware, compose } from 'redux';
-import { thunk } from 'redux-thunk'; // Исправленный импорт
+import { thunk } from 'redux-thunk';
 import { rootReducer } from './../../services/reducers/root-reducer';
 import AppHeader from './../app-header/app-header';
 import BurgerIngredients from '../burger-ingredients/burger-ingredients';
@@ -12,21 +12,17 @@ import OrderDetails from '../burger-constructor/order-details/oreder-details';
 import IngredientDetailsModal from './../burger-ingredients/ingredient-details/ingredient-details';
 import { fetchIngredients } from '../../services/actions/ingredients-actions';
 
-// Настройка хранилища с Redux DevTools и redux-thunk
 const composeEnhancers =
 	typeof window === 'object' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
 		? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({})
 		: compose;
 
-const enhancer = composeEnhancers(applyMiddleware(thunk)); // Используем thunk
+const enhancer = composeEnhancers(applyMiddleware(thunk));
 
-const store = createStore(rootReducer, enhancer); // Создаем хранилище
+const store = createStore(rootReducer, enhancer);
 
-// Основной компонент приложения
 function AppContent() {
 	const dispatch = useDispatch();
-
-	// Получаем состояние из Redux
 	const { ingredients, loading, error } = useSelector(
 		(state) => state.ingredients
 	);
@@ -38,33 +34,31 @@ function AppContent() {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [isIngredientDetailsOpen, setIsIngredientDetailsOpen] = useState(false);
 
-	// Загрузка ингредиентов при монтировании компонента
 	useEffect(() => {
-		dispatch(fetchIngredients()); // Используем асинхронное действие
+		dispatch(fetchIngredients());
 	}, [dispatch]);
 
-	// Модальное окно
-	const handleOrderClick = (data) => {
-		dispatch({ type: 'SET_ORDER_DATA', payload: data }); // Сохраняем данные заказа
-		setIsModalOpen(true); // Открываем модальное окно
-	};
+	useEffect(() => {
+		if (orderData) {
+			setIsModalOpen(true); // Открываем модальное окно при успешном заказе
+		}
+	}, [orderData]);
 
 	const handleModalClose = () => {
-		setIsModalOpen(false); // Закрываем модальное окно
-		dispatch({ type: 'CLEAR_ORDER_DATA' }); // Сбрасываем данные заказа
+		setIsModalOpen(false);
+		dispatch({ type: 'CLEAR_ORDER_DATA' });
 	};
 
 	const handleIngredientClick = (ingredient) => {
-		dispatch({ type: 'SET_SELECTED_INGREDIENT', payload: ingredient }); // Сохраняем выбранный ингредиент
-		setIsIngredientDetailsOpen(true); // Открываем модальное окно с деталями ингредиента
+		dispatch({ type: 'SET_SELECTED_INGREDIENT', payload: ingredient });
+		setIsIngredientDetailsOpen(true);
 	};
 
 	const handleIngredientModalClose = () => {
-		setIsIngredientDetailsOpen(false); // Закрываем модальное окно с деталями ингредиента
-		dispatch({ type: 'CLEAR_SELECTED_INGREDIENT' }); // Сбрасываем данные ингредиента
+		setIsIngredientDetailsOpen(false);
+		dispatch({ type: 'CLEAR_SELECTED_INGREDIENT' });
 	};
 
-	// Обработка загрузки и ошибок
 	if (loading) {
 		return <div>Идет загрузка...</div>;
 	}
@@ -83,21 +77,16 @@ function AppContent() {
 						ingredients={ingredients}
 						onIngredientClick={handleIngredientClick}
 					/>
-					<BurgerConstructor
-						ingredients={ingredients}
-						onOrderClick={handleOrderClick}
-					/>
+					<BurgerConstructor />
 				</section>
 			</main>
 
-			{/* Модальное окно с деталями заказа */}
 			{isModalOpen && (
 				<Modal onClose={handleModalClose} header=''>
-					{orderData && <OrderDetails orderData={orderData} />}
+					<OrderDetails orderData={orderData} />
 				</Modal>
 			)}
 
-			{/* Модальное окно с деталями ингредиента */}
 			{isIngredientDetailsOpen && (
 				<Modal onClose={handleIngredientModalClose} header='Детали ингредиента'>
 					<IngredientDetailsModal
