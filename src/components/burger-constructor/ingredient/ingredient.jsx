@@ -1,6 +1,9 @@
 import React, { useRef } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
-import { ConstructorElement } from '@ya.praktikum/react-developer-burger-ui-components';
+import {
+	ConstructorElement,
+	DragIcon,
+} from '@ya.praktikum/react-developer-burger-ui-components';
 import PropTypes from 'prop-types';
 import styles from './ingredient.module.scss';
 
@@ -16,8 +19,11 @@ const Ingredient = ({ ingredient, index, onRemove, moveIngredient }) => {
 				item.index === index
 			)
 				return;
+
+			if (ingredient.type === 'bun') return; // Если ингредиент - булка, не перемещаем
+
 			moveIngredient(item.index, index);
-			item.index = index; // Обновляем индекс
+			item.index = index; // Обновляем индекс у элемента
 		},
 	});
 
@@ -36,6 +42,7 @@ const Ingredient = ({ ingredient, index, onRemove, moveIngredient }) => {
 			ref={ref}
 			className={styles.ingredient}
 			style={{ opacity: isDragging ? 0.5 : 1 }}>
+			<DragIcon type='primary' />
 			<ConstructorElement
 				text={ingredient.name}
 				price={ingredient.price}

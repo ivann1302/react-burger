@@ -1,3 +1,5 @@
+import API_URL from './../../utils/api';
+
 export const setOrderData = (data) => ({
 	type: 'SET_ORDER_DATA',
 	payload: data,
@@ -22,16 +24,13 @@ export const createOrder = (ingredients) => async (dispatch) => {
 	dispatch(setOrderError(null)); // Сбрасываем ошибку
 
 	try {
-		const response = await fetch(
-			'https://norma.nomoreparties.space/api/orders',
-			{
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({ ingredients }),
-			}
-		);
+		const response = await fetch(API_URL, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({ ingredients }),
+		});
 
 		if (!response.ok) {
 			throw new Error('Ошибка при создании заказа');

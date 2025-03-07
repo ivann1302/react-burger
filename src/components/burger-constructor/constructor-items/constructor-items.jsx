@@ -13,7 +13,7 @@ export default function ConstructorItems({
 }) {
 	if (ingredient) {
 		return (
-			<div className={styles.container}>
+			<div className={styles.bun}>
 				<ConstructorElement
 					type={isBunTop ? 'top' : 'bottom'}
 					isLocked={true}
@@ -26,18 +26,16 @@ export default function ConstructorItems({
 	}
 
 	return (
-		<div className={styles.container}>
-			{ingredients
-				.filter((item) => item) // Убираем `undefined` элементы
-				.map((item, index) => (
-					<Ingredient
-						key={item._id + '-' + index} // Уникальный `key`, предотвращает дубликаты
-						ingredient={item}
-						index={index}
-						onRemove={onRemove}
-						moveIngredient={moveIngredient}
-					/>
-				))}
+		<div className={styles.ingredientsWrapper}>
+			{ingredients.map((item, index) => (
+				<Ingredient
+					key={item._id + '-' + index}
+					ingredient={item}
+					index={index}
+					onRemove={onRemove}
+					moveIngredient={moveIngredient}
+				/>
+			))}
 		</div>
 	);
 }

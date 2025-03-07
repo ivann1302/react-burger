@@ -6,22 +6,21 @@ const initialState = {
 const constructorReducer = (state = initialState, action) => {
 	switch (action.type) {
 		case 'ADD_INGREDIENT': {
-			const ingredientsCopy = [...(state.ingredients ?? [])]; // Гарантируем, что это массив
-			ingredientsCopy.push({
-				...action.payload,
-				index: ingredientsCopy.length,
-			});
 			return {
 				...state,
-				ingredients: ingredientsCopy,
+				ingredients: [
+					...(state.ingredients ?? []),
+					{ ...action.payload, index: (state.ingredients ?? []).length },
+				],
 			};
 		}
 
-		case 'ADD_BUN':
+		case 'ADD_BUN': {
 			return {
 				...state,
 				bun: action.payload,
 			};
+		}
 
 		case 'REMOVE_INGREDIENT': {
 			const ingredientsCopy = [...(state.ingredients ?? [])];
@@ -31,13 +30,13 @@ const constructorReducer = (state = initialState, action) => {
 				ingredients: ingredientsCopy.map((item, idx) => ({
 					...item,
 					index: idx,
-				})),
+				})), // Обновляем индексы
 			};
 		}
 
 		case 'MOVE_INGREDIENT': {
-			const ingredientsCopy = [...(state.ingredients ?? [])];
 			const { fromIndex, toIndex } = action.payload;
+			const ingredientsCopy = [...(state.ingredients ?? [])];
 
 			if (
 				fromIndex < 0 ||
@@ -49,7 +48,7 @@ const constructorReducer = (state = initialState, action) => {
 			}
 
 			const [movedItem] = ingredientsCopy.splice(fromIndex, 1);
-			if (!movedItem) return state; // Проверяем, что элемент не `undefined`
+			if (!movedItem) return state;
 
 			ingredientsCopy.splice(toIndex, 0, movedItem);
 
@@ -62,11 +61,12 @@ const constructorReducer = (state = initialState, action) => {
 			};
 		}
 
-		case 'CLEAR_CONSTRUCTOR':
-			return initialState;
+		case 'CLEAR_CONSTRUCTOR': {
+			return { ...initialState, ingredients: [] }; // Гарантируем, что ингредиенты остаются массивом
+		}
 
 		default:
-			return state;
+			return { ...state, ingredients: state.ingredients ?? [] }; // Защита от `undefined`
 	}
 };
 
