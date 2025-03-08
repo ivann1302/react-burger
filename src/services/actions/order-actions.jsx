@@ -1,4 +1,6 @@
-import { BASE_URL_ORDERS } from './../../utils/api';
+import { BASE_URL } from './../../utils/api';
+
+const BASE_URL_ORDERS = `${BASE_URL}/orders`;
 
 export const setOrderData = (data) => ({
 	type: 'SET_ORDER_DATA',

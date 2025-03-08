@@ -1,4 +1,5 @@
-import { BASE_URL_INGREDIENTS } from './../../utils/api';
+import { BASE_URL } from './../../utils/api';
+const BASE_URL_INGREDIENTS = `${BASE_URL}/ingredients`;
 // запрос
 export const fetchIngredientsRequest = () => ({
 	type: 'FETCH_INGREDIENTS_REQUEST',
