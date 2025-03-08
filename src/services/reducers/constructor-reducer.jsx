@@ -18,18 +18,19 @@ const constructorReducer = (state = initialState, action) => {
 				...state,
 				ingredients: [
 					...(state.ingredients ?? []),
-					{ ...action.payload, index: (state.ingredients ?? []).length },
+					{
+						...action.payload, // Уже содержит uniqueId
+						index: (state.ingredients ?? []).length,
+					},
 				],
 			};
 		}
-
 		case ADD_BUN: {
 			return {
 				...state,
 				bun: action.payload,
 			};
 		}
-
 		case REMOVE_INGREDIENT: {
 			const ingredientsCopy = [...(state.ingredients ?? [])];
 			ingredientsCopy.splice(action.payload, 1);
@@ -37,8 +38,8 @@ const constructorReducer = (state = initialState, action) => {
 				...state,
 				ingredients: ingredientsCopy.map((item, idx) => ({
 					...item,
-					index: idx,
-				})), // Обновляем индексы
+					index: idx, // Обновляем индексы
+				})),
 			};
 		}
 
@@ -64,7 +65,7 @@ const constructorReducer = (state = initialState, action) => {
 				...state,
 				ingredients: ingredientsCopy.map((item, idx) => ({
 					...item,
-					index: idx,
+					index: idx, // Обновляем индексы
 				})),
 			};
 		}

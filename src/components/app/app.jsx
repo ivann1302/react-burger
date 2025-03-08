@@ -12,9 +12,7 @@ import store from './../../services/store';
 
 function AppContent() {
 	const dispatch = useDispatch();
-	const { ingredients, loading, error } = useSelector(
-		(state) => state.ingredients
-	);
+	const { loading, error } = useSelector((state) => state.ingredients);
 	const { selectedIngredient } = useSelector(
 		(state) => state.ingredientDetails
 	);
@@ -62,10 +60,7 @@ function AppContent() {
 			<main className={styles.main}>
 				<h2 className='text text_type_main-large mb-5'>Соберите бургер</h2>
 				<section className={styles.container}>
-					<BurgerIngredients
-						ingredients={ingredients}
-						onIngredientClick={handleIngredientClick}
-					/>
+					<BurgerIngredients onIngredientClick={handleIngredientClick} />
 					<BurgerConstructor />
 				</section>
 			</main>
