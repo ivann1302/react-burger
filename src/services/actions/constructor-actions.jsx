@@ -1,6 +1,11 @@
+import { v4 as uuidv4 } from 'uuid';
+
 export const addIngredient = (ingredient) => ({
 	type: 'ADD_INGREDIENT',
-	payload: ingredient,
+	payload: {
+		...ingredient,
+		uniqueId: uuidv4(),
+	},
 });
 
 export const addBun = (bun) => ({

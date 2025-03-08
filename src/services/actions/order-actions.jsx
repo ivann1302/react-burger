@@ -1,5 +1,6 @@
 import { BASE_URL } from './../../utils/api';
 import { request } from './../../utils/check-response';
+import { clearConstructor } from './constructor-actions';
 
 const BASE_URL_ORDERS = `${BASE_URL}/orders`;
 
@@ -36,6 +37,7 @@ export const createOrder = (ingredients) => async (dispatch) => {
 		});
 
 		dispatch(setOrderData(data)); // Сохраняем данные заказа
+		dispatch(clearConstructor()); // Сбрасываем конструктор
 	} catch (error) {
 		console.error('Ошибка:', error);
 		dispatch(setOrderError(error.message)); // Сохраняем ошибку
