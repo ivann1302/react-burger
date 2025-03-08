@@ -1,4 +1,5 @@
 import { BASE_URL } from './../../utils/api';
+import { request } from './../../utils/check-response';
 
 const BASE_URL_ORDERS = `${BASE_URL}/orders`;
 
@@ -26,7 +27,7 @@ export const createOrder = (ingredients) => async (dispatch) => {
 	dispatch(setOrderError(null)); // Сбрасываем ошибку
 
 	try {
-		const response = await fetch(BASE_URL_ORDERS, {
+		const data = await request(BASE_URL_ORDERS, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -34,11 +35,6 @@ export const createOrder = (ingredients) => async (dispatch) => {
 			body: JSON.stringify({ ingredients }),
 		});
 
-		if (!response.ok) {
-			throw new Error('Ошибка при создании заказа');
-		}
-
-		const data = await response.json();
 		dispatch(setOrderData(data)); // Сохраняем данные заказа
 	} catch (error) {
 		console.error('Ошибка:', error);

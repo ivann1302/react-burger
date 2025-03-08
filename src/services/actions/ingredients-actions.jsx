@@ -1,4 +1,6 @@
 import { BASE_URL } from './../../utils/api';
+import { request } from './../../utils/check-response';
+
 const BASE_URL_INGREDIENTS = `${BASE_URL}/ingredients`;
 // запрос
 export const fetchIngredientsRequest = () => ({
@@ -28,13 +30,7 @@ export const fetchIngredients = () => async (dispatch) => {
 	dispatch(fetchIngredientsRequest()); // Запрос начался
 
 	try {
-		const response = await fetch(BASE_URL_INGREDIENTS);
-
-		if (!response.ok) {
-			throw new Error(`Ошибка: ${response.status}`);
-		}
-
-		const data = await response.json();
+		const data = await request(BASE_URL_INGREDIENTS);
 		dispatch(fetchIngredientsSuccess(data.data)); // Успешный запрос
 	} catch (err) {
 		dispatch(fetchIngredientsFailure(err.message)); // Ошибка запроса
