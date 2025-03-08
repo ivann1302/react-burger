@@ -1,4 +1,4 @@
-const API_URL = 'https://norma.nomoreparties.space/api/orders';
+import { BASE_URL_ORDERS } from './../../utils/api';
 
 export const setOrderData = (data) => ({
 	type: 'SET_ORDER_DATA',
@@ -24,7 +24,7 @@ export const createOrder = (ingredients) => async (dispatch) => {
 	dispatch(setOrderError(null)); // Сбрасываем ошибку
 
 	try {
-		const response = await fetch(API_URL, {
+		const response = await fetch(BASE_URL_ORDERS, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -45,3 +45,8 @@ export const createOrder = (ingredients) => async (dispatch) => {
 		dispatch(setOrderLoading(false)); // Сбрасываем состояние загрузки
 	}
 };
+
+export const SET_ORDER_DATA = 'SET_ORDER_DATA';
+export const CLEAR_ORDER_DATA = 'CLEAR_ORDER_DATA';
+export const SET_ORDER_LOADING = 'SET_ORDER_LOADING';
+export const SET_ORDER_ERROR = 'SET_ORDER_ERROR';

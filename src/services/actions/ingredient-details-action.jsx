@@ -6,3 +6,6 @@ export const setSelectedIngredient = (ingredient) => ({
 export const clearSelectedIngredient = () => ({
 	type: 'CLEAR_SELECTED_INGREDIENT',
 });
+
+export const SET_SELECTED_INGREDIENT = 'SET_SELECTED_INGREDIENT';
+export const CLEAR_SELECTED_INGREDIENT = 'CLEAR_SELECTED_INGREDIENT';

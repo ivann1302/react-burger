@@ -1,3 +1,9 @@
+import {
+	FETCH_INGREDIENTS_REQUEST,
+	FETCH_INGREDIENTS_SUCCESS,
+	FETCH_INGREDIENTS_FAILURE,
+} from './../actions/ingredients-actions';
+
 const initialState = {
 	ingredients: [],
 	loading: false,
@@ -6,19 +12,19 @@ const initialState = {
 
 const ingredientsReducer = (state = initialState, action) => {
 	switch (action.type) {
-		case 'FETCH_INGREDIENTS_REQUEST':
+		case FETCH_INGREDIENTS_REQUEST:
 			return {
 				...state,
 				loading: true,
 				error: null,
 			};
-		case 'FETCH_INGREDIENTS_SUCCESS':
+		case FETCH_INGREDIENTS_SUCCESS:
 			return {
 				...state,
 				ingredients: action.payload,
 				loading: false,
 			};
-		case 'FETCH_INGREDIENTS_FAILURE':
+		case FETCH_INGREDIENTS_FAILURE:
 			return {
 				...state,
 				loading: false,

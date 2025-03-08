@@ -1,3 +1,11 @@
+import {
+	ADD_INGREDIENT,
+	ADD_BUN,
+	REMOVE_INGREDIENT,
+	MOVE_INGREDIENT,
+	CLEAR_CONSTRUCTOR,
+} from './../actions/constructor-actions';
+
 const initialState = {
 	bun: null,
 	ingredients: [],
@@ -5,7 +13,7 @@ const initialState = {
 
 const constructorReducer = (state = initialState, action) => {
 	switch (action.type) {
-		case 'ADD_INGREDIENT': {
+		case ADD_INGREDIENT: {
 			return {
 				...state,
 				ingredients: [
@@ -15,14 +23,14 @@ const constructorReducer = (state = initialState, action) => {
 			};
 		}
 
-		case 'ADD_BUN': {
+		case ADD_BUN: {
 			return {
 				...state,
 				bun: action.payload,
 			};
 		}
 
-		case 'REMOVE_INGREDIENT': {
+		case REMOVE_INGREDIENT: {
 			const ingredientsCopy = [...(state.ingredients ?? [])];
 			ingredientsCopy.splice(action.payload, 1);
 			return {
@@ -34,7 +42,7 @@ const constructorReducer = (state = initialState, action) => {
 			};
 		}
 
-		case 'MOVE_INGREDIENT': {
+		case MOVE_INGREDIENT: {
 			const { fromIndex, toIndex } = action.payload;
 			const ingredientsCopy = [...(state.ingredients ?? [])];
 
@@ -61,7 +69,7 @@ const constructorReducer = (state = initialState, action) => {
 			};
 		}
 
-		case 'CLEAR_CONSTRUCTOR': {
+		case CLEAR_CONSTRUCTOR: {
 			return { ...initialState, ingredients: [] }; // Гарантируем, что ингредиенты остаются массивом
 		}
 

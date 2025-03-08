@@ -1,9 +1,10 @@
-const API_URL = 'https://norma.nomoreparties.space/api/ingredients';
-
+import { BASE_URL_INGREDIENTS } from './../../utils/api';
 // запрос
 export const fetchIngredientsRequest = () => ({
 	type: 'FETCH_INGREDIENTS_REQUEST',
 });
+
+export const FETCH_INGREDIENTS_REQUEST = 'FETCH_INGREDIENTS_REQUEST';
 
 // успешный запрос
 export const fetchIngredientsSuccess = (data) => ({
@@ -11,18 +12,22 @@ export const fetchIngredientsSuccess = (data) => ({
 	payload: data,
 });
 
+export const FETCH_INGREDIENTS_SUCCESS = 'FETCH_INGREDIENTS_SUCCESS';
+
 // ошибка
 export const fetchIngredientsFailure = (error) => ({
 	type: 'FETCH_INGREDIENTS_FAILURE',
 	payload: error,
 });
 
+export const FETCH_INGREDIENTS_FAILURE = 'FETCH_INGREDIENTS_FAILURE';
+
 // Асинхронное действие redux-thunk
 export const fetchIngredients = () => async (dispatch) => {
 	dispatch(fetchIngredientsRequest()); // Запрос начался
 
 	try {
-		const response = await fetch(API_URL);
+		const response = await fetch(BASE_URL_INGREDIENTS);
 
 		if (!response.ok) {
 			throw new Error(`Ошибка: ${response.status}`);
