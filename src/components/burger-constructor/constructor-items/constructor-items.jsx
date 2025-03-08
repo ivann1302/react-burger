@@ -28,11 +28,11 @@ export default function ConstructorItems({
 
 	return (
 		<div className={styles.ingredientsWrapper}>
-			{ingredients.map((item) => (
+			{ingredients.map((item, index) => (
 				<Ingredient
 					key={item.uniqueId} // Используем uniqueId вместо _id + index
 					ingredient={item}
-					index={item.index} // Используем index из payload
+					index={index}
 					onRemove={onRemove}
 					moveIngredient={moveIngredient}
 				/>

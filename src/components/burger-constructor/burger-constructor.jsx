@@ -15,10 +15,10 @@ export default function BurgerConstructor() {
 	const dispatch = useDispatch();
 
 	// Получаем ингредиенты из Redux
-	const { bun, ingredients = [] } = useSelector((state) => ({
-		bun: state.constructor.bun,
-		ingredients: state.constructor.ingredients ?? [], // Гарантируем массив
-	}));
+	const bun = useSelector((state) => state.burgerConstructor.bun);
+	const ingredients = useSelector(
+		(state) => state.burgerConstructor.ingredients ?? []
+	);
 
 	const handleRemoveIngredient = (index) => {
 		dispatch(removeIngredient(index));

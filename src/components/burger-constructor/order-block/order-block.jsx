@@ -11,7 +11,9 @@ import styles from './order-block.module.scss';
 
 export default function OrderBlock() {
 	const dispatch = useDispatch();
-	const { bun, ingredients = [] } = useSelector((state) => state.constructor);
+	const { bun, ingredients = [] } = useSelector(
+		(state) => state.burgerConstructor
+	);
 	const { loading = false, error = null } = useSelector(
 		(state) => state.order ?? {}
 	); // Теперь `loading` и `error` всегда определены
@@ -25,10 +27,6 @@ export default function OrderBlock() {
 	const handleOrderClick = () => {
 		if (!bun) {
 			alert('Добавьте булочку для заказа!');
-			return;
-		}
-		if (ingredients.length === 0) {
-			alert('Добавьте ингредиенты для заказа!');
 			return;
 		}
 

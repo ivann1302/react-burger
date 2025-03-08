@@ -48,7 +48,7 @@ const Ingredient = ({ ingredient, index, onRemove, moveIngredient }) => {
 				text={ingredient.name}
 				price={ingredient.price}
 				thumbnail={ingredient.image}
-				handleClose={() => onRemove(index)}
+				handleClose={() => onRemove(ingredient.uniqueId)}
 			/>
 		</div>
 	);
@@ -56,7 +56,7 @@ const Ingredient = ({ ingredient, index, onRemove, moveIngredient }) => {
 
 Ingredient.propTypes = {
 	ingredient: IngredientType.isRequired,
-	index: PropTypes.number.isRequired,
+	index: PropTypes.number,
 	onRemove: PropTypes.func.isRequired,
 	moveIngredient: PropTypes.func.isRequired,
 };

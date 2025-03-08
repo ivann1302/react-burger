@@ -16,13 +16,7 @@ const constructorReducer = (state = initialState, action) => {
 		case ADD_INGREDIENT: {
 			return {
 				...state,
-				ingredients: [
-					...(state.ingredients ?? []),
-					{
-						...action.payload, // Уже содержит uniqueId
-						index: (state.ingredients ?? []).length,
-					},
-				],
+				ingredients: [...state.ingredients, action.payload],
 			};
 		}
 		case ADD_BUN: {
