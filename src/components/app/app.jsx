@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useModal } from './../../hooks/use-modal';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 import AppHeader from './../app-header/app-header';
 import BurgerIngredients from '../burger-ingredients/burger-ingredients';
@@ -18,7 +19,7 @@ function AppContent() {
 	);
 	const { orderData } = useSelector((state) => state.order);
 
-	const [isModalOpen, setIsModalOpen] = useState(false);
+	const { isModalOpen, openModal, closeModal } = useModal();
 	const [isIngredientDetailsOpen, setIsIngredientDetailsOpen] = useState(false);
 
 	useEffect(() => {
@@ -27,12 +28,12 @@ function AppContent() {
 
 	useEffect(() => {
 		if (orderData) {
-			setIsModalOpen(true); // Открываем модальное окно при успешном заказе
+			openModal();
 		}
 	}, [orderData]);
 
 	const handleModalClose = () => {
-		setIsModalOpen(false);
+		closeModal();
 		dispatch({ type: 'CLEAR_ORDER_DATA' });
 	};
 
