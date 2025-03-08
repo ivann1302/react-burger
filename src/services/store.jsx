@@ -1,5 +1,5 @@
 import { createStore, applyMiddleware, compose } from 'redux';
-import thunk from 'redux-thunk'; // Middleware для асинхронных действий
+import { thunk } from 'redux-thunk';
 import { rootReducer } from './reducers/root-reducer'; // Импортируем корневой редьюсер
 
 // Настройка Redux DevTools

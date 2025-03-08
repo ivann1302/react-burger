@@ -1,11 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
+import { useSelector } from 'react-redux'; // Добавляем useSelector
 import { Tab } from '@ya.praktikum/react-developer-burger-ui-components';
 import styles from './burger-ingredients.module.scss';
 import IngredientsGroup from './ingredients-group/ingredients-group.jsx';
 import PropTypes from 'prop-types';
-import { IngredientType } from './../../utils/types';
 
-export default function BurgerIngredients({ ingredients, onIngredientClick }) {
+export default function BurgerIngredients({ onIngredientClick }) {
+	// Получаем ингредиенты из Redux
+	const { ingredients } = useSelector((state) => state.ingredients);
+
 	// Храним активный таб (по умолчанию "Булки")
 	const [current, setCurrent] = useState('Булки');
 
@@ -137,6 +140,5 @@ export default function BurgerIngredients({ ingredients, onIngredientClick }) {
 }
 
 BurgerIngredients.propTypes = {
-	ingredients: PropTypes.arrayOf(IngredientType),
 	onIngredientClick: PropTypes.func.isRequired,
 };

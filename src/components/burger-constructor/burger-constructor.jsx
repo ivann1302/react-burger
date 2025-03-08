@@ -9,12 +9,12 @@ import {
 	removeIngredient,
 	moveIngredient,
 } from '../../services/actions/constructor-actions';
-import { IngredientType } from '@utils/types';
-import PropTypes from 'prop-types';
 import styles from './burger-constructor.module.scss';
 
 export default function BurgerConstructor() {
 	const dispatch = useDispatch();
+
+	// Получаем ингредиенты из Redux
 	const { bun, ingredients = [] } = useSelector((state) => ({
 		bun: state.constructor.bun,
 		ingredients: state.constructor.ingredients ?? [], // Гарантируем массив
@@ -69,19 +69,3 @@ export default function BurgerConstructor() {
 		</section>
 	);
 }
-
-BurgerConstructor.propTypes = {
-	bun: IngredientType,
-	ingredients: PropTypes.arrayOf(IngredientType),
-	handleRemoveIngredient: PropTypes.func,
-	handleMoveIngredient: PropTypes.func,
-};
-
-BurgerConstructor.defaultProps = {
-	bun: null,
-	ingredients: [],
-	// eslint-disable-next-line @typescript-eslint/no-empty-function
-	handleRemoveIngredient: () => {},
-	// eslint-disable-next-line @typescript-eslint/no-empty-function
-	handleMoveIngredient: () => {},
-};
