@@ -10,6 +10,12 @@ import OrderDetails from '../burger-constructor/order-details/oreder-details';
 import IngredientDetailsModal from './../burger-ingredients/ingredient-details/ingredient-details';
 import { fetchIngredients } from '../../services/actions/ingredients-actions';
 import store from './../../services/store';
+import {
+	SET_SELECTED_INGREDIENT,
+	CLEAR_SELECTED_INGREDIENT,
+} from './../../services/actions/ingredient-details-action';
+
+import { CLEAR_ORDER_DATA } from './../../services/actions/order-actions';
 
 function AppContent() {
 	const dispatch = useDispatch();
@@ -34,17 +40,17 @@ function AppContent() {
 
 	const handleModalClose = () => {
 		closeModal();
-		dispatch({ type: 'CLEAR_ORDER_DATA' });
+		dispatch({ type: CLEAR_ORDER_DATA });
 	};
 
 	const handleIngredientClick = (ingredient) => {
-		dispatch({ type: 'SET_SELECTED_INGREDIENT', payload: ingredient });
+		dispatch({ type: SET_SELECTED_INGREDIENT, payload: ingredient });
 		setIsIngredientDetailsOpen(true);
 	};
 
 	const handleIngredientModalClose = () => {
 		setIsIngredientDetailsOpen(false);
-		dispatch({ type: 'CLEAR_SELECTED_INGREDIENT' });
+		dispatch({ type: CLEAR_SELECTED_INGREDIENT });
 	};
 
 	if (loading) {
