@@ -8,7 +8,9 @@ import styles from './ingredients-group.module.scss';
 const IngredientsGroup = forwardRef(
 	({ type, groupName, onIngredientClick }, ref) => {
 		// Получаем данные из конструктора
-		const { bun, ingredients = [] } = useSelector((state) => state.constructor); // Используем пустой массив по умолчанию
+		const { bun, ingredients = [] } = useSelector(
+			(state) => state.burgerConstructor
+		); // Используем пустой массив по умолчанию
 
 		// Функция для подсчета количества ингредиентов
 		const countIngredients = (id) => {
