@@ -1,74 +1,58 @@
 import React, { useEffect, useState } from 'react';
+import { useModal } from './../../hooks/use-modal';
+import { Provider, useDispatch, useSelector } from 'react-redux';
 import AppHeader from './../app-header/app-header';
 import BurgerIngredients from '../burger-ingredients/burger-ingredients';
 import BurgerConstructor from '../burger-constructor/burger-constructor';
 import styles from './app.module.scss';
 import Modal from '../modal/modal';
-import OrderDetails from '../burger-constructor/order-items/oreder-items';
+import OrderDetails from '../burger-constructor/order-details/oreder-details';
 import IngredientDetailsModal from './../burger-ingredients/ingredient-details/ingredient-details';
+import { fetchIngredients } from '../../services/actions/ingredients-actions';
+import store from './../../services/store';
+import {
+	SET_SELECTED_INGREDIENT,
+	CLEAR_SELECTED_INGREDIENT,
+} from './../../services/actions/ingredient-details-action';
 
-const API_URL = 'https://norma.nomoreparties.space/api/ingredients';
+import { CLEAR_ORDER_DATA } from './../../services/actions/order-actions';
 
-export default function App() {
-	// состояние для ингредиентов, загрузки и ошибок
-	const [ingredients, setIngredients] = useState([]);
-	const [loading, setLoading] = useState(false);
-	const [error, setError] = useState(null);
+function AppContent() {
+	const dispatch = useDispatch();
+	const { loading, error } = useSelector((state) => state.ingredients);
+	const { selectedIngredient } = useSelector(
+		(state) => state.ingredientDetails
+	);
+	const { orderData } = useSelector((state) => state.order);
 
-	// состояние для модального окна и данных заказа
-	const [orderData, setOrderData] = useState({ name: '0345366' });
-	const [isModalOpen, setIsModalOpen] = useState(false);
-
-	const [selectedIngredient, setSelectedIngredient] = useState(null);
+	const { isModalOpen, openModal, closeModal } = useModal();
 	const [isIngredientDetailsOpen, setIsIngredientDetailsOpen] = useState(false);
 
-	// юзэффект пре рендеринге компонента App
 	useEffect(() => {
-		setError(null);
+		dispatch(fetchIngredients());
+	}, [dispatch]);
 
-		const fetchIngredients = async () => {
-			try {
-				setLoading(true);
-				const response = await fetch(API_URL);
-
-				if (!response.ok) {
-					throw new Error(`Ошибка: ${response.status}`);
-				}
-
-				const data = await response.json();
-				setIngredients(data.data);
-			} catch (err) {
-				setError(err.message);
-			} finally {
-				setLoading(false);
-			}
-		};
-
-		fetchIngredients();
-	}, []);
-
-	// Модальное окно
-	const handleOrderClick = (data) => {
-		setOrderData(data); // Сохраняем данные заказа
-		setIsModalOpen(true); // Открываем модальное окно
-	};
+	useEffect(() => {
+		if (orderData) {
+			openModal();
+		}
+	}, [orderData]);
 
 	const handleModalClose = () => {
-		setIsModalOpen(false); // Закрываем модальное окно
-		setOrderData(null); // Сбрасываем данные заказа
+		closeModal();
+		dispatch({ type: CLEAR_ORDER_DATA });
 	};
 
 	const handleIngredientClick = (ingredient) => {
-		setSelectedIngredient(ingredient);
+		dispatch({ type: SET_SELECTED_INGREDIENT, payload: ingredient });
 		setIsIngredientDetailsOpen(true);
 	};
 
 	const handleIngredientModalClose = () => {
-		setIsIngredientDetailsOpen(false); // Закрываем модальное окно с деталями ингредиента
-		setSelectedIngredient(null); // Сбрасываем данные ингредиента
+		setIsIngredientDetailsOpen(false);
+		dispatch({ type: CLEAR_SELECTED_INGREDIENT });
 	};
 
-	// обработка загрузки и ошибок
 	if (loading) {
 		return <div>Идет загрузка...</div>;
 	}
@@ -83,25 +67,17 @@ export default function App() {
 			<main className={styles.main}>
 				<h2 className='text text_type_main-large mb-5'>Соберите бургер</h2>
 				<section className={styles.container}>
-					<BurgerIngredients
-						ingredients={ingredients}
-						onIngredientClick={handleIngredientClick}
-					/>
-					<BurgerConstructor
-						ingredients={ingredients}
-						onOrderClick={handleOrderClick}
-					/>
+					<BurgerIngredients onIngredientClick={handleIngredientClick} />
+					<BurgerConstructor />
 				</section>
 			</main>
 
-			{/* Модальное окно с деталями заказа */}
 			{isModalOpen && (
 				<Modal onClose={handleModalClose} header=''>
-					{orderData && <OrderDetails orderData={orderData} />}
+					<OrderDetails orderData={orderData} />
 				</Modal>
 			)}
 
-			{/* Модальное окно с деталями ингредиента */}
 			{isIngredientDetailsOpen && (
 				<Modal onClose={handleIngredientModalClose} header='Детали ингредиента'>
 					<IngredientDetailsModal
@@ -111,5 +87,13 @@ export default function App() {
 				</Modal>
 			)}
 		</>
+	);
+}
+
+export default function App() {
+	return (
+		<Provider store={store}>
+			<AppContent />
+		</Provider>
 	);
 }
