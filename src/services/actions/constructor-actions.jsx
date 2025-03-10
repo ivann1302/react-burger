@@ -9,7 +9,7 @@ export const addIngredient = (ingredient) => ({
 });
 
 export const addBun = (bun) => ({
-	type: 'ADD_BUN',
+	type: ADD_BUN,
 	payload: bun,
 });
 
