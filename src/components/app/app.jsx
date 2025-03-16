@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
+import { Routes, Route } from 'react-router-dom';
 import { useModal } from './../../hooks/use-modal';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 import AppHeader from './../app-header/app-header';
-import BurgerIngredients from '../burger-ingredients/burger-ingredients';
-import BurgerConstructor from '../burger-constructor/burger-constructor';
+import Home from './../../pages/home/home';
 import styles from './app.module.scss';
 import Modal from '../modal/modal';
 import OrderDetails from '../burger-constructor/order-details/oreder-details';
@@ -65,11 +65,13 @@ function AppContent() {
 		<>
 			<AppHeader />
 			<main className={styles.main}>
-				<h2 className='text text_type_main-large mb-5'>Соберите бургер</h2>
-				<section className={styles.container}>
-					<BurgerIngredients onIngredientClick={handleIngredientClick} />
-					<BurgerConstructor />
-				</section>
+				<Routes>
+					<Route
+						path='/'
+						element={
+							<Home onIngredientClick={handleIngredientClick} />
+						}></Route>
+				</Routes>
 			</main>
 
 			{isModalOpen && (

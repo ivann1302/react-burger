@@ -1,3 +1,4 @@
+import { BrowserRouter as Router } from 'react-router-dom';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { DndProvider } from 'react-dnd'; // Импортируем DndProvider
@@ -11,7 +12,9 @@ const root = createRoot(domNode);
 root.render(
 	<StrictMode>
 		<DndProvider backend={HTML5Backend}>
-			<App />
+			<Router>
+				<App />
+			</Router>
 		</DndProvider>
 	</StrictMode>
 );
