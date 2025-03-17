@@ -1,20 +1,15 @@
 import React from 'react';
-import styles from './register.module.scss';
+import styles from './forgot-password.module.scss';
 import {
 	EmailInput,
-	PasswordInput,
 	Button,
 } from '@ya.praktikum/react-developer-burger-ui-components';
 
-const RegisterPage = () => {
+const ForgotPasswordPage = () => {
 	const value = '';
 
 	const handleEmailChange = (e) => {
 		setEmail(e.target.value);
-	};
-
-	const handlePasswordChange = (e) => {
-		setPassword(e.target.value);
 	};
 
 	const handleSubmit = (e) => {
@@ -28,7 +23,7 @@ const RegisterPage = () => {
 	return (
 		<section className={styles.container}>
 			<form action='' className={styles.form}>
-				<h2 className='text text_type_main-medium'>Регистрация</h2>
+				<h2 className='text text_type_main-medium'>Восстановление пароля</h2>
 				<EmailInput
 					onChange={handleEmailChange}
 					value={value}
@@ -36,22 +31,17 @@ const RegisterPage = () => {
 					placeholder='E-mail'
 					isIcon={false}
 				/>
-				<PasswordInput
-					onChange={handlePasswordChange}
-					value={value}
-					name={'password'}
-				/>
 				<Button
 					onClick={handleSubmit}
 					htmlType='submit'
 					size='medium'
 					extraClass={styles.button}>
-					Зарегистрироваться
+					Восстановить
 				</Button>
 			</form>
 			<div>
-				<h4 className={`text text_type_main-default ${styles.registrationed}`}>
-					Уже зарегистрировались?
+				<h4 className={`text text_type_main-default ${styles.text}`}>
+					Вспомнили пароль?
 					<a
 						className={`text text_type_main-
                     default ${styles.href}`}
@@ -64,4 +54,4 @@ const RegisterPage = () => {
 	);
 };
 
-export default RegisterPage;
+export default ForgotPasswordPage;

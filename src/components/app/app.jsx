@@ -6,6 +6,8 @@ import AppHeader from './../app-header/app-header';
 import Home from './../../pages/home/home';
 import LoginPage from './../../pages/login/login';
 import RegisterPage from './../../pages/register/register';
+import ResetPasswordPage from './../../pages/reset-password/reset-password';
+import ForgotPasswordPage from './../../pages/forgon-password/forgot-password';
 import styles from './app.module.scss';
 import Modal from '../modal/modal';
 import OrderDetails from '../burger-constructor/order-details/oreder-details';
@@ -75,6 +77,10 @@ function AppContent() {
 						}></Route>
 					<Route path='/login' element={<LoginPage />}></Route>
 					<Route path='/register' element={<RegisterPage />}></Route>
+					<Route path='/reset-password' element={<ResetPasswordPage />}></Route>
+					<Route
+						path='/forgot-password'
+						element={<ForgotPasswordPage />}></Route>
 				</Routes>
 			</main>
 

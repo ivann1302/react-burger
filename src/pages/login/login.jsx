@@ -32,7 +32,7 @@ const LoginPage = () => {
 	return (
 		<section className={styles.container}>
 			<form action='' className={styles.form}>
-				<h2 className='text text_type_main-medium'>Регистрация</h2>
+				<h2 className='text text_type_main-medium'>Вход</h2>
 				<Input
 					type={'text'}
 					placeholder={'Имя'}
@@ -64,15 +64,23 @@ const LoginPage = () => {
 					Войти
 				</Button>
 			</form>
-
-			<div>
-				<h4 className={`text text_type_main-default ${styles.registrationed}`}>
-					Уже зарегистрировались?
+			<div className={styles.bottom}>
+				<h4 className={`text text_type_main-default ${styles.text}`}>
+					Вы - новый пользователь?
 					<a
 						className={`text text_type_main-
                     default ${styles.href}`}
-						href='/'>
-						Войти
+						href='/register'>
+						Зарегистрироваться
+					</a>
+				</h4>
+				<h4 className={`text text_type_main-default ${styles.text}`}>
+					Забыли пароль?
+					<a
+						className={`text text_type_main-
+                    default ${styles.href}`}
+						href='/reset-password'>
+						Восстановить пароль
 					</a>
 				</h4>
 			</div>
