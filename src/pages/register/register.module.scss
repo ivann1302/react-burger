@@ -23,15 +23,21 @@
 		color: #8585ad;
 	}
 
-	.href {
-		text-decoration: none;
-		color: #4c4cff;
-		font-size: 16px;
-		font-weight: 400;
-		padding-left: 8px;
-		&:hover {
-			color: #8585ad;
-			text-decoration: underline;
+	.bottom {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+
+		.href {
+			text-decoration: none;
+			color: #4c4cff;
+			font-size: 16px;
+			font-weight: 400;
+			padding-left: 8px;
+			&:hover {
+				color: #8585ad;
+				text-decoration: underline;
+			}
 		}
 	}
 }
