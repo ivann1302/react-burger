@@ -4,6 +4,7 @@ import { useModal } from './../../hooks/use-modal';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 import AppHeader from './../app-header/app-header';
 import Home from './../../pages/home/home';
+import LoginPage from './../../pages/login/login';
 import styles from './app.module.scss';
 import Modal from '../modal/modal';
 import OrderDetails from '../burger-constructor/order-details/oreder-details';
@@ -71,6 +72,7 @@ function AppContent() {
 						element={
 							<Home onIngredientClick={handleIngredientClick} />
 						}></Route>
+					<Route path='/login' element={<LoginPage />}></Route>
 				</Routes>
 			</main>
 
