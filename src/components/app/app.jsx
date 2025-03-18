@@ -8,6 +8,7 @@ import LoginPage from './../../pages/login/login';
 import RegisterPage from './../../pages/register/register';
 import ResetPasswordPage from './../../pages/reset-password/reset-password';
 import ForgotPasswordPage from './../../pages/forgot-password/forgot-password';
+import ProfilePage from './../../pages/profile/profile';
 import PageNotFound from './../../pages/page-not-found/page-not-found';
 import styles from './app.module.scss';
 import Modal from '../modal/modal';
@@ -83,6 +84,7 @@ function AppContent() {
 						path='/forgot-password'
 						element={<ForgotPasswordPage />}></Route>
 					<Route path='*' element={<PageNotFound />}></Route>
+					<Route path='/profile' element={<ProfilePage />}></Route>
 				</Routes>
 			</main>
 

@@ -1,0 +1,48 @@
+.container {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	margin-top: 180px;
+	margin-bottom: 210px;
+	text-align: center;
+	gap: 60px;
+
+	.tabs {
+		display: flex;
+		flex-direction: column;
+		align-items: baseline;
+		justify-content: space-between;
+		text-align: start;
+		width: 320px;
+		height: 320px;
+
+		.link {
+			color: #8585ad;
+			text-decoration: none;
+		}
+
+		.active {
+			color: #f2f2f3;
+		}
+
+		.exitButton {
+			color: #8585ad;
+			border: none;
+			background: none;
+		}
+
+		.description {
+			color: #8585ad;
+			font-size: 16px;
+		}
+	}
+
+	.form {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 24px;
+		margin-bottom: 80px;
+	}
+}
