@@ -1,0 +1,26 @@
+.container {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	margin-top: 180px;
+	margin-bottom: 210px;
+	text-align: center;
+
+	.text {
+		color: #8585ad;
+		font-size: 24px;
+
+		.href {
+			text-decoration: none;
+			color: #4c4cff;
+			font-size: 24px;
+			font-weight: 400;
+			padding-left: 8px;
+			&:hover {
+				color: #8585ad;
+				text-decoration: underline;
+			}
+		}
+	}
+}
