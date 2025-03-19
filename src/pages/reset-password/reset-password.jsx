@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { resetPassword } from './../../services/actions/password-action';
+import { useNavigate } from 'react-router-dom';
 import styles from './reset-password.module.scss';
 import {
 	Input,
 	PasswordInput,
 	Button,
 } from '@ya.praktikum/react-developer-burger-ui-components';
-import { useNavigate } from 'react-router-dom';
 
 const ResetPasswordPage = () => {
 	const [password, setPassword] = useState('');
 	const [token, setToken] = useState('');
+	const dispatch = useDispatch();
 	const navigate = useNavigate();
 
 	const handlePasswordChange = (e) => {
@@ -22,29 +25,11 @@ const ResetPasswordPage = () => {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-
-		try {
-			const response = await fetch(
-				'https://norma.nomoreparties.space/api/password-reset/reset',
-				{
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-					body: JSON.stringify({ password, token }),
-				}
-			);
-
-			const data = await response.json();
-
-			if (data.success) {
-				navigate('/login'); // Перенаправление на страницу входа
-			} else {
-				console.error('Ошибка:', data.message);
+		dispatch(resetPassword(password, token)).then((success) => {
+			if (success) {
+				navigate('/login');
 			}
-		} catch (error) {
-			console.error('Ошибка:', error);
-		}
+		});
 	};
 
 	return (
@@ -64,7 +49,6 @@ const ResetPasswordPage = () => {
 					value={token}
 					name={'token'}
 					error={false}
-					//ref={inputRef}
 					errorText={'Ошибка'}
 					size={'default'}
 				/>
@@ -76,10 +60,7 @@ const ResetPasswordPage = () => {
 			<div>
 				<h4 className={`text text_type_main-default ${styles.text}`}>
 					Вспомнили пароль?
-					<a
-						className={`text text_type_main-
-                    default ${styles.href}`}
-						href='/'>
+					<a className={`text text_type_main-default ${styles.href}`} href='/'>
 						Войти
 					</a>
 				</h4>

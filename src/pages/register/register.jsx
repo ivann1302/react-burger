@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { register } from './../../services/actions/auth-actions';
+import { useNavigate } from 'react-router-dom';
 import styles from './register.module.scss';
 import {
 	Input,
@@ -6,12 +9,12 @@ import {
 	PasswordInput,
 	Button,
 } from '@ya.praktikum/react-developer-burger-ui-components';
-import { useNavigate } from 'react-router-dom';
 
 const RegisterPage = () => {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [name, setName] = useState('');
+	const dispatch = useDispatch();
 	const navigate = useNavigate();
 
 	const handleEmailChange = (e) => {
@@ -28,30 +31,8 @@ const RegisterPage = () => {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-
-		try {
-			const response = await fetch(
-				'https://norma.nomoreparties.space/api/auth/register',
-				{
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-					body: JSON.stringify({ email, password, name }),
-				}
-			);
-
-			const data = await response.json();
-
-			if (data.success) {
-				console.log('Пользователь успешно зарегистрирован:', data);
-				navigate('/login'); // Перенаправление на страницу входа
-			} else {
-				console.error('Ошибка регистрации:', data.message);
-			}
-		} catch (error) {
-			console.error('Ошибка:', error);
-		}
+		dispatch(register(email, password, name));
+		navigate('/login');
 	};
 
 	return (
@@ -89,8 +70,7 @@ const RegisterPage = () => {
 				<h4 className={`text text_type_main-default ${styles.registrationed}`}>
 					Уже зарегистрировались?
 					<a
-						className={`text text_type_main-
-                    default ${styles.href}`}
+						className={`text text_type_main-default ${styles.href}`}
 						href='/login'>
 						Войти
 					</a>

@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { forgotPassword } from './../../services/actions/password-action';
+import { useNavigate } from 'react-router-dom';
 import styles from './forgot-password.module.scss';
 import {
 	EmailInput,
 	Button,
 } from '@ya.praktikum/react-developer-burger-ui-components';
-import { useNavigate } from 'react-router-dom';
 
 const ForgotPasswordPage = () => {
 	const [email, setEmail] = useState('');
+	const dispatch = useDispatch();
 	const navigate = useNavigate();
 
 	const handleEmailChange = (e) => {
@@ -16,29 +19,11 @@ const ForgotPasswordPage = () => {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-
-		try {
-			const response = await fetch(
-				'https://norma.nomoreparties.space/api/password-reset',
-				{
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-					body: JSON.stringify({ email: '' }),
-				}
-			);
-
-			const data = await response.json();
-
-			if (data.success) {
-				navigate('/reset-password'); // Перенаправление на страницу сброса пароля
-			} else {
-				console.error('Ошибка:', data.message);
+		dispatch(forgotPassword(email)).then((success) => {
+			if (success) {
+				navigate('/reset-password');
 			}
-		} catch (error) {
-			console.error('Ошибка:', error);
-		}
+		});
 	};
 
 	return (
@@ -60,8 +45,7 @@ const ForgotPasswordPage = () => {
 				<h4 className={`text text_type_main-default ${styles.text}`}>
 					Вспомнили пароль?
 					<a
-						className={`text text_type_main-
-                    default ${styles.href}`}
+						className={`text text_type_main-default ${styles.href}`}
 						href='/login'>
 						Войти
 					</a>

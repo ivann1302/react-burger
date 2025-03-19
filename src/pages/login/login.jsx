@@ -1,17 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { login } from '../../services/actions/auth-actions';
+import { useNavigate } from 'react-router-dom';
 import styles from './login.module.scss';
 import {
-	Input,
 	EmailInput,
 	PasswordInput,
 	Button,
 } from '@ya.praktikum/react-developer-burger-ui-components';
 
 const LoginPage = () => {
-	const value = '';
-	const handleNameChange = (e) => {
-		setName(e.target.value);
-	};
+	const [email, setEmail] = useState('');
+	const [password, setPassword] = useState('');
+	const dispatch = useDispatch();
+	const navigate = useNavigate();
 
 	const handleEmailChange = (e) => {
 		setEmail(e.target.value);
@@ -21,46 +23,30 @@ const LoginPage = () => {
 		setPassword(e.target.value);
 	};
 
-	const handleSubmit = (e) => {
+	const handleSubmit = async (e) => {
 		e.preventDefault();
-		// Здесь можно добавить логику для обработки данных формы
-		console.log('Имя:', name);
-		console.log('Email:', email);
-		console.log('Пароль:', password);
+		dispatch(login(email, password));
+		navigate('/');
 	};
 
 	return (
 		<section className={styles.container}>
-			<form action='' className={styles.form}>
+			<form onSubmit={handleSubmit} className={styles.form}>
 				<h2 className='text text_type_main-medium'>Вход</h2>
-				<Input
-					type={'text'}
-					placeholder={'Имя'}
-					onChange={handleNameChange}
-					value={value}
-					name={'name'}
-					error={false}
-					//ref={inputRef}
-					errorText={'Ошибка'}
-					size={'default'}
-				/>
 				<EmailInput
 					onChange={handleEmailChange}
-					value={value}
+					value={email}
 					name={'email'}
 					placeholder='E-mail'
 					isIcon={false}
 				/>
 				<PasswordInput
 					onChange={handlePasswordChange}
-					value={value}
+					value={password}
 					name={'password'}
+					placeholder='Пароль'
 				/>
-				<Button
-					onClick={handleSubmit}
-					htmlType='submit'
-					size='medium'
-					extraClass={styles.button}>
+				<Button htmlType='submit' size='medium' extraClass={styles.button}>
 					Войти
 				</Button>
 			</form>
@@ -68,8 +54,7 @@ const LoginPage = () => {
 				<h4 className={`text text_type_main-default ${styles.text}`}>
 					Вы - новый пользователь?
 					<a
-						className={`text text_type_main-
-                    default ${styles.href}`}
+						className={`text text_type_main-default ${styles.href}`}
 						href='/register'>
 						Зарегистрироваться
 					</a>
@@ -77,8 +62,7 @@ const LoginPage = () => {
 				<h4 className={`text text_type_main-default ${styles.text}`}>
 					Забыли пароль?
 					<a
-						className={`text text_type_main-
-                    default ${styles.href}`}
+						className={`text text_type_main-default ${styles.href}`}
 						href='/reset-password'>
 						Восстановить пароль
 					</a>
