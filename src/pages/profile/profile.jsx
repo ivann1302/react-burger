@@ -1,4 +1,7 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { logout } from './../../services/actions/auth-actions';
 import styles from './profile.module.scss';
 import {
 	Input,
@@ -7,6 +10,9 @@ import {
 } from '@ya.praktikum/react-developer-burger-ui-components';
 
 const ProfilePage = () => {
+	const dispatch = useDispatch();
+	const navigate = useNavigate();
+
 	const value = '';
 	const handleNameChange = (e) => {
 		setName(e.target.value);
@@ -18,6 +24,12 @@ const ProfilePage = () => {
 
 	const handlePasswordChange = (e) => {
 		setPassword(e.target.value);
+	};
+
+	const handleLogout = () => {
+		dispatch(logout()).then(() => {
+			navigate('/login'); // Перенаправление на страницу входа
+		});
 	};
 
 	return (
@@ -34,7 +46,8 @@ const ProfilePage = () => {
 					История заказов
 				</a>
 				<button
-					className={`${styles.exitButton} text text_type_main-medium mb-10`}>
+					className={`${styles.exitButton} text text_type_main-medium mb-10`}
+					onClick={handleLogout}>
 					Выход
 				</button>
 				<p className={`${styles.description} text text_type_main-small`}>
@@ -49,7 +62,6 @@ const ProfilePage = () => {
 					value={value}
 					name={'name'}
 					error={false}
-					//ref={inputRef}
 					errorText={'Ошибка'}
 					size={'default'}
 					icon='EditIcon'

@@ -96,7 +96,6 @@ export const register = (email, password, name) => async (dispatch) => {
 };
 
 // Авторизация пользователя
-// services/actions/auth-actions.js
 export const login = (email, password) => async (dispatch) => {
 	dispatch(loginRequest());
 	try {
@@ -127,6 +126,10 @@ export const logout = () => async (dispatch) => {
 	dispatch(logoutRequest());
 	try {
 		const refreshToken = localStorage.getItem('refreshToken');
+		if (!refreshToken) {
+			throw new Error('Refresh token not found');
+		}
+
 		const response = await fetch(
 			'https://norma.nomoreparties.space/api/auth/logout',
 			{
@@ -134,9 +137,14 @@ export const logout = () => async (dispatch) => {
 				headers: {
 					'Content-Type': 'application/json',
 				},
-				body: JSON.stringify({ token: refreshToken }),
+				body: JSON.stringify({ token: refreshToken }), // Убедитесь, что формат правильный
 			}
 		);
+
+		if (!response.ok) {
+			throw new Error(`HTTP error! status: ${response.status}`);
+		}
+
 		const data = await response.json();
 		if (data.success) {
 			dispatch(logoutSuccess());
