@@ -1,3 +1,9 @@
+import {
+	getCookie,
+	setCookie,
+	deleteCookie,
+} from './../../utils/cookies-fucntions';
+
 export const REGISTER_REQUEST = 'REGISTER_REQUEST';
 export const REGISTER_SUCCESS = 'REGISTER_SUCCESS';
 export const REGISTER_FAILED = 'REGISTER_FAILED';
@@ -86,7 +92,10 @@ export const register = (email, password, name) => async (dispatch) => {
 		const data = await response.json();
 		if (data.success) {
 			dispatch(registerSuccess(data.user));
-			localStorage.setItem('refreshToken', data.refreshToken);
+			// Сохраняем refreshToken в cookie
+			setCookie('refreshToken', data.refreshToken, { maxAge: 604800 }); // 7 дней
+			// Сохраняем token в localStorage
+			localStorage.setItem('token', data.accessToken);
 		} else {
 			dispatch(registerFailed(data.message));
 		}
@@ -112,7 +121,10 @@ export const login = (email, password) => async (dispatch) => {
 		const data = await response.json();
 		if (data.success) {
 			dispatch(loginSuccess(data.user));
-			localStorage.setItem('refreshToken', data.refreshToken);
+			// Сохраняем refreshToken в cookie
+			setCookie('refreshToken', data.refreshToken, { maxAge: 604800 }); // 7 дней
+			// Сохраняем token в localStorage
+			localStorage.setItem('token', data.accessToken);
 		} else {
 			dispatch(loginFailed(data.message));
 		}
@@ -125,7 +137,8 @@ export const login = (email, password) => async (dispatch) => {
 export const logout = () => async (dispatch) => {
 	dispatch(logoutRequest());
 	try {
-		const refreshToken = localStorage.getItem('refreshToken');
+		// Получаем refreshToken из cookies
+		const refreshToken = getCookie('refreshToken');
 		if (!refreshToken) {
 			throw new Error('Refresh token not found');
 		}
@@ -137,7 +150,7 @@ export const logout = () => async (dispatch) => {
 				headers: {
 					'Content-Type': 'application/json',
 				},
-				body: JSON.stringify({ token: refreshToken }), // Убедитесь, что формат правильный
+				body: JSON.stringify({ token: refreshToken }),
 			}
 		);
 
@@ -148,7 +161,10 @@ export const logout = () => async (dispatch) => {
 		const data = await response.json();
 		if (data.success) {
 			dispatch(logoutSuccess());
-			localStorage.removeItem('refreshToken');
+			// Удаляем refreshToken из cookies
+			deleteCookie('refreshToken');
+			// Удаляем token из localStorage
+			localStorage.removeItem('token');
 		} else {
 			dispatch(logoutFailed(data.message));
 		}
@@ -161,7 +177,12 @@ export const logout = () => async (dispatch) => {
 export const updateToken = () => async (dispatch) => {
 	dispatch(updateTokenRequest());
 	try {
-		const refreshToken = localStorage.getItem('refreshToken');
+		// Получаем refreshToken из cookies
+		const refreshToken = getCookie('refreshToken');
+		if (!refreshToken) {
+			throw new Error('Refresh token not found');
+		}
+
 		const response = await fetch(
 			'https://norma.nomoreparties.space/api/auth/token',
 			{
@@ -175,7 +196,10 @@ export const updateToken = () => async (dispatch) => {
 		const data = await response.json();
 		if (data.success) {
 			dispatch(updateTokenSuccess(data));
-			localStorage.setItem('refreshToken', data.refreshToken);
+			// Обновляем refreshToken в cookies
+			setCookie('refreshToken', data.refreshToken, { maxAge: 604800 }); // 7 дней
+			// Обновляем token в localStorage
+			localStorage.setItem('token', data.accessToken);
 		} else {
 			dispatch(updateTokenFailed(data.message));
 		}
