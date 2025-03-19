@@ -1,41 +1,58 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styles from './forgot-password.module.scss';
 import {
 	EmailInput,
 	Button,
 } from '@ya.praktikum/react-developer-burger-ui-components';
+import { useNavigate } from 'react-router-dom';
 
 const ForgotPasswordPage = () => {
-	const value = '';
+	const [email, setEmail] = useState('');
+	const navigate = useNavigate();
 
 	const handleEmailChange = (e) => {
 		setEmail(e.target.value);
 	};
 
-	const handleSubmit = (e) => {
+	const handleSubmit = async (e) => {
 		e.preventDefault();
-		// Здесь можно добавить логику для обработки данных формы
-		console.log('Имя:', name);
-		console.log('Email:', email);
-		console.log('Пароль:', password);
+
+		try {
+			const response = await fetch(
+				'https://norma.nomoreparties.space/api/password-reset',
+				{
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({ email: '' }),
+				}
+			);
+
+			const data = await response.json();
+
+			if (data.success) {
+				navigate('/reset-password'); // Перенаправление на страницу сброса пароля
+			} else {
+				console.error('Ошибка:', data.message);
+			}
+		} catch (error) {
+			console.error('Ошибка:', error);
+		}
 	};
 
 	return (
 		<section className={styles.container}>
-			<form action='' className={styles.form}>
+			<form onSubmit={handleSubmit} className={styles.form}>
 				<h2 className='text text_type_main-medium'>Восстановление пароля</h2>
 				<EmailInput
 					onChange={handleEmailChange}
-					value={value}
+					value={email}
 					name={'email'}
 					placeholder='E-mail'
 					isIcon={false}
 				/>
-				<Button
-					onClick={handleSubmit}
-					htmlType='submit'
-					size='medium'
-					extraClass={styles.button}>
+				<Button htmlType='submit' size='medium' extraClass={styles.button}>
 					Восстановить
 				</Button>
 			</form>

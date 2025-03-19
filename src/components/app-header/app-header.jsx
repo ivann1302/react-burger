@@ -33,7 +33,7 @@ export default function AppHeader() {
 
 					{/* Ссылка на ленту заказов */}
 					<NavLink
-						to='/feed'
+						to='/profile/orders'
 						className={`${styles.ref} mt-4 mr-4 mb-4 ml-5`}
 						activeClassName={styles.active}>
 						<ListIcon type={isActive('/feed') ? 'primary' : 'secondary'} />
