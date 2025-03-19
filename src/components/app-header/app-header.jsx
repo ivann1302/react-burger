@@ -21,10 +21,9 @@ export default function AppHeader() {
 					{/* Ссылка на главную страницу */}
 					<NavLink
 						to='/'
-						className={`${styles.ref} mt-4 mr-4 mb-4`}
-						activeClassName={styles.active}
-						exact // Точное совпадение пути
-					>
+						className={({ isActive }) =>
+							`${styles.ref} mt-4 mr-4 mb-4 ${isActive ? styles.active : ''}`
+						}>
 						<BurgerIcon type={isActive('/') ? 'primary' : 'secondary'} />
 						<p className={`${styles.paragraph} text text_type_main-medium`}>
 							Конструктор
@@ -33,9 +32,12 @@ export default function AppHeader() {
 
 					{/* Ссылка на ленту заказов */}
 					<NavLink
-						to='/profile/orders'
-						className={`${styles.ref} mt-4 mr-4 mb-4 ml-5`}
-						activeClassName={styles.active}>
+						to='/feed' // Исправлено на /feed
+						className={({ isActive }) =>
+							`${styles.ref} mt-4 mr-4 mb-4 ml-5 ${
+								isActive ? styles.active : ''
+							}`
+						}>
 						<ListIcon type={isActive('/feed') ? 'primary' : 'secondary'} />
 						<p className={`${styles.paragraph} text text_type_main-medium`}>
 							Лента заказов
@@ -49,8 +51,9 @@ export default function AppHeader() {
 				{/* Ссылка на личный кабинет */}
 				<NavLink
 					to='/profile'
-					className={`${styles.ref} mt-4 mb-4 ml-5`}
-					activeClassName={styles.active}>
+					className={({ isActive }) =>
+						`${styles.ref} mt-4 mb-4 ml-5 ${isActive ? styles.active : ''}`
+					}>
 					<ProfileIcon type={isActive('/profile') ? 'primary' : 'secondary'} />
 					<p className={`${styles.paragraph} text text_type_main-medium`}>
 						Личный кабинет
