@@ -25,21 +25,6 @@
 		.container {
 			display: flex;
 			gap: 8px;
-
-			.ref {
-				display: flex;
-				flex-direction: row;
-				text-decoration: none;
-				gap: 8px;
-
-				.paragraph {
-					color: #8585ad;
-				}
-
-				.active {
-					color: white;
-				}
-			}
 		}
 
 		.logo {
@@ -51,13 +36,21 @@
 			flex-direction: row;
 			text-decoration: none;
 			gap: 8px;
+			align-items: center;
+			color: #8585ad;
 
 			.paragraph {
 				color: #8585ad;
+				margin: 0;
+				font-size: 16px;
 			}
 
-			.active {
+			&.active {
 				color: white;
+
+				.paragraph {
+					color: white;
+				}
 			}
 		}
 	}

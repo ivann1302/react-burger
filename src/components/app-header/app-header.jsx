@@ -5,38 +5,57 @@ import {
 	ListIcon,
 	ProfileIcon,
 } from '@ya.praktikum/react-developer-burger-ui-components';
+import { NavLink, useLocation } from 'react-router-dom';
 import styles from './app-header.module.scss';
 
 export default function AppHeader() {
+	const location = useLocation();
+
+	// Определяем, активна ли ссылка
+	const isActive = (path) => location.pathname === path;
+
 	return (
 		<header className={styles.header}>
 			<nav className={styles.nav}>
 				<div className={styles.container}>
-					<a
-						href='./../../index.tsx'
-						className={`${styles.ref} ${styles.active} mt-4 mr-4 mb-4`}>
-						<BurgerIcon type='primary' />
-						<p
-							className={`${styles.paragraph} ${styles.active} text text_type_main-medium"`}>
+					{/* Ссылка на главную страницу */}
+					<NavLink
+						to='/'
+						className={`${styles.ref} mt-4 mr-4 mb-4`}
+						activeClassName={styles.active}
+						exact // Точное совпадение пути
+					>
+						<BurgerIcon type={isActive('/') ? 'primary' : 'secondary'} />
+						<p className={`${styles.paragraph} text text_type_main-medium`}>
 							Конструктор
 						</p>
-					</a>
-					<a
-						href='./../../index.tsx'
-						className={`${styles.ref} mt-4 mr-4 mb-4 ml-5`}>
-						<ListIcon type='secondary' />
-						<p className={`${styles.paragraph} text text_type_main-medium"`}>
+					</NavLink>
+
+					{/* Ссылка на ленту заказов */}
+					<NavLink
+						to='/feed'
+						className={`${styles.ref} mt-4 mr-4 mb-4 ml-5`}
+						activeClassName={styles.active}>
+						<ListIcon type={isActive('/feed') ? 'primary' : 'secondary'} />
+						<p className={`${styles.paragraph} text text_type_main-medium`}>
 							Лента заказов
 						</p>
-					</a>
+					</NavLink>
 				</div>
+
+				{/* Логотип */}
 				<Logo className={styles.logo} />
-				<a href='./../../index.tsx' className={`${styles.ref} mt-4 mb-4 ml-5`}>
-					<ProfileIcon type='secondary' />
-					<p className={`${styles.paragraph} text text_type_main-medium"`}>
+
+				{/* Ссылка на личный кабинет */}
+				<NavLink
+					to='/profile'
+					className={`${styles.ref} mt-4 mb-4 ml-5`}
+					activeClassName={styles.active}>
+					<ProfileIcon type={isActive('/profile') ? 'primary' : 'secondary'} />
+					<p className={`${styles.paragraph} text text_type_main-medium`}>
 						Личный кабинет
 					</p>
-				</a>
+				</NavLink>
 			</nav>
 		</header>
 	);
