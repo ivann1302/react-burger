@@ -40,8 +40,7 @@ export const createOrder = (ingredients) => async (dispatch) => {
 			},
 			body: JSON.stringify({ ingredients }),
 		});
-		console.log('Ответ сервера:', data); // Логируем ответ сервера
-
+		console.log('Ответ сервера:', data);
 		dispatch(setOrderData(data)); // Сохраняем данные заказа
 		dispatch(clearConstructor()); // Сбрасываем конструктор
 	} catch (error) {

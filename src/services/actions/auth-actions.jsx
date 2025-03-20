@@ -3,6 +3,12 @@ import {
 	setCookie,
 	deleteCookie,
 } from './../../utils/cookies-fucntions';
+import { BASE_URL } from './../../utils/api';
+
+const REGISTER_URL = `${BASE_URL}/auth/register`;
+const LOGIN_URL = `${BASE_URL}/auth/register`;
+const LOGOUT_URL = `${BASE_URL}/auth/register`;
+const UPDATE_TOKEN_URL = `${BASE_URL}/auth/register`;
 
 export const REGISTER_REQUEST = 'REGISTER_REQUEST';
 export const REGISTER_SUCCESS = 'REGISTER_SUCCESS';
@@ -79,21 +85,18 @@ export const updateTokenFailed = (error) => ({
 export const register = (email, password, name) => async (dispatch) => {
 	dispatch(registerRequest());
 	try {
-		const response = await fetch(
-			'https://norma.nomoreparties.space/api/auth/register',
-			{
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({ email, password, name }),
-			}
-		);
+		const response = await fetch(REGISTER_URL, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({ email, password, name }),
+		});
 		const data = await response.json();
 		if (data.success) {
 			dispatch(registerSuccess(data.user));
 			// Сохраняем refreshToken в cookie
-			setCookie('refreshToken', data.refreshToken, { maxAge: 604800 }); // 7 дней
+			setCookie('refreshToken', data.refreshToken, { maxAge: 120000 });
 			// Сохраняем token в localStorage
 			localStorage.setItem('token', data.accessToken);
 		} else {
@@ -108,21 +111,18 @@ export const register = (email, password, name) => async (dispatch) => {
 export const login = (email, password) => async (dispatch) => {
 	dispatch(loginRequest());
 	try {
-		const response = await fetch(
-			'https://norma.nomoreparties.space/api/auth/login',
-			{
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({ email, password }),
-			}
-		);
+		const response = await fetch(LOGIN_URL, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({ email, password }),
+		});
 		const data = await response.json();
 		if (data.success) {
 			dispatch(loginSuccess(data.user));
 			// Сохраняем refreshToken в cookie
-			setCookie('refreshToken', data.refreshToken, { maxAge: 604800 }); // 7 дней
+			setCookie('refreshToken', data.refreshToken, { maxAge: 120000 });
 			// Сохраняем token в localStorage
 			localStorage.setItem('token', data.accessToken);
 		} else {
@@ -143,16 +143,13 @@ export const logout = () => async (dispatch) => {
 			throw new Error('Refresh token not found');
 		}
 
-		const response = await fetch(
-			'https://norma.nomoreparties.space/api/auth/logout',
-			{
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({ token: refreshToken }),
-			}
-		);
+		const response = await fetch(LOGOUT_URL, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({ token: refreshToken }),
+		});
 
 		if (!response.ok) {
 			throw new Error(`HTTP error! status: ${response.status}`);
@@ -183,21 +180,18 @@ export const updateToken = () => async (dispatch) => {
 			throw new Error('Refresh token not found');
 		}
 
-		const response = await fetch(
-			'https://norma.nomoreparties.space/api/auth/token',
-			{
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({ token: refreshToken }),
-			}
-		);
+		const response = await fetch(UPDATE_TOKEN_URL, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({ token: refreshToken }),
+		});
 		const data = await response.json();
 		if (data.success) {
 			dispatch(updateTokenSuccess(data));
 			// Обновляем refreshToken в cookies
-			setCookie('refreshToken', data.refreshToken, { maxAge: 604800 }); // 7 дней
+			setCookie('refreshToken', data.refreshToken, { maxAge: 120000 });
 			// Обновляем token в localStorage
 			localStorage.setItem('token', data.accessToken);
 		} else {

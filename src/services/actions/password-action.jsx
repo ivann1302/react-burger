@@ -1,3 +1,8 @@
+import { BASE_URL } from './../../utils/api';
+
+const FORGOT_PASSWORD_URL = `${BASE_URL}/password-reset/reset`;
+const RESET_PASSWORD_URL = `${BASE_URL}/password-reset/reset`;
+
 export const FORGOT_PASSWORD_REQUEST = 'FORGOT_PASSWORD_REQUEST';
 export const FORGOT_PASSWORD_SUCCESS = 'FORGOT_PASSWORD_SUCCESS';
 export const FORGOT_PASSWORD_FAILED = 'FORGOT_PASSWORD_FAILED';
@@ -36,16 +41,13 @@ export const resetPasswordFailed = (error) => ({
 export const forgotPassword = (email) => async (dispatch) => {
 	dispatch(forgotPasswordRequest());
 	try {
-		const response = await fetch(
-			'https://norma.nomoreparties.space/api/password-reset',
-			{
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({ email }),
-			}
-		);
+		const response = await fetch(RESET_PASSWORD_URL, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({ email }),
+		});
 		const data = await response.json();
 		if (data.success) {
 			dispatch(forgotPasswordSuccess());
@@ -61,16 +63,13 @@ export const forgotPassword = (email) => async (dispatch) => {
 export const resetPassword = (password, token) => async (dispatch) => {
 	dispatch(resetPasswordRequest());
 	try {
-		const response = await fetch(
-			'https://norma.nomoreparties.space/api/password-reset/reset',
-			{
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({ password, token }),
-			}
-		);
+		const response = await fetch(FORGOT_PASSWORD_URL, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({ password, token }),
+		});
 		const data = await response.json();
 		if (data.success) {
 			dispatch(resetPasswordSuccess());

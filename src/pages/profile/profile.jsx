@@ -36,12 +36,12 @@ const ProfilePage = () => {
 		<section className={styles.container}>
 			<div className={styles.tabs}>
 				<a
-					href='/profile/orders'
+					href='/profile'
 					className={`${styles.active} ${styles.link} text text_type_main-medium mt-4`}>
 					Профиль
 				</a>
 				<a
-					href='/profile'
+					href='/profile/orders'
 					className={`${styles.link} text text_type_main-medium`}>
 					История заказов
 				</a>
