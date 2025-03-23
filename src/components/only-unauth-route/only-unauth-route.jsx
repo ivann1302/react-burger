@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux';
 import { Navigate, useLocation } from 'react-router-dom';
-
+import PropTypes from 'prop-types';
 const OnlyUnAuthRoute = ({ children }) => {
 	const { isAuthenticated, isLoading } = useSelector((state) => state.auth);
 	const location = useLocation();
@@ -17,6 +17,10 @@ const OnlyUnAuthRoute = ({ children }) => {
 	}
 
 	return children;
+};
+
+OnlyUnAuthRoute.propTypes = {
+	children: PropTypes.node.isRequired,
 };
 
 export default OnlyUnAuthRoute;
