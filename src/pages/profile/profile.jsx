@@ -1,35 +1,68 @@
-import React from 'react';
-import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { logout } from './../../services/actions/auth-actions';
+import { getUser, updateUser } from './../../services/actions/user-actions';
 import styles from './profile.module.scss';
 import {
 	Input,
 	EmailInput,
 	PasswordInput,
+	Button,
 } from '@ya.praktikum/react-developer-burger-ui-components';
 
 const ProfilePage = () => {
 	const dispatch = useDispatch();
-	const navigate = useNavigate();
+	const { user } = useSelector((state) => state.auth);
+	const [name, setName] = useState(user?.name || '');
+	const [email, setEmail] = useState(user?.email || '');
+	const [password, setPassword] = useState('');
+	const [isEditing, setIsEditing] = useState(false);
 
-	const value = '';
+	// Получаем данные пользователя при загрузке страницы
+	useEffect(() => {
+		dispatch(getUser());
+	}, [dispatch]);
+
+	// Обновляем состояния пользователя при изменении данных
+	useEffect(() => {
+		if (user) {
+			setName(user.name);
+			setEmail(user.email);
+		}
+	}, [user]);
+
 	const handleNameChange = (e) => {
 		setName(e.target.value);
+		setIsEditing(true);
 	};
 
 	const handleEmailChange = (e) => {
 		setEmail(e.target.value);
+		setIsEditing(true);
 	};
 
 	const handlePasswordChange = (e) => {
 		setPassword(e.target.value);
+		setIsEditing(true);
+	};
+
+	const handleSave = () => {
+		dispatch(updateUser({ name, email, password })).then(() => {
+			setIsEditing(false);
+		});
+	};
+
+	const handleCancel = () => {
+		if (user) {
+			setName(user.name);
+			setEmail(user.email);
+			setPassword('');
+			setIsEditing(false);
+		}
 	};
 
 	const handleLogout = () => {
-		dispatch(logout()).then(() => {
-			navigate('/login'); // Перенаправление на страницу входа
-		});
+		dispatch(logout());
 	};
 
 	return (
@@ -59,7 +92,7 @@ const ProfilePage = () => {
 					type={'text'}
 					placeholder={'Имя'}
 					onChange={handleNameChange}
-					value={value}
+					value={name}
 					name={'name'}
 					error={false}
 					errorText={'Ошибка'}
@@ -68,18 +101,28 @@ const ProfilePage = () => {
 				/>
 				<EmailInput
 					onChange={handleEmailChange}
-					value={value}
+					value={email}
 					name={'email'}
 					placeholder='Логин'
 					isIcon={true}
 				/>
 				<PasswordInput
 					onChange={handlePasswordChange}
-					value={value}
+					value={password}
 					name={'password'}
 					placeholder='Пароль'
 					icon='EditIcon'
 				/>
+				{isEditing && (
+					<div className={styles.buttons}>
+						<Button type='secondary' htmlType='submit' onClick={handleCancel}>
+							Отмена
+						</Button>
+						<Button type='primary' htmlType='submit' onClick={handleSave}>
+							Сохранить
+						</Button>
+					</div>
+				)}
 			</div>
 		</section>
 	);

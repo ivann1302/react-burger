@@ -2,13 +2,15 @@ import {
 	getCookie,
 	setCookie,
 	deleteCookie,
-} from './../../utils/cookies-fucntions';
+} from './../../utils/cookies-fucntions.js';
 import { BASE_URL } from './../../utils/api';
+import { request } from './../../utils/check-response'; // Добавлено
 
 const REGISTER_URL = `${BASE_URL}/auth/register`;
-const LOGIN_URL = `${BASE_URL}/auth/register`;
-const LOGOUT_URL = `${BASE_URL}/auth/register`;
-const UPDATE_TOKEN_URL = `${BASE_URL}/auth/register`;
+const LOGIN_URL = `${BASE_URL}/auth/login`;
+const LOGOUT_URL = `${BASE_URL}/auth/logout`;
+const UPDATE_TOKEN_URL = `${BASE_URL}/auth/token`;
+const USER_URL = `${BASE_URL}/auth/user`; // Добавлено
 
 export const REGISTER_REQUEST = 'REGISTER_REQUEST';
 export const REGISTER_SUCCESS = 'REGISTER_SUCCESS';
@@ -26,81 +28,73 @@ export const UPDATE_TOKEN_REQUEST = 'UPDATE_TOKEN_REQUEST';
 export const UPDATE_TOKEN_SUCCESS = 'UPDATE_TOKEN_SUCCESS';
 export const UPDATE_TOKEN_FAILED = 'UPDATE_TOKEN_FAILED';
 
-export const registerRequest = () => ({
-	type: REGISTER_REQUEST,
-});
+export const GET_USER_REQUEST = 'GET_USER_REQUEST';
+export const GET_USER_SUCCESS = 'GET_USER_SUCCESS';
+export const GET_USER_FAILED = 'GET_USER_FAILED';
 
+export const CHECK_AUTH_REQUEST = 'CHECK_AUTH_REQUEST';
+export const CHECK_AUTH_SUCCESS = 'CHECK_AUTH_SUCCESS';
+export const CHECK_AUTH_FAILED = 'CHECK_AUTH_FAILED';
+
+export const registerRequest = () => ({ type: REGISTER_REQUEST });
 export const registerSuccess = (user) => ({
 	type: REGISTER_SUCCESS,
 	payload: user,
 });
-
 export const registerFailed = (error) => ({
 	type: REGISTER_FAILED,
 	payload: error,
 });
 
-export const loginRequest = () => ({
-	type: LOGIN_REQUEST,
-});
+export const loginRequest = () => ({ type: LOGIN_REQUEST });
+export const loginSuccess = (user) => ({ type: LOGIN_SUCCESS, payload: user });
+export const loginFailed = (error) => ({ type: LOGIN_FAILED, payload: error });
 
-export const loginSuccess = (user) => ({
-	type: LOGIN_SUCCESS,
-	payload: user,
-});
-
-export const loginFailed = (error) => ({
-	type: LOGIN_FAILED,
-	payload: error,
-});
-
-export const logoutRequest = () => ({
-	type: LOGOUT_REQUEST,
-});
-
-export const logoutSuccess = () => ({
-	type: LOGOUT_SUCCESS,
-});
-
+export const logoutRequest = () => ({ type: LOGOUT_REQUEST });
+export const logoutSuccess = () => ({ type: LOGOUT_SUCCESS });
 export const logoutFailed = (error) => ({
 	type: LOGOUT_FAILED,
 	payload: error,
 });
 
-export const updateTokenRequest = () => ({
-	type: UPDATE_TOKEN_REQUEST,
-});
-
+export const updateTokenRequest = () => ({ type: UPDATE_TOKEN_REQUEST });
 export const updateTokenSuccess = (tokens) => ({
 	type: UPDATE_TOKEN_SUCCESS,
 	payload: tokens,
 });
-
 export const updateTokenFailed = (error) => ({
 	type: UPDATE_TOKEN_FAILED,
 	payload: error,
 });
 
+export const getUserRequest = () => ({ type: GET_USER_REQUEST }); // Добавлено
+export const getUserSuccess = (user) => ({
+	type: GET_USER_SUCCESS,
+	payload: user,
+}); // Добавлено
+export const getUserFailed = (error) => ({
+	type: GET_USER_FAILED,
+	payload: error,
+}); // Добавлено
+
 // Регистрация пользователя
 export const register = (email, password, name) => async (dispatch) => {
 	dispatch(registerRequest());
 	try {
-		const response = await fetch(REGISTER_URL, {
+		const response = await request(REGISTER_URL, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
 			},
 			body: JSON.stringify({ email, password, name }),
 		});
-		const data = await response.json();
-		if (data.success) {
-			dispatch(registerSuccess(data.user));
-			// Сохраняем refreshToken в cookie
-			setCookie('refreshToken', data.refreshToken, { maxAge: 120000 });
-			// Сохраняем token в localStorage
-			localStorage.setItem('token', data.accessToken);
+		if (response.success) {
+			dispatch(registerSuccess(response.user));
+			setCookie('refreshToken', response.refreshToken, { maxAge: 120000 });
+			const cleanToken = response.accessToken.replace(/^Bearer\s/, '');
+			localStorage.setItem('token', cleanToken);
 		} else {
-			dispatch(registerFailed(data.message));
+			dispatch(registerFailed(response.message));
 		}
 	} catch (error) {
 		dispatch(registerFailed(error.message));
@@ -111,25 +105,26 @@ export const register = (email, password, name) => async (dispatch) => {
 export const login = (email, password) => async (dispatch) => {
 	dispatch(loginRequest());
 	try {
-		const response = await fetch(LOGIN_URL, {
+		const response = await request(LOGIN_URL, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
 			},
 			body: JSON.stringify({ email, password }),
 		});
-		const data = await response.json();
-		if (data.success) {
-			dispatch(loginSuccess(data.user));
-			// Сохраняем refreshToken в cookie
-			setCookie('refreshToken', data.refreshToken, { maxAge: 120000 });
-			// Сохраняем token в localStorage
-			localStorage.setItem('token', data.accessToken);
+		if (response.success) {
+			dispatch(loginSuccess(response.user));
+			setCookie('refreshToken', response.refreshToken, { maxAge: 120000 });
+			const cleanToken = response.accessToken.replace(/^Bearer\s/, '');
+			localStorage.setItem('token', cleanToken);
+			return true;
 		} else {
-			dispatch(loginFailed(data.message));
+			dispatch(loginFailed(response.message));
+			return false;
 		}
 	} catch (error) {
 		dispatch(loginFailed(error.message));
+		return false;
 	}
 };
 
@@ -137,13 +132,12 @@ export const login = (email, password) => async (dispatch) => {
 export const logout = () => async (dispatch) => {
 	dispatch(logoutRequest());
 	try {
-		// Получаем refreshToken из cookies
 		const refreshToken = getCookie('refreshToken');
 		if (!refreshToken) {
 			throw new Error('Refresh token not found');
 		}
 
-		const response = await fetch(LOGOUT_URL, {
+		const response = await request(LOGOUT_URL, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -155,15 +149,12 @@ export const logout = () => async (dispatch) => {
 			throw new Error(`HTTP error! status: ${response.status}`);
 		}
 
-		const data = await response.json();
-		if (data.success) {
+		if (response.success) {
 			dispatch(logoutSuccess());
-			// Удаляем refreshToken из cookies
 			deleteCookie('refreshToken');
-			// Удаляем token из localStorage
 			localStorage.removeItem('token');
 		} else {
-			dispatch(logoutFailed(data.message));
+			dispatch(logoutFailed(response.message));
 		}
 	} catch (error) {
 		dispatch(logoutFailed(error.message));
@@ -174,30 +165,108 @@ export const logout = () => async (dispatch) => {
 export const updateToken = () => async (dispatch) => {
 	dispatch(updateTokenRequest());
 	try {
-		// Получаем refreshToken из cookies
 		const refreshToken = getCookie('refreshToken');
 		if (!refreshToken) {
 			throw new Error('Refresh token not found');
 		}
 
-		const response = await fetch(UPDATE_TOKEN_URL, {
+		const response = await request(UPDATE_TOKEN_URL, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
 			},
 			body: JSON.stringify({ token: refreshToken }),
 		});
-		const data = await response.json();
-		if (data.success) {
-			dispatch(updateTokenSuccess(data));
-			// Обновляем refreshToken в cookies
-			setCookie('refreshToken', data.refreshToken, { maxAge: 120000 });
-			// Обновляем token в localStorage
-			localStorage.setItem('token', data.accessToken);
+		if (response.success) {
+			dispatch(updateTokenSuccess(response));
+			setCookie('refreshToken', response.refreshToken, { maxAge: 120000 });
+			const cleanToken = response.accessToken.replace(/^Bearer\s/, '');
+			localStorage.setItem('token', cleanToken);
 		} else {
-			dispatch(updateTokenFailed(data.message));
+			dispatch(updateTokenFailed(response.message));
 		}
 	} catch (error) {
 		dispatch(updateTokenFailed(error.message));
+	}
+};
+
+// Получение данных пользователя
+export const getUser = () => async (dispatch) => {
+	dispatch(getUserRequest());
+	try {
+		let token = localStorage.getItem('token');
+		if (!token) {
+			throw new Error('Токен отсутствует');
+		}
+		console.log('Authorization header:', `Bearer ${token}`);
+
+		// Первый запрос данных пользователя
+		let response = await request(USER_URL, {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`,
+			},
+		});
+
+		// Если токен истек, обновляем его
+		if (!response.success && response.message === 'jwt malformed') {
+			await dispatch(updateToken()); // Обновляем токен
+			token = localStorage.getItem('token'); // Получаем новый токен
+
+			// Повторяем запрос с новым токеном
+			response = await request(USER_URL, {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${token}`,
+				},
+			});
+		}
+
+		if (response.success) {
+			dispatch(getUserSuccess(response.user));
+		} else {
+			dispatch(getUserFailed(response.message));
+		}
+	} catch (error) {
+		dispatch(getUserFailed(error.message));
+	}
+};
+
+export const checkAuthRequest = () => ({ type: CHECK_AUTH_REQUEST });
+export const checkAuthSuccess = (user) => ({
+	type: CHECK_AUTH_SUCCESS,
+	payload: user,
+});
+export const checkAuthFailed = (error) => ({
+	type: CHECK_AUTH_FAILED,
+	payload: error,
+});
+
+export const checkAuth = () => async (dispatch) => {
+	console.log('Token in checkAuth:', token);
+	dispatch(checkAuthRequest());
+	try {
+		const token = localStorage.getItem('token');
+		if (token) {
+			const response = await request(USER_URL, {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${token}`,
+				},
+			});
+
+			if (response.success) {
+				dispatch(checkAuthSuccess(response.user));
+			} else {
+				dispatch(checkAuthFailed(response.message));
+			}
+		} else {
+			dispatch(checkAuthFailed('Токен отсутствует'));
+		}
+	} catch (error) {
+		dispatch(checkAuthFailed(error.message));
 	}
 };

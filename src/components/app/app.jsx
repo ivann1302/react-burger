@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Routes, Route } from 'react-router-dom';
-import { useModal } from './../../hooks/use-modal';
-import { Provider, useDispatch, useSelector } from 'react-redux';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import { useDispatch, useSelector, Provider } from 'react-redux';
 import AppHeader from './../app-header/app-header';
 import Home from './../../pages/home/home';
 import LoginPage from './../../pages/login/login';
@@ -10,42 +9,65 @@ import ResetPasswordPage from './../../pages/reset-password/reset-password';
 import ForgotPasswordPage from './../../pages/forgot-password/forgot-password';
 import ProfilePage from './../../pages/profile/profile';
 import PageNotFound from './../../pages/page-not-found/page-not-found';
-import styles from './app.module.scss';
 import Modal from '../modal/modal';
 import OrderDetails from '../burger-constructor/order-details/oreder-details';
 import IngredientDetailsModal from './../burger-ingredients/ingredient-details/ingredient-details';
 import { fetchIngredients } from '../../services/actions/ingredients-actions';
+import { checkAuth } from './../../services/actions/auth-actions';
 import store from './../../services/store';
 import {
 	SET_SELECTED_INGREDIENT,
 	CLEAR_SELECTED_INGREDIENT,
 } from './../../services/actions/ingredient-details-action';
-
 import { CLEAR_ORDER_DATA } from './../../services/actions/order-actions';
+import ProtectedRoute from './../protected-route/protected-route';
+import OnlyUnAuthRoute from '../only-unauth-route/only-unauth-route';
+import styles from './app.module.scss';
 
 function AppContent() {
 	const dispatch = useDispatch();
+	const navigate = useNavigate(); // ⬅️ добавлено
+	const location = useLocation(); // ⬅️ добавлено
+
 	const { loading, error } = useSelector((state) => state.ingredients);
+	const { isAuthenticated } = useSelector((state) => state.auth);
 	const { selectedIngredient } = useSelector(
 		(state) => state.ingredientDetails
 	);
 	const { orderData } = useSelector((state) => state.order);
 
-	const { isModalOpen, openModal, closeModal } = useModal();
+	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [isIngredientDetailsOpen, setIsIngredientDetailsOpen] = useState(false);
+
+	// очистка токена
+	useEffect(() => {
+		const rawToken = localStorage.getItem('token');
+		if (rawToken?.startsWith('Bearer ')) {
+			const cleaned = rawToken.replace(/^Bearer\s/, '');
+			localStorage.setItem('token', cleaned);
+		}
+	}, []);
+
+	// ⬇️ автоматический редирект при выходе, если пользователь остался на /profile
+	useEffect(() => {
+		if (isAuthenticated === false && location.pathname.startsWith('/profile')) {
+			navigate('/login');
+		}
+	}, [isAuthenticated, location.pathname, navigate]);
 
 	useEffect(() => {
 		dispatch(fetchIngredients());
+		dispatch(checkAuth());
 	}, [dispatch]);
 
 	useEffect(() => {
 		if (orderData) {
-			openModal();
+			setIsModalOpen(true);
 		}
 	}, [orderData]);
 
 	const handleModalClose = () => {
-		closeModal();
+		setIsModalOpen(false);
 		dispatch({ type: CLEAR_ORDER_DATA });
 	};
 
@@ -59,14 +81,8 @@ function AppContent() {
 		dispatch({ type: CLEAR_SELECTED_INGREDIENT });
 	};
 
-	if (loading) {
-		return <div>Идет загрузка...</div>;
-	}
-
-	if (error) {
-		return <div>Ошибка: {error}</div>;
-	}
-
+	if (loading) return <div>Загрузка...</div>;
+	if (error) return <div>Ошибка: {error}</div>;
 	return (
 		<>
 			<AppHeader />
@@ -74,17 +90,52 @@ function AppContent() {
 				<Routes>
 					<Route
 						path='/'
+						element={<Home onIngredientClick={handleIngredientClick} />}
+					/>
+
+					<Route
+						path='/login'
 						element={
-							<Home onIngredientClick={handleIngredientClick} />
-						}></Route>
-					<Route path='/login' element={<LoginPage />}></Route>
-					<Route path='/register' element={<RegisterPage />}></Route>
-					<Route path='/reset-password' element={<ResetPasswordPage />}></Route>
+							<OnlyUnAuthRoute>
+								<LoginPage />
+							</OnlyUnAuthRoute>
+						}
+					/>
+					<Route
+						path='/register'
+						element={
+							<OnlyUnAuthRoute>
+								<RegisterPage />
+							</OnlyUnAuthRoute>
+						}
+					/>
 					<Route
 						path='/forgot-password'
-						element={<ForgotPasswordPage />}></Route>
-					<Route path='*' element={<PageNotFound />}></Route>
-					<Route path='/profile' element={<ProfilePage />}></Route>
+						element={
+							<OnlyUnAuthRoute>
+								<ForgotPasswordPage />
+							</OnlyUnAuthRoute>
+						}
+					/>
+					<Route
+						path='/reset-password'
+						element={
+							<OnlyUnAuthRoute>
+								<ResetPasswordPage />
+							</OnlyUnAuthRoute>
+						}
+					/>
+
+					<Route
+						path='/profile'
+						element={
+							<ProtectedRoute>
+								<ProfilePage />
+							</ProtectedRoute>
+						}
+					/>
+
+					<Route path='*' element={<PageNotFound />} />
 				</Routes>
 			</main>
 

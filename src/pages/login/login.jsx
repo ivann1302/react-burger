@@ -1,7 +1,8 @@
+// pages/login/login.jsx
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate, useLocation, Navigate } from 'react-router-dom';
 import { login } from '../../services/actions/auth-actions';
-import { useNavigate } from 'react-router-dom';
 import styles from './login.module.scss';
 import {
 	EmailInput,
@@ -14,6 +15,13 @@ const LoginPage = () => {
 	const [password, setPassword] = useState('');
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
+	const location = useLocation();
+	const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+
+	// Если пользователь уже авторизован, перенаправляем его на главную страницу
+	if (isAuthenticated) {
+		return <Navigate to='/' replace />;
+	}
 
 	const handleEmailChange = (e) => {
 		setEmail(e.target.value);
@@ -25,8 +33,12 @@ const LoginPage = () => {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		dispatch(login(email, password));
-		navigate('/');
+		const success = await dispatch(login(email, password));
+		if (success) {
+			// Перенаправляем пользователя на страницу, с которой он был перенаправлен, или на главную страницу
+			const from = location.state?.from?.pathname || '/';
+			navigate(from, { replace: true });
+		}
 	};
 
 	return (
