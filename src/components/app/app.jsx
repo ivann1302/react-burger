@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector, Provider } from 'react-redux';
+
+import store from './../../services/store';
 import AppHeader from './../app-header/app-header';
 import Home from './../../pages/home/home';
 import LoginPage from './../../pages/login/login';
@@ -9,90 +11,117 @@ import ResetPasswordPage from './../../pages/reset-password/reset-password';
 import ForgotPasswordPage from './../../pages/forgot-password/forgot-password';
 import ProfilePage from './../../pages/profile/profile';
 import PageNotFound from './../../pages/page-not-found/page-not-found';
+import IngredientPage from './../../pages/ingredient/ingredient';
+
 import Modal from '../modal/modal';
 import OrderDetails from '../burger-constructor/order-details/oreder-details';
 import IngredientDetailsModal from './../burger-ingredients/ingredient-details/ingredient-details';
+
 import { fetchIngredients } from '../../services/actions/ingredients-actions';
 import { checkAuth } from './../../services/actions/auth-actions';
-import store from './../../services/store';
 import {
 	SET_SELECTED_INGREDIENT,
 	CLEAR_SELECTED_INGREDIENT,
 } from './../../services/actions/ingredient-details-action';
 import { CLEAR_ORDER_DATA } from './../../services/actions/order-actions';
+
 import ProtectedRoute from './../protected-route/protected-route';
 import OnlyUnAuthRoute from '../only-unauth-route/only-unauth-route';
+
 import styles from './app.module.scss';
 
-function AppContent() {
+const AppContent = () => {
 	const dispatch = useDispatch();
-	const navigate = useNavigate(); // ⬅️ добавлено
-	const location = useLocation(); // ⬅️ добавлено
+	const navigate = useNavigate();
+	const location = useLocation();
 
-	const { loading, error } = useSelector((state) => state.ingredients);
+	const isIngredientPage = location.pathname.startsWith('/ingredients/');
+	const ingredientIdFromUrl = isIngredientPage
+		? location.pathname.split('/ingredients/')[1]
+		: null;
+
+	const { ingredients, loading, error } = useSelector(
+		(state) => state.ingredients
+	);
 	const { isAuthenticated } = useSelector((state) => state.auth);
 	const { selectedIngredient } = useSelector(
 		(state) => state.ingredientDetails
 	);
 	const { orderData } = useSelector((state) => state.order);
 
-	const [isModalOpen, setIsModalOpen] = useState(false);
-	const [isIngredientDetailsOpen, setIsIngredientDetailsOpen] = useState(false);
+	// Определяем фон — откуда мы пришли, если был клик по ингредиенту
+	const background = location.state?.background || null;
 
-	// очистка токена
+	// Загружаем ингредиенты и авторизацию
 	useEffect(() => {
-		const rawToken = localStorage.getItem('token');
-		if (rawToken?.startsWith('Bearer ')) {
-			const cleaned = rawToken.replace(/^Bearer\s/, '');
-			localStorage.setItem('token', cleaned);
-		}
-	}, []);
+		dispatch(fetchIngredients());
+		dispatch(checkAuth());
 
-	// ⬇️ автоматический редирект при выходе, если пользователь остался на /profile
+		const token = localStorage.getItem('token');
+		if (token?.startsWith('Bearer ')) {
+			localStorage.setItem('token', token.replace(/^Bearer\s/, ''));
+		}
+	}, [dispatch]);
+
+	// Если пользователь не авторизован, а находится на закрытой странице
 	useEffect(() => {
 		if (isAuthenticated === false && location.pathname.startsWith('/profile')) {
 			navigate('/login');
 		}
 	}, [isAuthenticated, location.pathname, navigate]);
 
+	// Если модалка открыта по ссылке — подгружаем нужный ингредиент вручную
 	useEffect(() => {
-		dispatch(fetchIngredients());
-		dispatch(checkAuth());
-	}, [dispatch]);
-
-	useEffect(() => {
-		if (orderData) {
-			setIsModalOpen(true);
+		if (isIngredientPage && !selectedIngredient && ingredients.length > 0) {
+			const found = ingredients.find(
+				(item) => item._id === ingredientIdFromUrl
+			);
+			if (found) {
+				dispatch({ type: SET_SELECTED_INGREDIENT, payload: found });
+			}
 		}
-	}, [orderData]);
+	}, [
+		dispatch,
+		isIngredientPage,
+		selectedIngredient,
+		ingredients,
+		ingredientIdFromUrl,
+	]);
 
-	const handleModalClose = () => {
-		setIsModalOpen(false);
-		dispatch({ type: CLEAR_ORDER_DATA });
-	};
-
+	// Клик по ингредиенту
 	const handleIngredientClick = (ingredient) => {
 		dispatch({ type: SET_SELECTED_INGREDIENT, payload: ingredient });
-		setIsIngredientDetailsOpen(true);
+
+		navigate(`/ingredients/${ingredient._id}`, {
+			state: { background: location },
+		});
 	};
 
+	// Закрытие модалки ингредиента
 	const handleIngredientModalClose = () => {
-		setIsIngredientDetailsOpen(false);
 		dispatch({ type: CLEAR_SELECTED_INGREDIENT });
+		navigate(-1);
+	};
+
+	// Закрытие модалки заказа
+	const handleOrderModalClose = () => {
+		dispatch({ type: CLEAR_ORDER_DATA });
+		navigate(-1);
 	};
 
 	if (loading) return <div>Загрузка...</div>;
 	if (error) return <div>Ошибка: {error}</div>;
+
 	return (
 		<>
 			<AppHeader />
 			<main className={styles.main}>
-				<Routes>
+				{/* Основные маршруты */}
+				<Routes location={background || location}>
 					<Route
 						path='/'
 						element={<Home onIngredientClick={handleIngredientClick} />}
 					/>
-
 					<Route
 						path='/login'
 						element={
@@ -125,7 +154,6 @@ function AppContent() {
 							</OnlyUnAuthRoute>
 						}
 					/>
-
 					<Route
 						path='/profile'
 						element={
@@ -134,28 +162,29 @@ function AppContent() {
 							</ProtectedRoute>
 						}
 					/>
-
+					<Route path='/ingredients/:id' element={<IngredientPage />} />
 					<Route path='*' element={<PageNotFound />} />
 				</Routes>
-			</main>
 
-			{isModalOpen && (
-				<Modal onClose={handleModalClose} header=''>
-					<OrderDetails orderData={orderData} />
-				</Modal>
-			)}
-
-			{isIngredientDetailsOpen && (
-				<Modal onClose={handleIngredientModalClose} header='Детали ингредиента'>
-					<IngredientDetailsModal
-						ingredient={selectedIngredient}
+				{/* Модалка с ингредиентом, если был переход из фона */}
+				{background && selectedIngredient && (
+					<Modal
 						onClose={handleIngredientModalClose}
-					/>
-				</Modal>
-			)}
+						header='Детали ингредиента'>
+						<IngredientDetailsModal ingredient={selectedIngredient} />
+					</Modal>
+				)}
+
+				{/* Модалка заказа */}
+				{background && orderData && (
+					<Modal onClose={handleOrderModalClose}>
+						<OrderDetails orderData={orderData} />
+					</Modal>
+				)}
+			</main>
 		</>
 	);
-}
+};
 
 export default function App() {
 	return (
