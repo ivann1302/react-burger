@@ -175,8 +175,7 @@ const AppContent = () => {
 					</Modal>
 				)}
 
-				{/* Модалка заказа */}
-				{background && orderData && (
+				{orderData && (
 					<Modal onClose={handleOrderModalClose}>
 						<OrderDetails orderData={orderData} />
 					</Modal>

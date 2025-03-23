@@ -1,5 +1,7 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+
+import { useNavigate, useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { createOrder } from '../../../services/actions/order-actions';
 import {
@@ -11,12 +13,16 @@ import styles from './order-block.module.scss';
 
 export default function OrderBlock() {
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
+	const location = useLocation();
+	const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+
 	const { bun, ingredients = [] } = useSelector(
 		(state) => state.burgerConstructor
 	);
 	const { loading = false, error = null } = useSelector(
 		(state) => state.order ?? {}
-	); // Теперь `loading` и `error` всегда определены
+	);
 
 	// Рассчитываем итоговую стоимость
 	const totalPrice =
@@ -30,10 +36,17 @@ export default function OrderBlock() {
 			return;
 		}
 
-		// Формируем список ингредиентов для заказа
-		const orderIngredients = [bun, ...ingredients, bun].map((item) => item._id);
+		if (!isAuthenticated) {
+			// Сохраняем текущее состояние конструктора перед редиректом
+			sessionStorage.setItem(
+				'constructorIngredients',
+				JSON.stringify({ bun, ingredients })
+			);
+			navigate('/login', { state: { from: location } });
+			return;
+		}
 
-		// Отправляем заказ
+		const orderIngredients = [bun, ...ingredients, bun].map((item) => item._id);
 		dispatch(createOrder(orderIngredients));
 	};
 
@@ -50,12 +63,10 @@ export default function OrderBlock() {
 				htmlType='button'
 				type='primary'
 				size='medium'
-				disabled={loading} // Блокируем кнопку во время загрузки
-			>
+				disabled={loading}>
 				Оформить заказ
 			</Button>
-			{error && <p className='text text_type_main-default mt-4'>{error}</p>}{' '}
-			{/* Отображаем ошибку */}
+			{error && <p className='text text_type_main-default mt-4'>{error}</p>}
 		</div>
 	);
 }
