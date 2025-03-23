@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate, Link } from 'react-router-dom';
 import { logout } from './../../services/actions/auth-actions';
 import { getUser, updateUser } from './../../services/actions/user-actions';
 import styles from './profile.module.scss';
@@ -12,6 +13,7 @@ import {
 
 const ProfilePage = () => {
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
 	const { user } = useSelector((state) => state.auth);
 	const [name, setName] = useState(user?.name || '');
 	const [email, setEmail] = useState(user?.email || '');
@@ -61,23 +63,24 @@ const ProfilePage = () => {
 		}
 	};
 
-	const handleLogout = () => {
-		dispatch(logout());
+	const handleLogout = async () => {
+		await dispatch(logout());
+		navigate('/login', { replace: true });
 	};
 
 	return (
 		<section className={styles.container}>
 			<div className={styles.tabs}>
-				<a
-					href='/profile'
+				<Link
+					to='/profile'
 					className={`${styles.active} ${styles.link} text text_type_main-medium mt-4`}>
 					Профиль
-				</a>
-				<a
-					href='/profile/orders'
+				</Link>
+				<Link
+					to='/profile/orders'
 					className={`${styles.link} text text_type_main-medium`}>
 					История заказов
-				</a>
+				</Link>
 				<button
 					className={`${styles.exitButton} text text_type_main-medium mb-10`}
 					onClick={handleLogout}>

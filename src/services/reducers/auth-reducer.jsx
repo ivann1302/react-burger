@@ -11,20 +11,25 @@ import {
 	UPDATE_TOKEN_REQUEST,
 	UPDATE_TOKEN_SUCCESS,
 	UPDATE_TOKEN_FAILED,
+	CHECK_AUTH_REQUEST,
+	CHECK_AUTH_SUCCESS,
+	CHECK_AUTH_FAILED, // ← добавь эти
 } from './../actions/auth-actions';
 
 const initialState = {
 	user: null,
-	isAuthenticated: false,
+	isAuthenticated: null, // ← стартовое состояние: null (ещё не знаем)
 	isLoading: false,
 	error: null,
 };
+
 const authReducer = (state = initialState, action) => {
 	switch (action.type) {
 		case REGISTER_REQUEST:
 		case LOGIN_REQUEST:
 		case LOGOUT_REQUEST:
 		case UPDATE_TOKEN_REQUEST:
+		case CHECK_AUTH_REQUEST: // ← добавь
 			return {
 				...state,
 				isLoading: true,
@@ -33,6 +38,7 @@ const authReducer = (state = initialState, action) => {
 
 		case REGISTER_SUCCESS:
 		case LOGIN_SUCCESS:
+		case CHECK_AUTH_SUCCESS: // ← добавь
 			return {
 				...state,
 				user: action.payload,
@@ -61,8 +67,10 @@ const authReducer = (state = initialState, action) => {
 		case LOGIN_FAILED:
 		case LOGOUT_FAILED:
 		case UPDATE_TOKEN_FAILED:
+		case CHECK_AUTH_FAILED: // ← добавь
 			return {
 				...state,
+				isAuthenticated: false, // ← важно!
 				isLoading: false,
 				error: action.payload,
 			};

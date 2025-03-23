@@ -1,7 +1,6 @@
-// pages/login/login.jsx
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate, useLocation, Navigate } from 'react-router-dom';
+import { useNavigate, useLocation, Navigate, Link } from 'react-router-dom';
 import { login } from '../../services/actions/auth-actions';
 import styles from './login.module.scss';
 import {
@@ -35,7 +34,6 @@ const LoginPage = () => {
 		e.preventDefault();
 		const success = await dispatch(login(email, password));
 		if (success) {
-			// Перенаправляем пользователя на страницу, с которой он был перенаправлен, или на главную страницу
 			const from = location.state?.from?.pathname || '/';
 			navigate(from, { replace: true });
 		}
@@ -65,19 +63,19 @@ const LoginPage = () => {
 			<div className={styles.bottom}>
 				<h4 className={`text text_type_main-default ${styles.text}`}>
 					Вы - новый пользователь?
-					<a
+					<Link
 						className={`text text_type_main-default ${styles.href}`}
-						href='/register'>
+						to='/register'>
 						Зарегистрироваться
-					</a>
+					</Link>
 				</h4>
 				<h4 className={`text text_type_main-default ${styles.text}`}>
 					Забыли пароль?
-					<a
+					<Link
 						className={`text text_type_main-default ${styles.href}`}
-						href='/reset-password'>
+						to='/reset-password'>
 						Восстановить пароль
-					</a>
+					</Link>
 				</h4>
 			</div>
 		</section>

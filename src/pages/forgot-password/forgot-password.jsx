@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { forgotPassword } from './../../services/actions/password-action';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import styles from './forgot-password.module.scss';
 import {
 	EmailInput,
@@ -44,11 +44,11 @@ const ForgotPasswordPage = () => {
 			<div>
 				<h4 className={`text text_type_main-default ${styles.text}`}>
 					Вспомнили пароль?
-					<a
+					<Link
 						className={`text text_type_main-default ${styles.href}`}
 						href='/login'>
 						Войти
-					</a>
+					</Link>
 				</h4>
 			</div>
 		</section>

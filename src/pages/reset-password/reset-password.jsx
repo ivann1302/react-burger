@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { resetPassword } from './../../services/actions/password-action';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import styles from './reset-password.module.scss';
 import {
 	Input,
@@ -60,9 +60,9 @@ const ResetPasswordPage = () => {
 			<div>
 				<h4 className={`text text_type_main-default ${styles.text}`}>
 					Вспомнили пароль?
-					<a className={`text text_type_main-default ${styles.href}`} href='/'>
+					<Link className={`text text_type_main-default ${styles.href}`} to='/'>
 						Войти
-					</a>
+					</Link>
 				</h4>
 			</div>
 		</section>

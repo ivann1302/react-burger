@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { register } from './../../services/actions/auth-actions';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import styles from './register.module.scss';
 import {
 	Input,
@@ -69,11 +69,11 @@ const RegisterPage = () => {
 			<div>
 				<h4 className={`text text_type_main-default ${styles.registrationed}`}>
 					Уже зарегистрировались?
-					<a
+					<Link
 						className={`text text_type_main-default ${styles.href}`}
-						href='/login'>
+						to='/login'>
 						Войти
-					</a>
+					</Link>
 				</h4>
 			</div>
 		</section>

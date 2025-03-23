@@ -1,12 +1,19 @@
-import React from 'react';
-import { Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { Navigate, useLocation } from 'react-router-dom';
 
 const OnlyUnAuthRoute = ({ children }) => {
-	const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+	const { isAuthenticated, isLoading } = useSelector((state) => state.auth);
+	const location = useLocation();
 
+	// Показываем прелоадер, пока статус не определён
+	if (isLoading) {
+		return <div>Загрузка...</div>;
+	}
+
+	// Если пользователь авторизован — редирект
 	if (isAuthenticated) {
-		return <Navigate to='/' replace />;
+		const from = location.state?.from?.pathname || '/';
+		return <Navigate to={from} replace />;
 	}
 
 	return children;

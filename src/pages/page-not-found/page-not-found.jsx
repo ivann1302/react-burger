@@ -1,17 +1,18 @@
 import React from 'react';
 import styles from './page-not-found.module.scss';
+import { Link } from 'react-router-dom';
 
 const PageNotFound = () => {
 	return (
 		<div className={styles.container}>
 			<h4 className={`text text_type_main-default ${styles.text}`}>
 				Извините, страница не найдена.
-				<a
+				<Link
 					className={`text text_type_main-
     default ${styles.href}`}
-					href='/login'>
+					to='/'>
 					Вернуться на главную
-				</a>
+				</Link>
 			</h4>
 		</div>
 	);
