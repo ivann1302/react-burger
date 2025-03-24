@@ -60,7 +60,9 @@ const ResetPasswordPage = () => {
 			<div>
 				<h4 className={`text text_type_main-default ${styles.text}`}>
 					Вспомнили пароль?
-					<Link className={`text text_type_main-default ${styles.href}`} to='/'>
+					<Link
+						className={`text text_type_main-default ${styles.href}`}
+						to='/login'>
 						Войти
 					</Link>
 				</h4>

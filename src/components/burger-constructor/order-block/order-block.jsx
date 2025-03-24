@@ -48,6 +48,7 @@ export default function OrderBlock() {
 
 		const orderIngredients = [bun, ...ingredients, bun].map((item) => item._id);
 		dispatch(createOrder(orderIngredients));
+		navigate('/login', { state: { from: location } });
 	};
 
 	return (

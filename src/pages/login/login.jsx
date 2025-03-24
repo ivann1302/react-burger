@@ -73,7 +73,7 @@ const LoginPage = () => {
 					Забыли пароль?
 					<Link
 						className={`text text_type_main-default ${styles.href}`}
-						to='/reset-password'>
+						to='/forgot-password'>
 						Восстановить пароль
 					</Link>
 				</h4>

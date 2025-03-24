@@ -1,6 +1,6 @@
 import { BASE_URL } from './../../utils/api';
 
-const FORGOT_PASSWORD_URL = `${BASE_URL}/password-reset/reset`;
+const FORGOT_PASSWORD_URL = `${BASE_URL}/password-reset`;
 const RESET_PASSWORD_URL = `${BASE_URL}/password-reset/reset`;
 
 export const FORGOT_PASSWORD_REQUEST = 'FORGOT_PASSWORD_REQUEST';
@@ -37,11 +37,11 @@ export const resetPasswordFailed = (error) => ({
 	payload: error,
 });
 
-// Экшен для запроса на восстановление пароля
+// Экшен для запроса восстановления пароля
 export const forgotPassword = (email) => async (dispatch) => {
 	dispatch(forgotPasswordRequest());
 	try {
-		const response = await fetch(RESET_PASSWORD_URL, {
+		const response = await fetch(FORGOT_PASSWORD_URL, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -51,11 +51,14 @@ export const forgotPassword = (email) => async (dispatch) => {
 		const data = await response.json();
 		if (data.success) {
 			dispatch(forgotPasswordSuccess());
+			return true;
 		} else {
 			dispatch(forgotPasswordFailed(data.message));
+			return false;
 		}
 	} catch (error) {
 		dispatch(forgotPasswordFailed(error.message));
+		return false;
 	}
 };
 
@@ -63,7 +66,7 @@ export const forgotPassword = (email) => async (dispatch) => {
 export const resetPassword = (password, token) => async (dispatch) => {
 	dispatch(resetPasswordRequest());
 	try {
-		const response = await fetch(FORGOT_PASSWORD_URL, {
+		const response = await fetch(RESET_PASSWORD_URL, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -73,10 +76,13 @@ export const resetPassword = (password, token) => async (dispatch) => {
 		const data = await response.json();
 		if (data.success) {
 			dispatch(resetPasswordSuccess());
+			return true;
 		} else {
 			dispatch(resetPasswordFailed(data.message));
+			return false;
 		}
 	} catch (error) {
 		dispatch(resetPasswordFailed(error.message));
+		return false;
 	}
 };

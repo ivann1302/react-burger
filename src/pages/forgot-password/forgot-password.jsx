@@ -9,6 +9,7 @@ import {
 } from '@ya.praktikum/react-developer-burger-ui-components';
 
 const ForgotPasswordPage = () => {
+	const [error, setError] = useState('');
 	const [email, setEmail] = useState('');
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
@@ -19,11 +20,15 @@ const ForgotPasswordPage = () => {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		dispatch(forgotPassword(email)).then((success) => {
-			if (success) {
-				navigate('/reset-password');
-			}
-		});
+		setError(''); // сброс ошибки перед запросом
+
+		const success = await dispatch(forgotPassword(email));
+		if (success) {
+			sessionStorage.setItem('canResetPassword', 'true'); // 💾 флаг для /reset-password
+			navigate('/reset-password');
+		} else {
+			setError('Пользователь не найден или неверный email');
+		}
 	};
 
 	return (
@@ -37,6 +42,11 @@ const ForgotPasswordPage = () => {
 					placeholder='E-mail'
 					isIcon={false}
 				/>
+				{error && (
+					<p className='text text_type_main-default text_color_error mt-2'>
+						{error}
+					</p>
+				)}
 				<Button htmlType='submit' size='medium' extraClass={styles.button}>
 					Восстановить
 				</Button>
@@ -46,7 +56,7 @@ const ForgotPasswordPage = () => {
 					Вспомнили пароль?
 					<Link
 						className={`text text_type_main-default ${styles.href}`}
-						href='/login'>
+						to='/login'>
 						Войти
 					</Link>
 				</h4>

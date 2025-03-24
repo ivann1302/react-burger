@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
 import { logout } from './../../services/actions/auth-actions';
@@ -15,19 +15,26 @@ const ProfilePage = () => {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const { user } = useSelector((state) => state.auth);
-	const [name, setName] = useState(user?.name || '');
-	const [email, setEmail] = useState(user?.email || '');
+
+	const [name, setName] = useState('');
+	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [isEditing, setIsEditing] = useState(false);
+
+	// refs для начальных значений
+	const initialName = useRef('');
+	const initialEmail = useRef('');
 
 	// Получаем данные пользователя при загрузке страницы
 	useEffect(() => {
 		dispatch(getUser());
 	}, [dispatch]);
 
-	// Обновляем состояния пользователя при изменении данных
+	// Сохраняем начальные значения и обновляем поля
 	useEffect(() => {
 		if (user) {
+			initialName.current = user.name;
+			initialEmail.current = user.email;
 			setName(user.name);
 			setEmail(user.email);
 		}
@@ -50,17 +57,18 @@ const ProfilePage = () => {
 
 	const handleSave = () => {
 		dispatch(updateUser({ name, email, password })).then(() => {
+			initialName.current = name;
+			initialEmail.current = email;
+			setPassword('');
 			setIsEditing(false);
 		});
 	};
 
 	const handleCancel = () => {
-		if (user) {
-			setName(user.name);
-			setEmail(user.email);
-			setPassword('');
-			setIsEditing(false);
-		}
+		setName(initialName.current);
+		setEmail(initialEmail.current);
+		setPassword('');
+		setIsEditing(false);
 	};
 
 	const handleLogout = async () => {
@@ -90,38 +98,37 @@ const ProfilePage = () => {
 					В этом разделе вы можете изменить свои персональные данные
 				</p>
 			</div>
+
 			<div className={styles.form}>
 				<Input
-					type={'text'}
-					placeholder={'Имя'}
+					type='text'
+					placeholder='Имя'
 					onChange={handleNameChange}
 					value={name}
-					name={'name'}
-					error={false}
-					errorText={'Ошибка'}
-					size={'default'}
+					name='name'
 					icon='EditIcon'
 				/>
 				<EmailInput
 					onChange={handleEmailChange}
 					value={email}
-					name={'email'}
+					name='email'
 					placeholder='Логин'
 					isIcon={true}
 				/>
 				<PasswordInput
 					onChange={handlePasswordChange}
 					value={password}
-					name={'password'}
+					name='password'
 					placeholder='Пароль'
 					icon='EditIcon'
 				/>
+
 				{isEditing && (
 					<div className={styles.buttons}>
-						<Button type='secondary' htmlType='submit' onClick={handleCancel}>
+						<Button type='secondary' htmlType='button' onClick={handleCancel}>
 							Отмена
 						</Button>
-						<Button type='primary' htmlType='submit' onClick={handleSave}>
+						<Button type='primary' htmlType='button' onClick={handleSave}>
 							Сохранить
 						</Button>
 					</div>

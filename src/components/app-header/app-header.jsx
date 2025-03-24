@@ -11,50 +11,52 @@ import styles from './app-header.module.scss';
 export default function AppHeader() {
 	const location = useLocation();
 
-	// Определяем, активна ли ссылка
-	const isActive = (path) => location.pathname === path;
+	// "Конструктор" активен на главной и при модалках ингредиента/заказа
+	const isConstructor =
+		location.pathname === '/' ||
+		location.pathname.startsWith('/ingredients/') ||
+		location.pathname.startsWith('/order');
+
+	const isFeed = location.pathname.startsWith('/feed');
+	const isProfile = location.pathname.startsWith('/profile');
 
 	return (
 		<header className={styles.header}>
 			<nav className={styles.nav}>
 				<div className={styles.container}>
-					{/* Ссылка на главную страницу */}
 					<NavLink
 						to='/'
-						className={({ isActive }) =>
-							`${styles.ref} mt-4 mr-4 mb-4 ${isActive ? styles.active : ''}`
+						className={() =>
+							`${styles.ref} mt-4 mr-4 mb-4 ${
+								isConstructor ? styles.active : ''
+							}`
 						}>
-						<BurgerIcon type={isActive('/') ? 'primary' : 'secondary'} />
+						<BurgerIcon type={isConstructor ? 'primary' : 'secondary'} />
 						<p className={`${styles.paragraph} text text_type_main-medium`}>
 							Конструктор
 						</p>
 					</NavLink>
 
-					{/* Ссылка на ленту заказов */}
 					<NavLink
-						to='/feed' // Исправлено на /feed
-						className={({ isActive }) =>
-							`${styles.ref} mt-4 mr-4 mb-4 ml-5 ${
-								isActive ? styles.active : ''
-							}`
+						to='/feed'
+						className={() =>
+							`${styles.ref} mt-4 mr-4 mb-4 ml-5 ${isFeed ? styles.active : ''}`
 						}>
-						<ListIcon type={isActive('/feed') ? 'primary' : 'secondary'} />
+						<ListIcon type={isFeed ? 'primary' : 'secondary'} />
 						<p className={`${styles.paragraph} text text_type_main-medium`}>
 							Лента заказов
 						</p>
 					</NavLink>
 				</div>
 
-				{/* Логотип */}
 				<Logo className={styles.logo} />
 
-				{/* Ссылка на личный кабинет */}
 				<NavLink
 					to='/profile'
-					className={({ isActive }) =>
-						`${styles.ref} mt-4 mb-4 ml-5 ${isActive ? styles.active : ''}`
+					className={() =>
+						`${styles.ref} mt-4 mb-4 ml-5 ${isProfile ? styles.active : ''}`
 					}>
-					<ProfileIcon type={isActive('/profile') ? 'primary' : 'secondary'} />
+					<ProfileIcon type={isProfile ? 'primary' : 'secondary'} />
 					<p className={`${styles.paragraph} text text_type_main-medium`}>
 						Личный кабинет
 					</p>
