@@ -5,6 +5,7 @@ import { IngredientType } from './../../../utils/types';
 
 const IngredientDetailsModal = ({ ingredient }) => {
 	if (!ingredient) return null;
+
 	return (
 		<div className={styles.container}>
 			<img

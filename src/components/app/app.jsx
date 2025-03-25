@@ -1,115 +1,196 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import { useDispatch, useSelector, Provider } from 'react-redux';
+
+import store from './../../services/store';
 import AppHeader from './../app-header/app-header';
-import BurgerIngredients from '../burger-ingredients/burger-ingredients';
-import BurgerConstructor from '../burger-constructor/burger-constructor';
-import styles from './app.module.scss';
+import Home from './../../pages/home/home';
+import LoginPage from './../../pages/login/login';
+import RegisterPage from './../../pages/register/register';
+import ResetPasswordPage from './../../pages/reset-password/reset-password';
+import ForgotPasswordPage from './../../pages/forgot-password/forgot-password';
+import ProfilePage from './../../pages/profile/profile';
+import PageNotFound from './../../pages/page-not-found/page-not-found';
+import IngredientPage from './../../pages/ingredient/ingredient';
+
 import Modal from '../modal/modal';
-import OrderDetails from '../burger-constructor/order-items/oreder-items';
+import OrderDetails from '../burger-constructor/order-details/oreder-details';
 import IngredientDetailsModal from './../burger-ingredients/ingredient-details/ingredient-details';
 
-const API_URL = 'https://norma.nomoreparties.space/api/ingredients';
+import { fetchIngredients } from '../../services/actions/ingredients-actions';
+import { checkAuth } from './../../services/actions/auth-actions';
+import {
+	SET_SELECTED_INGREDIENT,
+	CLEAR_SELECTED_INGREDIENT,
+} from './../../services/actions/ingredient-details-action';
+import { CLEAR_ORDER_DATA } from './../../services/actions/order-actions';
 
-export default function App() {
-	// состояние для ингредиентов, загрузки и ошибок
-	const [ingredients, setIngredients] = useState([]);
-	const [loading, setLoading] = useState(false);
-	const [error, setError] = useState(null);
+import ProtectedRoute from './../protected-route/protected-route';
+import ResetPasswordGuardRoute from '../reset-password-guard-route/reset-password-guard-route';
 
-	// состояние для модального окна и данных заказа
-	const [orderData, setOrderData] = useState({ name: '0345366' });
-	const [isModalOpen, setIsModalOpen] = useState(false);
+import styles from './app.module.scss';
 
-	const [selectedIngredient, setSelectedIngredient] = useState(null);
-	const [isIngredientDetailsOpen, setIsIngredientDetailsOpen] = useState(false);
+const AppContent = () => {
+	const dispatch = useDispatch();
+	const navigate = useNavigate();
+	const location = useLocation();
 
-	// юзэффект пре рендеринге компонента App
+	const isIngredientPage = location.pathname.startsWith('/ingredients/');
+	const ingredientIdFromUrl = isIngredientPage
+		? location.pathname.split('/ingredients/')[1]
+		: null;
+
+	const { ingredients, loading, error } = useSelector(
+		(state) => state.ingredients
+	);
+	const { isAuthenticated } = useSelector((state) => state.auth);
+	const { selectedIngredient } = useSelector(
+		(state) => state.ingredientDetails
+	);
+	const { orderData } = useSelector((state) => state.order);
+
+	// Определяем фон — откуда мы пришли, если был клик по ингредиенту
+	const background = location.state?.background || null;
+
+	// Загружаем ингредиенты и авторизацию
 	useEffect(() => {
-		setError(null);
+		dispatch(fetchIngredients());
+		dispatch(checkAuth());
 
-		const fetchIngredients = async () => {
-			try {
-				setLoading(true);
-				const response = await fetch(API_URL);
+		const token = localStorage.getItem('token');
+		if (token?.startsWith('Bearer ')) {
+			localStorage.setItem('token', token.replace(/^Bearer\s/, ''));
+		}
+	}, [dispatch]);
 
-				if (!response.ok) {
-					throw new Error(`Ошибка: ${response.status}`);
-				}
+	// Если пользователь не авторизован, а находится на закрытой странице
+	useEffect(() => {
+		if (isAuthenticated === false && location.pathname.startsWith('/profile')) {
+			navigate('/login');
+		}
+	}, [isAuthenticated, location.pathname, navigate]);
 
-				const data = await response.json();
-				setIngredients(data.data);
-			} catch (err) {
-				setError(err.message);
-			} finally {
-				setLoading(false);
+	// Если модалка открыта по ссылке — подгружаем нужный ингредиент вручную
+	useEffect(() => {
+		if (isIngredientPage && !selectedIngredient && ingredients.length > 0) {
+			const found = ingredients.find(
+				(item) => item._id === ingredientIdFromUrl
+			);
+			if (found) {
+				dispatch({ type: SET_SELECTED_INGREDIENT, payload: found });
 			}
-		};
+		}
+	}, [
+		dispatch,
+		isIngredientPage,
+		selectedIngredient,
+		ingredients,
+		ingredientIdFromUrl,
+	]);
 
-		fetchIngredients();
-	}, []);
-
-	// Модальное окно
-	const handleOrderClick = (data) => {
-		setOrderData(data); // Сохраняем данные заказа
-		setIsModalOpen(true); // Открываем модальное окно
-	};
-
-	const handleModalClose = () => {
-		setIsModalOpen(false); // Закрываем модальное окно
-		setOrderData(null); // Сбрасываем данные заказа
-	};
-
+	// Клик по ингредиенту
 	const handleIngredientClick = (ingredient) => {
-		setSelectedIngredient(ingredient);
-		setIsIngredientDetailsOpen(true);
+		dispatch({ type: SET_SELECTED_INGREDIENT, payload: ingredient });
+
+		navigate(`/ingredients/${ingredient._id}`, {
+			state: { background: location },
+		});
 	};
 
+	// Закрытие модалки ингредиента
 	const handleIngredientModalClose = () => {
-		setIsIngredientDetailsOpen(false); // Закрываем модальное окно с деталями ингредиента
-		setSelectedIngredient(null); // Сбрасываем данные ингредиента
+		dispatch({ type: CLEAR_SELECTED_INGREDIENT });
+		navigate(-1);
 	};
 
-	// обработка загрузки и ошибок
-	if (loading) {
-		return <div>Идет загрузка...</div>;
-	}
+	// Закрытие модалки заказа
+	const handleOrderModalClose = () => {
+		dispatch({ type: CLEAR_ORDER_DATA });
+		navigate(-1);
+	};
 
-	if (error) {
-		return <div>Ошибка: {error}</div>;
-	}
+	if (loading) return <div>Загрузка...</div>;
+	if (error) return <div>Ошибка: {error}</div>;
 
 	return (
 		<>
 			<AppHeader />
 			<main className={styles.main}>
-				<h2 className='text text_type_main-large mb-5'>Соберите бургер</h2>
-				<section className={styles.container}>
-					<BurgerIngredients
-						ingredients={ingredients}
-						onIngredientClick={handleIngredientClick}
+				{/* Основные маршруты */}
+				<Routes location={background || location}>
+					<Route
+						path='/'
+						element={<Home onIngredientClick={handleIngredientClick} />}
 					/>
-					<BurgerConstructor
-						ingredients={ingredients}
-						onOrderClick={handleOrderClick}
+					<Route
+						path='/login'
+						element={
+							<ProtectedRoute anonymous>
+								<LoginPage />
+							</ProtectedRoute>
+						}
 					/>
-				</section>
-			</main>
+					<Route
+						path='/register'
+						element={
+							<ProtectedRoute anonymous>
+								<RegisterPage />
+							</ProtectedRoute>
+						}
+					/>
+					<Route
+						path='/forgot-password'
+						element={
+							<ProtectedRoute anonymous>
+								<ForgotPasswordPage />
+							</ProtectedRoute>
+						}
+					/>
+					<Route
+						path='/reset-password'
+						element={
+							<ProtectedRoute anonymous>
+								<ResetPasswordGuardRoute>
+									<ResetPasswordPage />
+								</ResetPasswordGuardRoute>
+							</ProtectedRoute>
+						}
+					/>
+					<Route
+						path='/profile'
+						element={
+							<ProtectedRoute>
+								<ProfilePage />
+							</ProtectedRoute>
+						}
+					/>
+					<Route path='/ingredients/:id' element={<IngredientPage />} />
+					<Route path='*' element={<PageNotFound />} />
+				</Routes>
 
-			{/* Модальное окно с деталями заказа */}
-			{isModalOpen && (
-				<Modal onClose={handleModalClose} header=''>
-					{orderData && <OrderDetails orderData={orderData} />}
-				</Modal>
-			)}
-
-			{/* Модальное окно с деталями ингредиента */}
-			{isIngredientDetailsOpen && (
-				<Modal onClose={handleIngredientModalClose} header='Детали ингредиента'>
-					<IngredientDetailsModal
-						ingredient={selectedIngredient}
+				{/* Модалка с ингредиентом, если был переход из фона */}
+				{background && selectedIngredient && (
+					<Modal
 						onClose={handleIngredientModalClose}
-					/>
-				</Modal>
-			)}
+						header='Детали ингредиента'>
+						<IngredientDetailsModal ingredient={selectedIngredient} />
+					</Modal>
+				)}
+
+				{orderData && (
+					<Modal onClose={handleOrderModalClose}>
+						<OrderDetails orderData={orderData} />
+					</Modal>
+				)}
+			</main>
 		</>
+	);
+};
+
+export default function App() {
+	return (
+		<Provider store={store}>
+			<AppContent />
+		</Provider>
 	);
 }

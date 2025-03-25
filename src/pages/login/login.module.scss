@@ -1,0 +1,39 @@
+.container {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	margin-top: 180px;
+	margin-bottom: 210px;
+	text-align: center;
+
+	.form {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 24px;
+		margin-bottom: 80px;
+
+		.button {
+			width: 210px;
+		}
+	}
+
+	.bottom {
+		.text {
+			color: #8585ad;
+		}
+
+		.href {
+			text-decoration: none;
+			color: #4c4cff;
+			font-size: 16px;
+			font-weight: 400;
+			padding-left: 8px;
+			&:hover {
+				color: #8585ad;
+				text-decoration: underline;
+			}
+		}
+	}
+}

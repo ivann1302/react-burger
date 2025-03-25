@@ -5,38 +5,62 @@ import {
 	ListIcon,
 	ProfileIcon,
 } from '@ya.praktikum/react-developer-burger-ui-components';
+import { NavLink, useLocation } from 'react-router-dom';
 import styles from './app-header.module.scss';
 
 export default function AppHeader() {
+	const location = useLocation();
+
+	// "Конструктор" активен на главной и при модалках ингредиента/заказа
+	const isConstructor =
+		location.pathname === '/' ||
+		location.pathname.startsWith('/ingredients/') ||
+		location.pathname.startsWith('/order');
+
+	const isFeed = location.pathname.startsWith('/feed');
+	const isProfile = location.pathname.startsWith('/profile');
+
 	return (
 		<header className={styles.header}>
 			<nav className={styles.nav}>
 				<div className={styles.container}>
-					<a
-						href='./../../index.tsx'
-						className={`${styles.ref} ${styles.active} mt-4 mr-4 mb-4`}>
-						<BurgerIcon type='primary' />
-						<p
-							className={`${styles.paragraph} ${styles.active} text text_type_main-medium"`}>
+					<NavLink
+						to='/'
+						className={() =>
+							`${styles.ref} mt-4 mr-4 mb-4 ${
+								isConstructor ? styles.active : ''
+							}`
+						}>
+						<BurgerIcon type={isConstructor ? 'primary' : 'secondary'} />
+						<p className={`${styles.paragraph} text text_type_main-medium`}>
 							Конструктор
 						</p>
-					</a>
-					<a
-						href='./../../index.tsx'
-						className={`${styles.ref} mt-4 mr-4 mb-4 ml-5`}>
-						<ListIcon type='secondary' />
-						<p className={`${styles.paragraph} text text_type_main-medium"`}>
+					</NavLink>
+
+					<NavLink
+						to='/feed'
+						className={() =>
+							`${styles.ref} mt-4 mr-4 mb-4 ml-5 ${isFeed ? styles.active : ''}`
+						}>
+						<ListIcon type={isFeed ? 'primary' : 'secondary'} />
+						<p className={`${styles.paragraph} text text_type_main-medium`}>
 							Лента заказов
 						</p>
-					</a>
+					</NavLink>
 				</div>
+
 				<Logo className={styles.logo} />
-				<a href='./../../index.tsx' className={`${styles.ref} mt-4 mb-4 ml-5`}>
-					<ProfileIcon type='secondary' />
-					<p className={`${styles.paragraph} text text_type_main-medium"`}>
+
+				<NavLink
+					to='/profile'
+					className={() =>
+						`${styles.ref} mt-4 mb-4 ml-5 ${isProfile ? styles.active : ''}`
+					}>
+					<ProfileIcon type={isProfile ? 'primary' : 'secondary'} />
+					<p className={`${styles.paragraph} text text_type_main-medium`}>
 						Личный кабинет
 					</p>
-				</a>
+				</NavLink>
 			</nav>
 		</header>
 	);
