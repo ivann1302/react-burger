@@ -27,6 +27,7 @@ const ResetPasswordPage = () => {
 		e.preventDefault();
 		dispatch(resetPassword(password, token)).then((success) => {
 			if (success) {
+				sessionStorage.removeItem('canResetPassword');
 				navigate('/login');
 			}
 		});

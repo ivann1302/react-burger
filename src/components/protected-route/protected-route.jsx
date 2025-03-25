@@ -1,20 +1,22 @@
-import React from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { Navigate, useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
-const ProtectedRoute = ({ children }) => {
-	const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+const ProtectedRoute = ({ children, anonymous = false }) => {
+	const { isAuthenticated, isLoading } = useSelector((state) => state.auth);
 	const location = useLocation();
+	const from = location.state?.from || '/';
 
-	// Явная проверка: null — ещё не знаем, false — неавторизован
-	if (isAuthenticated === false) {
-		return <Navigate to='/login' state={{ from: location }} replace />;
+	if (isLoading) {
+		return null; // или <Loader /> если есть компонент
 	}
 
-	// Пока грузится — ничего не делаем (или можyj добавить лоадер)
-	if (isAuthenticated === null || isAuthenticated === undefined) {
-		return null;
+	if (anonymous && isAuthenticated) {
+		return <Navigate to={from} replace />;
+	}
+
+	if (!anonymous && !isAuthenticated) {
+		return <Navigate to='/login' state={{ from: location }} replace />;
 	}
 
 	return children;
@@ -22,6 +24,7 @@ const ProtectedRoute = ({ children }) => {
 
 ProtectedRoute.propTypes = {
 	children: PropTypes.node.isRequired,
+	anonymous: PropTypes.bool,
 };
 
 export default ProtectedRoute;

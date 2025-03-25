@@ -26,7 +26,7 @@ import {
 import { CLEAR_ORDER_DATA } from './../../services/actions/order-actions';
 
 import ProtectedRoute from './../protected-route/protected-route';
-import OnlyUnAuthRoute from '../only-unauth-route/only-unauth-route';
+import ResetPasswordGuardRoute from '../reset-password-guard-route/reset-password-guard-route';
 
 import styles from './app.module.scss';
 
@@ -125,33 +125,35 @@ const AppContent = () => {
 					<Route
 						path='/login'
 						element={
-							<OnlyUnAuthRoute>
+							<ProtectedRoute anonymous>
 								<LoginPage />
-							</OnlyUnAuthRoute>
+							</ProtectedRoute>
 						}
 					/>
 					<Route
 						path='/register'
 						element={
-							<OnlyUnAuthRoute>
+							<ProtectedRoute anonymous>
 								<RegisterPage />
-							</OnlyUnAuthRoute>
+							</ProtectedRoute>
 						}
 					/>
 					<Route
 						path='/forgot-password'
 						element={
-							<OnlyUnAuthRoute>
+							<ProtectedRoute anonymous>
 								<ForgotPasswordPage />
-							</OnlyUnAuthRoute>
+							</ProtectedRoute>
 						}
 					/>
 					<Route
 						path='/reset-password'
 						element={
-							<OnlyUnAuthRoute>
-								<ResetPasswordPage />
-							</OnlyUnAuthRoute>
+							<ProtectedRoute anonymous>
+								<ResetPasswordGuardRoute>
+									<ResetPasswordPage />
+								</ResetPasswordGuardRoute>
+							</ProtectedRoute>
 						}
 					/>
 					<Route
