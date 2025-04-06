@@ -2,8 +2,19 @@ import { useSelector } from 'react-redux';
 import styles from './order-details.module.scss';
 import doneImage from './../../../images/done.svg';
 
+interface IOrder {
+	number: number;
+}
+
+interface IOrderData {
+	order?: IOrder;
+}
+
 const OrderDetails = () => {
-	const { orderData = null } = useSelector((state) => state.order ?? {}); // Теперь `orderData` всегда определён
+	const orderData = useSelector<
+		{ order: { orderData?: IOrderData } },
+		IOrderData | undefined
+	>((state) => state.order.orderData);
 
 	if (!orderData) {
 		return null;

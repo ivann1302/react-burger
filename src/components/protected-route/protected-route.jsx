@@ -8,7 +8,7 @@ const ProtectedRoute = ({ children, anonymous = false }) => {
 	const from = location.state?.from || '/';
 
 	if (isLoading) {
-		return null; // или <Loader /> если есть компонент
+		return null;
 	}
 
 	if (anonymous && isAuthenticated) {
