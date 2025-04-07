@@ -2,7 +2,7 @@ import {
 	getCookie,
 	setCookie,
 	deleteCookie,
-} from './../../utils/cookies-fucntions.js';
+} from './../../utils/cookies-fucntions';
 import { BASE_URL } from './../../utils/api';
 import { request } from './../../utils/check-response'; // Добавлено
 

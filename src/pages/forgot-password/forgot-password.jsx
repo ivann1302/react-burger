@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { forgotPassword } from './../../services/actions/password-action';
+import { forgotPassword } from '../../services/actions/password-action';
 import { useNavigate, Link } from 'react-router-dom';
 import styles from './forgot-password.module.scss';
 import {

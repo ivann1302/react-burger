@@ -1,8 +1,13 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import PropTypes from 'prop-types';
 
-const ResetPasswordGuardRoute = ({ children }) => {
+type TResetPasswordGuardRouteProps = {
+	children: React.ReactNode | null;
+};
+
+const ResetPasswordGuardRoute = ({
+	children,
+}: TResetPasswordGuardRouteProps): React.ReactNode => {
 	const canReset = sessionStorage.getItem('canResetPassword');
 
 	if (!canReset) {
@@ -10,10 +15,6 @@ const ResetPasswordGuardRoute = ({ children }) => {
 	}
 
 	return children;
-};
-
-ResetPasswordGuardRoute.propTypes = {
-	children: PropTypes.node.isRequired,
 };
 
 export default ResetPasswordGuardRoute;
