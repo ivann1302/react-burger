@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, ChangeEvent, FormEvent } from 'react';
 import { useDispatch } from 'react-redux';
-import { register } from './../../services/actions/auth-actions';
+import { register } from '../../services/actions/auth-actions';
 import { useNavigate, Link } from 'react-router-dom';
 import styles from './register.module.scss';
 import {
@@ -10,27 +10,28 @@ import {
 	Button,
 } from '@ya.praktikum/react-developer-burger-ui-components';
 
-const RegisterPage = () => {
+const RegisterPage = (): JSX.Element => {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [name, setName] = useState('');
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 
-	const handleEmailChange = (e) => {
+	const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setEmail(e.target.value);
 	};
 
-	const handlePasswordChange = (e) => {
+	const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setPassword(e.target.value);
 	};
 
-	const handleNameChange = (e) => {
+	const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setName(e.target.value);
 	};
 
-	const handleSubmit = async (e) => {
+	const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
+		// @ts-expect-error 'redux'
 		dispatch(register(email, password, name));
 		navigate('/login');
 	};

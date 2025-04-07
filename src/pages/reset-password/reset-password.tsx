@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, ChangeEvent, FormEvent } from 'react';
 import { useDispatch } from 'react-redux';
-import { resetPassword } from './../../services/actions/password-action';
+import { resetPassword } from '../../services/actions/password-action';
 import { useNavigate, Link } from 'react-router-dom';
 import styles from './reset-password.module.scss';
 import {
@@ -9,22 +9,23 @@ import {
 	Button,
 } from '@ya.praktikum/react-developer-burger-ui-components';
 
-const ResetPasswordPage = () => {
+const ResetPasswordPage = (): JSX.Element => {
 	const [password, setPassword] = useState('');
 	const [token, setToken] = useState('');
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 
-	const handlePasswordChange = (e) => {
+	const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setPassword(e.target.value);
 	};
 
-	const handleTokenChange = (e) => {
+	const handleTokenChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setToken(e.target.value);
 	};
 
-	const handleSubmit = async (e) => {
+	const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
+		// @ts-expect-error 'redux'
 		dispatch(resetPassword(password, token)).then((success) => {
 			if (success) {
 				sessionStorage.removeItem('canResetPassword');
