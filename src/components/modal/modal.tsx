@@ -3,40 +3,52 @@ import { createPortal } from 'react-dom';
 import ModalHeader from './modal-header/modal-header';
 import ModalOverlay from './modal-overlay/modal-overlay';
 import styles from './modal.module.scss';
-import PropTypes from 'prop-types';
 
 const modalRoot = document.getElementById('react-modals');
-const Modal = ({ onClose, header, children }) => {
+
+type TModalProps = {
+	onClose: () => void;
+	header?: string;
+	children?: React.ReactNode;
+};
+
+const Modal: React.FC<TModalProps> = ({
+	onClose,
+	header = '',
+	children = null,
+}) => {
 	//  Закрытие окна при нажатии Escape
 	useEffect(() => {
-		const handleEscape = (e) => {
+		const handleEscape = (e: KeyboardEvent) => {
 			if (e.key === 'Escape') onClose();
 		};
 		document.addEventListener('keydown', handleEscape);
 		return () => document.removeEventListener('keydown', handleEscape);
 	}, [onClose]);
 
+	if (!modalRoot) {
+		return null;
+	}
+
 	return createPortal(
 		<>
 			<ModalOverlay onClose={onClose} />
-			<div className={`${styles.modal} p-0`}>
-				<ModalHeader onClose={onClose} name={header}></ModalHeader>
-				{children}
+			<div
+				className={styles.modalWrapper}
+				role='dialog'
+				tabIndex={-1}
+				aria-modal='true'>
+				<div
+					className={styles.modal}
+					onClick={(e) => e.stopPropagation()}
+					role='none'>
+					<ModalHeader onClose={onClose} name={header} />
+					{children}
+				</div>
 			</div>
 		</>,
 		modalRoot
 	);
-};
-
-Modal.propTypes = {
-	onClose: PropTypes.func.isRequired,
-	header: PropTypes.string,
-	children: PropTypes.node,
-};
-
-Modal.defaultProps = {
-	header: '',
-	children: null,
 };
 
 export default Modal;
