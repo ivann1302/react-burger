@@ -8,26 +8,44 @@ import {
 	Button,
 	CurrencyIcon,
 } from '@ya.praktikum/react-developer-burger-ui-components';
-import { IngredientType } from './../../../utils/types';
+import { IngredientType } from '../../../utils/types';
+import { TIngredient } from '../../../utils/ingredient-types';
 import styles from './order-block.module.scss';
 
-export default function OrderBlock() {
+export default function OrderBlock(): JSX.Element {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const location = useLocation();
-	const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+	const isAuthenticated: boolean = useSelector(
+		// @ts-expect-error типизация auth
+		(state) => state.auth.isAuthenticated
+	);
 
-	const { bun, ingredients = [] } = useSelector(
+	const {
+		bun,
+		ingredients = [],
+	}: {
+		bun: TIngredient | null;
+		ingredients: TIngredient[];
+	} = useSelector(
+		// @ts-expect-error 'redux'
 		(state) => state.burgerConstructor
 	);
-	const { loading = false, error = null } = useSelector(
+	const {
+		loading = false,
+		error = null,
+	}: {
+		loading: boolean;
+		error: string | null;
+	} = useSelector(
+		// @ts-expect-error 'redux'
 		(state) => state.order ?? {}
 	);
 
 	// Рассчитываем итоговую стоимость
-	const totalPrice =
+	const totalPrice: number =
 		(bun ? bun.price * 2 : 0) +
-		ingredients.reduce((sum, item) => sum + item.price, 0);
+		ingredients.reduce((sum: number, item) => sum + item.price, 0);
 
 	// Обработчик клика для оформления заказа
 	const handleOrderClick = () => {
@@ -47,6 +65,7 @@ export default function OrderBlock() {
 		}
 
 		const orderIngredients = [bun, ...ingredients, bun].map((item) => item._id);
+		// @ts-expect-error 'redux'
 		dispatch(createOrder(orderIngredients));
 		navigate('/login', { state: { from: location } });
 	};
@@ -57,7 +76,7 @@ export default function OrderBlock() {
 				<p className={`text text_type_main-large ml-1 ${styles.price}`}>
 					{totalPrice}
 				</p>
-				<CurrencyIcon className={styles.icon} />
+				<CurrencyIcon className={styles.icon} type='primary' />
 			</div>
 			<Button
 				onClick={handleOrderClick}
