@@ -106,7 +106,7 @@ const AppContent = () => {
 	// Закрытие модалки ингредиента
 	const handleIngredientModalClose = () => {
 		dispatch({ type: CLEAR_SELECTED_INGREDIENT });
-		navigate(-1);
+		navigate('/', { replace: true });
 	};
 
 	// Закрытие модалки заказа

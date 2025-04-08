@@ -1,14 +1,11 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-
 import { useNavigate, useLocation } from 'react-router-dom';
-import PropTypes from 'prop-types';
 import { createOrder } from '../../../services/actions/order-actions';
 import {
 	Button,
 	CurrencyIcon,
 } from '@ya.praktikum/react-developer-burger-ui-components';
-import { IngredientType } from '../../../utils/types';
 import { TIngredient } from '../../../utils/ingredient-types';
 import styles from './order-block.module.scss';
 
@@ -90,17 +87,3 @@ export default function OrderBlock(): JSX.Element {
 		</div>
 	);
 }
-
-OrderBlock.propTypes = {
-	bun: IngredientType,
-	ingredients: PropTypes.arrayOf(IngredientType).isRequired,
-	loading: PropTypes.bool,
-	error: PropTypes.string,
-};
-
-OrderBlock.defaultProps = {
-	ingredients: [],
-	bun: null,
-	loading: false,
-	error: null,
-};
