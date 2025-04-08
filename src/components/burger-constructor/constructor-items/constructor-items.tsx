@@ -33,6 +33,11 @@ const ConstructorItems: React.FC<TConstructorItems> = ({
 		);
 	}
 
+	// Защита: ingredients, onRemove и moveIngredient должны быть определены
+	if (!ingredients || !onRemove || !moveIngredient) {
+		return null;
+	}
+
 	return (
 		<div className={styles.ingredientsWrapper}>
 			{ingredients?.map((item, index) => (
@@ -40,8 +45,8 @@ const ConstructorItems: React.FC<TConstructorItems> = ({
 					key={item.uniqueId} // Используем uniqueId вместо _id + index
 					ingredient={item}
 					index={index}
-					onRemove={onRemove!}
-					moveIngredient={moveIngredient!}
+					onRemove={onRemove}
+					moveIngredient={moveIngredient}
 				/>
 			))}
 		</div>

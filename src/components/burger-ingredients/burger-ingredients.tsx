@@ -2,21 +2,30 @@ import { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux'; // Добавляем useSelector
 import { Tab } from '@ya.praktikum/react-developer-burger-ui-components';
 import styles from './burger-ingredients.module.scss';
-import IngredientsGroup from './ingredients-group/ingredients-group.jsx';
-import PropTypes from 'prop-types';
+import IngredientsGroup from './ingredients-group/ingredients-group';
+import { TIngredient } from '@utils/ingredient-types';
 
-export default function BurgerIngredients({ onIngredientClick }) {
+type TBurgerIngredientsProps = {
+	onIngredientClick: (ingredient: TIngredient) => void;
+};
+
+type TIngredientSection = 'Булки' | 'Соусы' | 'Начинки';
+
+export default function BurgerIngredients({
+	onIngredientClick,
+}: TBurgerIngredientsProps) {
 	// Получаем ингредиенты из Redux
+	// @ts-expect-error 'redux'
 	const { ingredients } = useSelector((state) => state.ingredients);
 
 	// Храним активный таб (по умолчанию "Булки")
 	const [current, setCurrent] = useState('Булки');
 
 	// Создаем ссылки (рефы) для контейнера и секций с ингредиентами
-	const containerRef = useRef(null);
-	const bunsRef = useRef(null);
-	const saucesRef = useRef(null);
-	const mainRef = useRef(null);
+	const containerRef = useRef<HTMLDivElement | null>(null);
+	const bunsRef = useRef<HTMLHeadingElement | null>(null);
+	const saucesRef = useRef<HTMLHeadingElement | null>(null);
+	const mainRef = useRef<HTMLHeadingElement | null>(null);
 
 	// Фильтруем ингредиенты по типу
 	const sauces = Array.isArray(ingredients)
@@ -40,7 +49,10 @@ export default function BurgerIngredients({ onIngredientClick }) {
 				{ name: 'Булки', ref: bunsRef },
 				{ name: 'Соусы', ref: saucesRef },
 				{ name: 'Начинки', ref: mainRef },
-			];
+			] as const satisfies ReadonlyArray<{
+				name: TIngredientSection;
+				ref: React.RefObject<HTMLHeadingElement>;
+			}>;
 
 			let closestSection = 'Булки';
 			let minDistance = Infinity;
@@ -74,7 +86,7 @@ export default function BurgerIngredients({ onIngredientClick }) {
 	}, []);
 
 	// Обработчик клика по табу (скроллим к нужному заголовку)
-	const handleTabClick = (section) => {
+	const handleTabClick = (section: TIngredientSection) => {
 		setCurrent(section);
 		const refs = {
 			Булки: bunsRef,
@@ -138,7 +150,3 @@ export default function BurgerIngredients({ onIngredientClick }) {
 		</section>
 	);
 }
-
-BurgerIngredients.propTypes = {
-	onIngredientClick: PropTypes.func,
-};
