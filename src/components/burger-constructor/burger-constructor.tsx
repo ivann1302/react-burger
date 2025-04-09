@@ -9,27 +9,32 @@ import {
 	removeIngredient,
 	moveIngredient,
 } from '../../services/actions/constructor-actions';
+import { TIngredient } from '@utils/ingredient-types';
 import styles from './burger-constructor.module.scss';
+
+type TDragItem = TIngredient & { uniqueId?: string };
 
 export default function BurgerConstructor() {
 	const dispatch = useDispatch();
 
 	// Получаем ингредиенты из Redux
+	// @ts-expect-error 'reudx'
 	const bun = useSelector((state) => state.burgerConstructor.bun);
 	const ingredients = useSelector(
+		// @ts-expect-error 'reudx'
 		(state) => state.burgerConstructor.ingredients ?? []
 	);
 
-	const handleRemoveIngredient = (index) => {
+	const handleRemoveIngredient = (index: string) => {
 		dispatch(removeIngredient(index));
 	};
 
-	const handleMoveIngredient = (fromIndex, toIndex) => {
+	const handleMoveIngredient = (fromIndex: number, toIndex: number) => {
 		if (fromIndex === toIndex || fromIndex < 0 || toIndex < 0) return;
 		dispatch(moveIngredient(fromIndex, toIndex));
 	};
 
-	const [{ isOver }, drop] = useDrop({
+	const [{ isOver }, drop] = useDrop<TDragItem, void, { isOver: boolean }>({
 		accept: 'INGREDIENT',
 		drop: (item) => {
 			if (!item || !item.type) return; // Защита от undefined

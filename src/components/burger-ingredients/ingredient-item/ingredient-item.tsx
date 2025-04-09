@@ -1,10 +1,20 @@
 import React from 'react';
 import { useDrag } from 'react-dnd';
 import { Counter } from '@ya.praktikum/react-developer-burger-ui-components';
-import PropTypes from 'prop-types';
 import styles from './ingredient-items.module.scss';
+import { TIngredient } from '@utils/ingredient-types';
 
-export default function IngredientItem({ ingredient, count, onClick }) {
+type TIngredientItemProps = {
+	ingredient: TIngredient;
+	count: number;
+	onClick: () => void;
+};
+
+const IngredientItem: React.FC<TIngredientItemProps> = ({
+	ingredient,
+	count,
+	onClick,
+}) => {
 	const [{ isDragging }, drag] = useDrag({
 		type: 'INGREDIENT',
 		item: { ...ingredient },
@@ -35,10 +45,6 @@ export default function IngredientItem({ ingredient, count, onClick }) {
 			/>
 		</div>
 	);
-}
-
-IngredientItem.propTypes = {
-	ingredient: PropTypes.object.isRequired,
-	count: PropTypes.number.isRequired,
-	onClick: PropTypes.func.isRequired,
 };
+
+export default IngredientItem;

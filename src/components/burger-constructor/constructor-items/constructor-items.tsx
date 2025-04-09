@@ -1,17 +1,24 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { IngredientType } from './../../../utils/types';
 import { ConstructorElement } from '@ya.praktikum/react-developer-burger-ui-components';
-import Ingredient from './../ingredient/ingredient';
+import Ingredient from '../ingredient/ingredient';
 import styles from './constructor-items.module.scss';
+import { TIngredient } from '@utils/ingredient-types';
 
-export default function ConstructorItems({
+type TConstructorItems = {
+	ingredient?: TIngredient;
+	ingredients?: (TIngredient & { uniqueId: string })[];
+	isBunTop?: boolean;
+	onRemove?: (id: string) => void;
+	moveIngredient?: (fromIndex: number, toIndex: number) => void;
+};
+
+const ConstructorItems: React.FC<TConstructorItems> = ({
 	ingredient,
 	ingredients,
 	isBunTop,
 	onRemove,
 	moveIngredient,
-}) {
+}) => {
 	if (ingredient) {
 		return (
 			<div className={styles.bun}>
@@ -26,9 +33,14 @@ export default function ConstructorItems({
 		);
 	}
 
+	// Защита: ingredients, onRemove и moveIngredient должны быть определены
+	if (!ingredients || !onRemove || !moveIngredient) {
+		return null;
+	}
+
 	return (
 		<div className={styles.ingredientsWrapper}>
-			{ingredients.map((item, index) => (
+			{ingredients?.map((item, index) => (
 				<Ingredient
 					key={item.uniqueId} // Используем uniqueId вместо _id + index
 					ingredient={item}
@@ -39,16 +51,6 @@ export default function ConstructorItems({
 			))}
 		</div>
 	);
-}
-
-ConstructorItems.propTypes = {
-	ingredient: IngredientType,
-	ingredients: PropTypes.arrayOf(IngredientType).isRequired,
-	isBunTop: PropTypes.bool,
-	onRemove: PropTypes.func,
-	moveIngredient: PropTypes.func,
 };
 
-ConstructorItems.defaultProps = {
-	ingredients: [],
-};
+export default ConstructorItems;

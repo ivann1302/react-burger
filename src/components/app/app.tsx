@@ -16,7 +16,7 @@ import IngredientPage from './../../pages/ingredient/ingredient';
 import Modal from '../modal/modal';
 import OrderDetails from '../burger-constructor/order-details/oreder-details';
 import IngredientDetailsModal from './../burger-ingredients/ingredient-details/ingredient-details';
-
+import { TIngredient } from './../../utils/ingredient-types';
 import { fetchIngredients } from '../../services/actions/ingredients-actions';
 import { checkAuth } from './../../services/actions/auth-actions';
 import {
@@ -41,12 +41,16 @@ const AppContent = () => {
 		: null;
 
 	const { ingredients, loading, error } = useSelector(
+		// @ts-expect-error 'redux'
 		(state) => state.ingredients
 	);
+	// @ts-expect-error 'redux'
 	const { isAuthenticated } = useSelector((state) => state.auth);
 	const { selectedIngredient } = useSelector(
+		// @ts-expect-error 'redux'
 		(state) => state.ingredientDetails
 	);
+	// @ts-expect-error 'redux'
 	const { orderData } = useSelector((state) => state.order);
 
 	// Определяем фон — откуда мы пришли, если был клик по ингредиенту
@@ -54,7 +58,9 @@ const AppContent = () => {
 
 	// Загружаем ингредиенты и авторизацию
 	useEffect(() => {
+		// @ts-expect-error 'redux'
 		dispatch(fetchIngredients());
+		// @ts-expect-error 'redux'
 		dispatch(checkAuth());
 
 		const token = localStorage.getItem('token');
@@ -74,7 +80,7 @@ const AppContent = () => {
 	useEffect(() => {
 		if (isIngredientPage && !selectedIngredient && ingredients.length > 0) {
 			const found = ingredients.find(
-				(item) => item._id === ingredientIdFromUrl
+				(item: TIngredient) => item._id === ingredientIdFromUrl
 			);
 			if (found) {
 				dispatch({ type: SET_SELECTED_INGREDIENT, payload: found });
@@ -89,7 +95,7 @@ const AppContent = () => {
 	]);
 
 	// Клик по ингредиенту
-	const handleIngredientClick = (ingredient) => {
+	const handleIngredientClick = (ingredient: TIngredient) => {
 		dispatch({ type: SET_SELECTED_INGREDIENT, payload: ingredient });
 
 		navigate(`/ingredients/${ingredient._id}`, {
@@ -100,7 +106,7 @@ const AppContent = () => {
 	// Закрытие модалки ингредиента
 	const handleIngredientModalClose = () => {
 		dispatch({ type: CLEAR_SELECTED_INGREDIENT });
-		navigate(-1);
+		navigate('/', { replace: true });
 	};
 
 	// Закрытие модалки заказа
@@ -179,7 +185,7 @@ const AppContent = () => {
 
 				{orderData && (
 					<Modal onClose={handleOrderModalClose}>
-						<OrderDetails orderData={orderData} />
+						<OrderDetails />
 					</Modal>
 				)}
 			</main>

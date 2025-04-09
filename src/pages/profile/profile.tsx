@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, ChangeEvent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
-import { logout } from './../../services/actions/auth-actions';
-import { getUser, updateUser } from './../../services/actions/user-actions';
+import { logout } from '../../services/actions/auth-actions';
+import { getUser, updateUser } from '../../services/actions/user-actions';
 import styles from './profile.module.scss';
 import {
 	Input,
@@ -11,9 +11,10 @@ import {
 	Button,
 } from '@ya.praktikum/react-developer-burger-ui-components';
 
-const ProfilePage = () => {
+const ProfilePage = (): JSX.Element => {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
+	// @ts-expect-error 'resux'
 	const { user } = useSelector((state) => state.auth);
 
 	const [name, setName] = useState('');
@@ -27,6 +28,7 @@ const ProfilePage = () => {
 
 	// Получаем данные пользователя при загрузке страницы
 	useEffect(() => {
+		// @ts-expect-error 'redux'
 		dispatch(getUser());
 	}, [dispatch]);
 
@@ -40,22 +42,23 @@ const ProfilePage = () => {
 		}
 	}, [user]);
 
-	const handleNameChange = (e) => {
+	const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setName(e.target.value);
 		setIsEditing(true);
 	};
 
-	const handleEmailChange = (e) => {
+	const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setEmail(e.target.value);
 		setIsEditing(true);
 	};
 
-	const handlePasswordChange = (e) => {
+	const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setPassword(e.target.value);
 		setIsEditing(true);
 	};
 
 	const handleSave = () => {
+		// @ts-expect-error 'redux'
 		dispatch(updateUser({ name, email, password })).then(() => {
 			initialName.current = name;
 			initialEmail.current = email;
@@ -64,7 +67,7 @@ const ProfilePage = () => {
 		});
 	};
 
-	const handleCancel = () => {
+	const handleCancel = (): void => {
 		setName(initialName.current);
 		setEmail(initialEmail.current);
 		setPassword('');
@@ -72,6 +75,7 @@ const ProfilePage = () => {
 	};
 
 	const handleLogout = async () => {
+		// @ts-expect-error 'redux'
 		await dispatch(logout());
 		navigate('/login', { replace: true });
 	};

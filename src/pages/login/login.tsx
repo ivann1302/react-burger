@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, ChangeEvent, FormEvent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useLocation, Navigate, Link } from 'react-router-dom';
 import { login } from '../../services/actions/auth-actions';
@@ -9,12 +9,13 @@ import {
 	Button,
 } from '@ya.praktikum/react-developer-burger-ui-components';
 
-const LoginPage = () => {
+const LoginPage = (): JSX.Element => {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const location = useLocation();
+	// @ts-expect-error 'redux'
 	const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
 	// Если пользователь уже авторизован, перенаправляем его на главную страницу
@@ -22,16 +23,17 @@ const LoginPage = () => {
 		return <Navigate to='/' replace />;
 	}
 
-	const handleEmailChange = (e) => {
+	const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setEmail(e.target.value);
 	};
 
-	const handlePasswordChange = (e) => {
+	const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setPassword(e.target.value);
 	};
 
-	const handleSubmit = async (e) => {
+	const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
+		// @ts-expect-error 'redux'
 		const success = await dispatch(login(email, password));
 		if (success) {
 			const from = location.state?.from?.pathname || '/';

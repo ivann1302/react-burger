@@ -1,10 +1,13 @@
 import React from 'react';
 import styles from './modal-overlay.module.scss';
-import PropTypes from 'prop-types';
 
-const ModalOverlay = ({ onClose }) => {
+type TModalOverlay = {
+	onClose: () => void;
+};
+
+const ModalOverlay: React.FC<TModalOverlay> = ({ onClose }) => {
 	// Обработчик событий клавиатуры
-	const handleKeyDown = (event) => {
+	const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>): void => {
 		if (event.key === 'Enter' || event.key === ' ') {
 			onClose();
 		}
@@ -20,10 +23,6 @@ const ModalOverlay = ({ onClose }) => {
 			aria-label='Закрыть модальное окно' // Описание для screen readers
 		></div>
 	);
-};
-
-ModalOverlay.propTypes = {
-	onClose: PropTypes.func.isRequired,
 };
 
 export default ModalOverlay;

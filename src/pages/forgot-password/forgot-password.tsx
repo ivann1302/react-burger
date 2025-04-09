@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, ChangeEvent, FormEvent } from 'react';
 import { useDispatch } from 'react-redux';
-import { forgotPassword } from './../../services/actions/password-action';
+import { forgotPassword } from '../../services/actions/password-action';
 import { useNavigate, Link } from 'react-router-dom';
 import styles from './forgot-password.module.scss';
 import {
@@ -8,20 +8,21 @@ import {
 	Button,
 } from '@ya.praktikum/react-developer-burger-ui-components';
 
-const ForgotPasswordPage = () => {
+const ForgotPasswordPage = (): JSX.Element => {
 	const [error, setError] = useState('');
 	const [email, setEmail] = useState('');
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 
-	const handleEmailChange = (e) => {
+	const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setEmail(e.target.value);
 	};
 
-	const handleSubmit = async (e) => {
+	const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		setError(''); // сброс ошибки перед запросом
 
+		// @ts-expect-error 'redux'
 		const success = await dispatch(forgotPassword(email));
 		if (success) {
 			sessionStorage.setItem('canResetPassword', 'true'); // 💾 флаг для /reset-password

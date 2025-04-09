@@ -1,22 +1,30 @@
 import React, { forwardRef } from 'react';
 import { useSelector } from 'react-redux';
-import IngredientItem from './../ingredient-item/ingredient-item';
+import IngredientItem from '../ingredient-item/ingredient-item';
 import IngredientInformation from '../ingredient-information/ingredient-information';
 import styles from './ingredients-group.module.scss';
+import { TIngredient } from '@utils/ingredient-types';
+
+type IngredientsGroupProps = {
+	type: TIngredient[];
+	groupName: string;
+	onIngredientClick: (ingredient: TIngredient) => void;
+};
 
 // eslint-disable-next-line react/display-name
-const IngredientsGroup = forwardRef(
+const IngredientsGroup = forwardRef<HTMLHeadingElement, IngredientsGroupProps>(
 	({ type, groupName, onIngredientClick }, ref) => {
 		// Получаем данные из конструктора
 		const { bun, ingredients = [] } = useSelector(
+			// @ts-expect-error 'redux'
 			(state) => state.burgerConstructor
 		); // Используем пустой массив по умолчанию
 
 		// Функция для подсчета количества ингредиентов
-		const countIngredients = (id) => {
+		const countIngredients = (id: string) => {
 			const bunCount = bun?._id === id ? 2 : 0; // Булки учитываются дважды
 			const ingredientsCount = ingredients.filter(
-				(item) => item._id === id
+				(item: TIngredient) => item._id === id
 			).length;
 
 			return bunCount + ingredientsCount;

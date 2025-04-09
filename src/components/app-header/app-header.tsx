@@ -8,7 +8,9 @@ import {
 import { NavLink, useLocation } from 'react-router-dom';
 import styles from './app-header.module.scss';
 
-export default function AppHeader() {
+type TAppHeaderProps = unknown;
+
+const AppHeader: React.FC<TAppHeaderProps> = () => {
 	const location = useLocation();
 
 	// "Конструктор" активен на главной и при модалках ингредиента/заказа
@@ -17,8 +19,8 @@ export default function AppHeader() {
 		location.pathname.startsWith('/ingredients/') ||
 		location.pathname.startsWith('/order');
 
-	const isFeed = location.pathname.startsWith('/feed');
-	const isProfile = location.pathname.startsWith('/profile');
+	const isFeed: boolean = location.pathname.startsWith('/feed');
+	const isProfile: boolean = location.pathname.startsWith('/profile');
 
 	return (
 		<header className={styles.header}>
@@ -64,4 +66,6 @@ export default function AppHeader() {
 			</nav>
 		</header>
 	);
-}
+};
+
+export default AppHeader;

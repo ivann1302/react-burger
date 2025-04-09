@@ -1,9 +1,14 @@
 import React from 'react';
 import styles from './ingredient-details.module.scss';
-import PropTypes from 'prop-types';
-import { IngredientType } from './../../../utils/types';
+import { TIngredient } from '../../../utils/ingredient-types';
 
-const IngredientDetailsModal = ({ ingredient }) => {
+type TIngredientDetailsModalProps = {
+	ingredient: TIngredient;
+};
+
+const IngredientDetailsModal: React.FC<TIngredientDetailsModalProps> = ({
+	ingredient,
+}) => {
 	if (!ingredient) return null;
 
 	return (
@@ -46,10 +51,6 @@ const IngredientDetailsModal = ({ ingredient }) => {
 			</div>
 		</div>
 	);
-};
-
-IngredientDetailsModal.propTypes = {
-	ingredients: PropTypes.arrayOf(IngredientType),
 };
 
 export default IngredientDetailsModal;

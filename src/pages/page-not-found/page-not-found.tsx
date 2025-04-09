@@ -2,7 +2,7 @@ import React from 'react';
 import styles from './page-not-found.module.scss';
 import { Link } from 'react-router-dom';
 
-const PageNotFound = () => {
+const PageNotFound = (): JSX.Element => {
 	return (
 		<div className={styles.container}>
 			<h4 className={`text text_type_main-default ${styles.text}`}>
