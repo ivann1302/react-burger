@@ -14,7 +14,7 @@ import {
 	CHECK_AUTH_REQUEST,
 	CHECK_AUTH_SUCCESS,
 	CHECK_AUTH_FAILED, // ← добавь эти
-} from './../actions/auth-actions';
+} from '../actions/auth-actions';
 
 const initialState = {
 	user: null,

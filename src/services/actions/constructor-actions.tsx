@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
+import { TIngredient } from './../../utils/ingredient-types';
 
-export const addIngredient = (ingredient) => ({
+export const addIngredient = (ingredient: TIngredient) => ({
 	type: ADD_INGREDIENT,
 	payload: {
 		...ingredient,
@@ -8,17 +9,17 @@ export const addIngredient = (ingredient) => ({
 	},
 });
 
-export const addBun = (bun) => ({
+export const addBun = (bun: TIngredient) => ({
 	type: ADD_BUN,
 	payload: bun,
 });
 
-export const removeIngredient = (index) => ({
+export const removeIngredient = (index: string) => ({
 	type: REMOVE_INGREDIENT,
 	payload: index,
 });
 
-export const moveIngredient = (fromIndex, toIndex) => {
+export const moveIngredient = (fromIndex: number, toIndex: number) => {
 	if (typeof fromIndex !== 'number' || typeof toIndex !== 'number') {
 		return { type: NO_ACTION }; // Безопасный пустой экшен
 	}

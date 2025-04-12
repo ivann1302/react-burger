@@ -1,6 +1,6 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
 import { useDispatch } from 'react-redux';
-import { resetPassword } from '../../services/actions/password-action';
+import { resetPassword } from './../../services/actions/password-action';
 import { useNavigate, Link } from 'react-router-dom';
 import styles from './reset-password.module.scss';
 import {
