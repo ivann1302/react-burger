@@ -15,6 +15,7 @@ import {
 	CHECK_AUTH_SUCCESS,
 	CHECK_AUTH_FAILED, // ← добавь эти
 } from '../actions/auth-actions';
+import { IUser } from './../../utils/types';
 
 const initialState = {
 	user: null,
@@ -23,7 +24,24 @@ const initialState = {
 	error: null,
 };
 
-const authReducer = (state = initialState, action) => {
+type TAuthActionTypes =
+	| { type: typeof REGISTER_REQUEST }
+	| { type: typeof REGISTER_SUCCESS; payload: IUser }
+	| { type: typeof REGISTER_FAILED; payload: string }
+	| { type: typeof LOGIN_REQUEST }
+	| { type: typeof LOGIN_SUCCESS; payload: IUser }
+	| { type: typeof LOGIN_FAILED; payload: string }
+	| { type: typeof LOGOUT_REQUEST }
+	| { type: typeof LOGOUT_SUCCESS }
+	| { type: typeof LOGOUT_FAILED; payload: string }
+	| { type: typeof UPDATE_TOKEN_REQUEST }
+	| { type: typeof UPDATE_TOKEN_SUCCESS }
+	| { type: typeof UPDATE_TOKEN_FAILED; payload: string }
+	| { type: typeof CHECK_AUTH_REQUEST }
+	| { type: typeof CHECK_AUTH_SUCCESS; payload: IUser }
+	| { type: typeof CHECK_AUTH_FAILED; payload: string };
+
+const authReducer = (state = initialState, action: TAuthActionTypes) => {
 	switch (action.type) {
 		case REGISTER_REQUEST:
 		case LOGIN_REQUEST:
