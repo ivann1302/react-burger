@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'; // Добавляем useSelector
 import { Tab } from '@ya.praktikum/react-developer-burger-ui-components';
 import styles from './burger-ingredients.module.scss';
 import IngredientsGroup from './ingredients-group/ingredients-group';
-import { TIngredient } from '@utils/ingredient-types';
+import { TIngredient } from './../../utils/ingredient-types';
 
 type TBurgerIngredientsProps = {
 	onIngredientClick: (ingredient: TIngredient) => void;

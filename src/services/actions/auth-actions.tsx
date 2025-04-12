@@ -2,15 +2,17 @@ import {
 	getCookie,
 	setCookie,
 	deleteCookie,
-} from './../../utils/cookies-fucntions';
-import { BASE_URL } from './../../utils/api';
-import { request } from './../../utils/check-response'; // Добавлено
+} from '../../utils/cookies-fucntions';
+import { BASE_URL } from '../../utils/api';
+import { request } from '../../utils/check-response';
+import { AppDispatch } from './../store';
+import { IUser, ITokens } from './../../utils/types';
 
 const REGISTER_URL = `${BASE_URL}/auth/register`;
 const LOGIN_URL = `${BASE_URL}/auth/login`;
 const LOGOUT_URL = `${BASE_URL}/auth/logout`;
 const UPDATE_TOKEN_URL = `${BASE_URL}/auth/token`;
-const USER_URL = `${BASE_URL}/auth/user`; // Добавлено
+const USER_URL = `${BASE_URL}/auth/user`;
 
 export const REGISTER_REQUEST = 'REGISTER_REQUEST';
 export const REGISTER_SUCCESS = 'REGISTER_SUCCESS';
@@ -37,99 +39,112 @@ export const CHECK_AUTH_SUCCESS = 'CHECK_AUTH_SUCCESS';
 export const CHECK_AUTH_FAILED = 'CHECK_AUTH_FAILED';
 
 export const registerRequest = () => ({ type: REGISTER_REQUEST });
-export const registerSuccess = (user) => ({
+export const registerSuccess = (user: IUser) => ({
 	type: REGISTER_SUCCESS,
 	payload: user,
 });
-export const registerFailed = (error) => ({
+export const registerFailed = (error: string) => ({
 	type: REGISTER_FAILED,
 	payload: error,
 });
 
 export const loginRequest = () => ({ type: LOGIN_REQUEST });
-export const loginSuccess = (user) => ({ type: LOGIN_SUCCESS, payload: user });
-export const loginFailed = (error) => ({ type: LOGIN_FAILED, payload: error });
+export const loginSuccess = (user: IUser) => ({
+	type: LOGIN_SUCCESS,
+	payload: user,
+});
+export const loginFailed = (error: string) => ({
+	type: LOGIN_FAILED,
+	payload: error,
+});
 
 export const logoutRequest = () => ({ type: LOGOUT_REQUEST });
 export const logoutSuccess = () => ({ type: LOGOUT_SUCCESS });
-export const logoutFailed = (error) => ({
+export const logoutFailed = (error: string) => ({
 	type: LOGOUT_FAILED,
 	payload: error,
 });
 
 export const updateTokenRequest = () => ({ type: UPDATE_TOKEN_REQUEST });
-export const updateTokenSuccess = (tokens) => ({
+export const updateTokenSuccess = (tokens: ITokens) => ({
 	type: UPDATE_TOKEN_SUCCESS,
 	payload: tokens,
 });
-export const updateTokenFailed = (error) => ({
+export const updateTokenFailed = (error: string) => ({
 	type: UPDATE_TOKEN_FAILED,
 	payload: error,
 });
 
-export const getUserRequest = () => ({ type: GET_USER_REQUEST }); // Добавлено
-export const getUserSuccess = (user) => ({
+export const getUserRequest = () => ({ type: GET_USER_REQUEST });
+export const getUserSuccess = (user: IUser) => ({
 	type: GET_USER_SUCCESS,
 	payload: user,
-}); // Добавлено
-export const getUserFailed = (error) => ({
+});
+export const getUserFailed = (error: string) => ({
 	type: GET_USER_FAILED,
 	payload: error,
-}); // Добавлено
+});
 
 // Регистрация пользователя
-export const register = (email, password, name) => async (dispatch) => {
-	dispatch(registerRequest());
-	try {
-		const response = await request(REGISTER_URL, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({ email, password, name }),
-		});
-		if (response.success) {
-			dispatch(registerSuccess(response.user));
-			setCookie('refreshToken', response.refreshToken, { maxAge: 120000 });
-			const cleanToken = response.accessToken.replace(/^Bearer\s/, '');
-			localStorage.setItem('token', cleanToken);
-		} else {
-			dispatch(registerFailed(response.message));
+export const register =
+	(email: string, password: string, name: string) =>
+	async (dispatch: AppDispatch) => {
+		dispatch(registerRequest());
+		try {
+			const response = await request(REGISTER_URL, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({ email, password, name }),
+			});
+			if (response.success) {
+				dispatch(registerSuccess(response.user));
+				setCookie('refreshToken', response.refreshToken, { maxAge: 120000 });
+				const cleanToken = response.accessToken.replace(/^Bearer\s/, '');
+				localStorage.setItem('token', cleanToken);
+			} else {
+				dispatch(registerFailed(response.message));
+			}
+		} catch (error: unknown) {
+			const message =
+				error instanceof Error ? error.message : 'Неизвестная ошибка';
+			dispatch(registerFailed(message));
 		}
-	} catch (error) {
-		dispatch(registerFailed(error.message));
-	}
-};
+	};
 
 // Авторизация пользователя
-export const login = (email, password) => async (dispatch) => {
-	dispatch(loginRequest());
-	try {
-		const response = await request(LOGIN_URL, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({ email, password }),
-		});
-		if (response.success) {
-			dispatch(loginSuccess(response.user));
-			setCookie('refreshToken', response.refreshToken, { maxAge: 120000 });
-			const cleanToken = response.accessToken.replace(/^Bearer\s/, '');
-			localStorage.setItem('token', cleanToken);
-			return true;
-		} else {
-			dispatch(loginFailed(response.message));
+export const login =
+	(email: string, password: string) => async (dispatch: AppDispatch) => {
+		dispatch(loginRequest());
+		try {
+			const response = await request(LOGIN_URL, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({ email, password }),
+			});
+			if (response.success) {
+				dispatch(loginSuccess(response.user));
+				setCookie('refreshToken', response.refreshToken, { maxAge: 120000 });
+				const cleanToken = response.accessToken.replace(/^Bearer\s/, '');
+				localStorage.setItem('token', cleanToken);
+				return true;
+			} else {
+				dispatch(loginFailed(response.message));
+				return false;
+			}
+		} catch (error: unknown) {
+			const message =
+				error instanceof Error ? error.message : 'Неизвестная ошибка';
+			dispatch(loginFailed(message));
 			return false;
 		}
-	} catch (error) {
-		dispatch(loginFailed(error.message));
-		return false;
-	}
-};
+	};
 
 // Выход из системы
-export const logout = () => async (dispatch) => {
+export const logout = () => async (dispatch: AppDispatch) => {
 	dispatch(logoutRequest());
 	try {
 		const refreshToken = getCookie('refreshToken');
@@ -156,13 +171,15 @@ export const logout = () => async (dispatch) => {
 		} else {
 			dispatch(logoutFailed(response.message));
 		}
-	} catch (error) {
-		dispatch(logoutFailed(error.message));
+	} catch (error: unknown) {
+		const message =
+			error instanceof Error ? error.message : 'Неизвестная ошибка';
+		dispatch(logoutFailed(message));
 	}
 };
 
 // Обновление токена
-export const updateToken = () => async (dispatch) => {
+export const updateToken = () => async (dispatch: AppDispatch) => {
 	dispatch(updateTokenRequest());
 	try {
 		const refreshToken = getCookie('refreshToken');
@@ -185,13 +202,15 @@ export const updateToken = () => async (dispatch) => {
 		} else {
 			dispatch(updateTokenFailed(response.message));
 		}
-	} catch (error) {
-		dispatch(updateTokenFailed(error.message));
+	} catch (error: unknown) {
+		const message =
+			error instanceof Error ? error.message : 'Неизвестная ошибка';
+		dispatch(updateTokenFailed(message));
 	}
 };
 
 // Получение данных пользователя
-export const getUser = () => async (dispatch) => {
+export const getUser = () => async (dispatch: AppDispatch) => {
 	dispatch(getUserRequest());
 	try {
 		let token = localStorage.getItem('token');
@@ -229,23 +248,24 @@ export const getUser = () => async (dispatch) => {
 		} else {
 			dispatch(getUserFailed(response.message));
 		}
-	} catch (error) {
-		dispatch(getUserFailed(error.message));
+	} catch (error: unknown) {
+		const message =
+			error instanceof Error ? error.message : 'Неизвестная ошибка';
+		dispatch(getUserFailed(message));
 	}
 };
 
 export const checkAuthRequest = () => ({ type: CHECK_AUTH_REQUEST });
-export const checkAuthSuccess = (user) => ({
+export const checkAuthSuccess = (user: IUser) => ({
 	type: CHECK_AUTH_SUCCESS,
 	payload: user,
 });
-export const checkAuthFailed = (error) => ({
+export const checkAuthFailed = (error: string) => ({
 	type: CHECK_AUTH_FAILED,
 	payload: error,
 });
 
-export const checkAuth = () => async (dispatch) => {
-	console.log('Token in checkAuth:', token);
+export const checkAuth = () => async (dispatch: AppDispatch) => {
 	dispatch(checkAuthRequest());
 	try {
 		const token = localStorage.getItem('token');
@@ -266,7 +286,9 @@ export const checkAuth = () => async (dispatch) => {
 		} else {
 			dispatch(checkAuthFailed('Токен отсутствует'));
 		}
-	} catch (error) {
-		dispatch(checkAuthFailed(error.message));
+	} catch (error: unknown) {
+		const message =
+			error instanceof Error ? error.message : 'Неизвестная ошибка';
+		dispatch(checkAuthFailed(message));
 	}
 };

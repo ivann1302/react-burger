@@ -6,7 +6,7 @@ import {
 	Button,
 	CurrencyIcon,
 } from '@ya.praktikum/react-developer-burger-ui-components';
-import { TIngredient } from '../../../utils/ingredient-types';
+import { TIngredient } from './../../../utils/ingredient-types';
 import styles from './order-block.module.scss';
 
 export default function OrderBlock(): JSX.Element {
