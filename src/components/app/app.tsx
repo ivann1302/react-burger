@@ -1,8 +1,13 @@
 import React, { useEffect } from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
-import { useDispatch, useSelector, Provider } from 'react-redux';
+import {
+	useDispatch,
+	useSelector,
+	Provider,
+	TypedUseSelectorHook,
+} from 'react-redux';
 
-import store from './../../services/store';
+import { store, AppDispatch, RootState } from './../../services/store';
 import AppHeader from './../app-header/app-header';
 import Home from './../../pages/home/home';
 import LoginPage from './../../pages/login/login';
@@ -30,8 +35,11 @@ import ResetPasswordGuardRoute from '../reset-password-guard-route/reset-passwor
 
 import styles from './app.module.scss';
 
+const useAppDispatch: () => AppDispatch = useDispatch;
+const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
+
 const AppContent = () => {
-	const dispatch = useDispatch();
+	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
 	const location = useLocation();
 
@@ -40,27 +48,22 @@ const AppContent = () => {
 		? location.pathname.split('/ingredients/')[1]
 		: null;
 
-	const { ingredients, loading, error } = useSelector(
-		// @ts-expect-error 'redux'
+	const { ingredients, loading, error } = useAppSelector(
 		(state) => state.ingredients
 	);
-	// @ts-expect-error 'redux'
-	const { isAuthenticated } = useSelector((state) => state.auth);
-	const { selectedIngredient } = useSelector(
-		// @ts-expect-error 'redux'
+	const { isAuthenticated } = useAppSelector((state) => state.auth);
+	const { selectedIngredient } = useAppSelector(
 		(state) => state.ingredientDetails
 	);
-	// @ts-expect-error 'redux'
-	const { orderData } = useSelector((state) => state.order);
+
+	const { orderData } = useAppSelector((state) => state.order);
 
 	// Определяем фон — откуда мы пришли, если был клик по ингредиенту
 	const background = location.state?.background || null;
 
 	// Загружаем ингредиенты и авторизацию
 	useEffect(() => {
-		// @ts-expect-error 'redux'
 		dispatch(fetchIngredients());
-		// @ts-expect-error 'redux'
 		dispatch(checkAuth());
 
 		const token = localStorage.getItem('token');
@@ -116,7 +119,7 @@ const AppContent = () => {
 	};
 
 	if (loading) return <div>Загрузка...</div>;
-	if (error) return <div>Ошибка: {error}</div>;
+	if (error) return <div>Ошибка: {error.message}</div>;
 
 	return (
 		<>

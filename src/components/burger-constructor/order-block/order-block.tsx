@@ -1,5 +1,5 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, TypedUseSelectorHook } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { createOrder } from '../../../services/actions/order-actions';
 import {
@@ -7,15 +7,18 @@ import {
 	CurrencyIcon,
 } from '@ya.praktikum/react-developer-burger-ui-components';
 import { TIngredient } from './../../../utils/ingredient-types';
+import { AppDispatch, RootState } from './../../../services/store';
 import styles from './order-block.module.scss';
 
+const useAppDispatch: () => AppDispatch = useDispatch;
+const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
+
 export default function OrderBlock(): JSX.Element {
-	const dispatch = useDispatch();
+	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
 	const location = useLocation();
-	const isAuthenticated: boolean = useSelector(
-		// @ts-expect-error типизация auth
-		(state) => state.auth.isAuthenticated
+	const isAuthenticated = Boolean(
+		useAppSelector((state) => state.auth.isAuthenticated)
 	);
 
 	const {
@@ -24,20 +27,14 @@ export default function OrderBlock(): JSX.Element {
 	}: {
 		bun: TIngredient | null;
 		ingredients: TIngredient[];
-	} = useSelector(
-		// @ts-expect-error 'redux'
-		(state) => state.burgerConstructor
-	);
+	} = useAppSelector((state) => state.burgerConstructor);
 	const {
 		loading = false,
 		error = null,
 	}: {
 		loading: boolean;
 		error: string | null;
-	} = useSelector(
-		// @ts-expect-error 'redux'
-		(state) => state.order ?? {}
-	);
+	} = useAppSelector((state) => state.order ?? {});
 
 	// Рассчитываем итоговую стоимость
 	const totalPrice: number =
@@ -61,8 +58,9 @@ export default function OrderBlock(): JSX.Element {
 			return;
 		}
 
-		const orderIngredients = [bun, ...ingredients, bun].map((item) => item._id);
-		// @ts-expect-error 'redux'
+		const orderIngredients = [bun, ...ingredients, bun].filter(
+			Boolean
+		) as TIngredient[];
 		dispatch(createOrder(orderIngredients));
 		navigate('/login', { state: { from: location } });
 	};
