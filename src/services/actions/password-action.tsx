@@ -1,6 +1,5 @@
 import { AppDispatch } from '@services/store';
 import { BASE_URL } from '../../utils/api';
-import { ITokens } from '@utils/types';
 
 const FORGOT_PASSWORD_URL = `${BASE_URL}/password-reset`;
 const RESET_PASSWORD_URL = `${BASE_URL}/password-reset/reset`;
@@ -13,29 +12,39 @@ export const RESET_PASSWORD_REQUEST = 'RESET_PASSWORD_REQUEST';
 export const RESET_PASSWORD_SUCCESS = 'RESET_PASSWORD_SUCCESS';
 export const RESET_PASSWORD_FAILED = 'RESET_PASSWORD_FAILED';
 
+export interface IResetPasswordData {
+	password: string;
+	token: string;
+}
+
+interface IApiResponse {
+	success: boolean;
+	message?: string;
+}
+
 export const forgotPasswordRequest = () => ({
-	type: FORGOT_PASSWORD_REQUEST,
+	type: FORGOT_PASSWORD_REQUEST as typeof FORGOT_PASSWORD_REQUEST,
 });
 
 export const forgotPasswordSuccess = () => ({
-	type: FORGOT_PASSWORD_SUCCESS,
+	type: FORGOT_PASSWORD_SUCCESS as typeof FORGOT_PASSWORD_SUCCESS,
 });
 
-export const forgotPasswordFailed = (error: unknown) => ({
-	type: FORGOT_PASSWORD_FAILED,
+export const forgotPasswordFailed = (error: string) => ({
+	type: FORGOT_PASSWORD_FAILED as typeof FORGOT_PASSWORD_FAILED,
 	payload: error,
 });
 
 export const resetPasswordRequest = () => ({
-	type: RESET_PASSWORD_REQUEST,
+	type: RESET_PASSWORD_REQUEST as typeof RESET_PASSWORD_REQUEST,
 });
 
 export const resetPasswordSuccess = () => ({
-	type: RESET_PASSWORD_SUCCESS,
+	type: RESET_PASSWORD_SUCCESS as typeof RESET_PASSWORD_SUCCESS,
 });
 
-export const resetPasswordFailed = (error: unknown) => ({
-	type: RESET_PASSWORD_FAILED,
+export const resetPasswordFailed = (error: string) => ({
+	type: RESET_PASSWORD_FAILED as typeof RESET_PASSWORD_FAILED,
 	payload: error,
 });
 
@@ -51,12 +60,15 @@ export const forgotPassword =
 				},
 				body: JSON.stringify({ email }),
 			});
-			const data = await response.json();
-			if (data.success) {
+
+			const responseData: IApiResponse = await response.json();
+
+			if (responseData.success) {
 				dispatch(forgotPasswordSuccess());
 				return true;
 			} else {
-				dispatch(forgotPasswordFailed(data.message));
+				const errorMessage = responseData.message || 'Неизвестная ошибка';
+				dispatch(forgotPasswordFailed(errorMessage));
 				return false;
 			}
 		} catch (error) {
@@ -69,7 +81,7 @@ export const forgotPassword =
 
 // Экшен для сброса пароля
 export const resetPassword =
-	(password: string, token: ITokens) => async (dispatch: AppDispatch) => {
+	(data: IResetPasswordData) => async (dispatch: AppDispatch) => {
 		dispatch(resetPasswordRequest());
 		try {
 			const response = await fetch(RESET_PASSWORD_URL, {
@@ -77,14 +89,17 @@ export const resetPassword =
 				headers: {
 					'Content-Type': 'application/json',
 				},
-				body: JSON.stringify({ password, token }),
+				body: JSON.stringify(data),
 			});
-			const data = await response.json();
-			if (data.success) {
+
+			const responseData: IApiResponse = await response.json();
+
+			if (responseData.success) {
 				dispatch(resetPasswordSuccess());
 				return true;
 			} else {
-				dispatch(resetPasswordFailed(data.message));
+				const errorMessage = responseData.message || 'Неизвестная ошибка';
+				dispatch(resetPasswordFailed(errorMessage));
 				return false;
 			}
 		} catch (error) {

@@ -7,10 +7,16 @@ import {
 } from '../actions/constructor-actions';
 import { TIngredient } from '@utils/ingredient-types';
 
+// Тип для ингредиента в конструкторе
+export type TConstructorIngredient = TIngredient & {
+	uniqueId: string;
+	index?: number; // опциональное поле для индекса
+};
+
 // Начальное состояние
 const initialState = {
 	bun: null as TIngredient | null,
-	ingredients: [] as TIngredient[],
+	ingredients: [] as TConstructorIngredient[],
 };
 
 // Тип состояния
@@ -19,7 +25,7 @@ type IConstructorState = typeof initialState;
 // Типы экшенов
 type TAddIngredientAction = {
 	type: typeof ADD_INGREDIENT;
-	payload: TIngredient;
+	payload: TConstructorIngredient;
 };
 
 type TAddBunAction = {
@@ -29,7 +35,7 @@ type TAddBunAction = {
 
 type TRemoveIngredientAction = {
 	type: typeof REMOVE_INGREDIENT;
-	payload: number;
+	payload: string;
 };
 
 type TMoveIngredientAction = {
@@ -60,7 +66,13 @@ const constructorReducer = (
 		case ADD_INGREDIENT:
 			return {
 				...state,
-				ingredients: [...state.ingredients, action.payload],
+				ingredients: [
+					...state.ingredients,
+					{
+						...action.payload,
+						index: state.ingredients.length, // добавляем индекс
+					},
+				],
 			};
 
 		case ADD_BUN:
@@ -70,14 +82,11 @@ const constructorReducer = (
 			};
 
 		case REMOVE_INGREDIENT: {
-			const ingredientsCopy = [...state.ingredients];
-			ingredientsCopy.splice(action.payload, 1);
 			return {
 				...state,
-				ingredients: ingredientsCopy.map((item, idx) => ({
-					...item,
-					index: idx,
-				})),
+				ingredients: state.ingredients.filter(
+					(item) => item.uniqueId !== action.payload
+				),
 			};
 		}
 
@@ -97,11 +106,12 @@ const constructorReducer = (
 			const [movedItem] = ingredientsCopy.splice(fromIndex, 1);
 			ingredientsCopy.splice(toIndex, 0, movedItem);
 
+			// Обновляем индексы после перемещения
 			return {
 				...state,
-				ingredients: ingredientsCopy.map((item, idx) => ({
+				ingredients: ingredientsCopy.map((item, index) => ({
 					...item,
-					index: idx,
+					index,
 				})),
 			};
 		}

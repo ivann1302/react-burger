@@ -2,6 +2,7 @@ import React, { useState, ChangeEvent, FormEvent } from 'react';
 import { useDispatch } from 'react-redux';
 import { resetPassword } from './../../services/actions/password-action';
 import { useNavigate, Link } from 'react-router-dom';
+import { AppDispatch } from '@services/store';
 import styles from './reset-password.module.scss';
 import {
 	Input,
@@ -9,10 +10,12 @@ import {
 	Button,
 } from '@ya.praktikum/react-developer-burger-ui-components';
 
+const useAppDispatch: () => AppDispatch = useDispatch;
+
 const ResetPasswordPage = (): JSX.Element => {
 	const [password, setPassword] = useState('');
 	const [token, setToken] = useState('');
-	const dispatch = useDispatch();
+	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
 
 	const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -25,8 +28,7 @@ const ResetPasswordPage = (): JSX.Element => {
 
 	const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		// @ts-expect-error 'redux'
-		dispatch(resetPassword(password, token)).then((success) => {
+		dispatch(resetPassword({ password, token })).then((success) => {
 			if (success) {
 				sessionStorage.removeItem('canResetPassword');
 				navigate('/login');

@@ -2,7 +2,6 @@ import { BASE_URL } from '../../utils/api';
 import { request } from '../../utils/check-response';
 import { AppDispatch } from './../store';
 import { IUser } from './../../utils/types';
-import { TIngredient } from '@utils/ingredient-types';
 
 export const GET_USER_REQUEST = 'GET_USER_REQUEST';
 export const GET_USER_SUCCESS = 'GET_USER_SUCCESS';
@@ -53,23 +52,22 @@ export const getUser = () => async (dispatch: AppDispatch) => {
 };
 
 // Обновление данных пользователя
-export const updateUser =
-	(data: TIngredient[]) => async (dispatch: AppDispatch) => {
-		dispatch(updateUserRequest());
-		try {
-			const token = localStorage.getItem('token');
-			const response = await request(`${BASE_URL}/auth/user`, {
-				method: 'PATCH',
-				headers: {
-					'Content-Type': 'application/json',
-					Authorization: `Bearer ${token}`,
-				},
-				body: JSON.stringify(data),
-			});
-			dispatch(updateUserSuccess(response.user));
-		} catch (error) {
-			const message =
-				error instanceof Error ? error.message : 'Неизвестная ошибка';
-			dispatch(updateUserFailed(message));
-		}
-	};
+export const updateUser = (data: IUser) => async (dispatch: AppDispatch) => {
+	dispatch(updateUserRequest());
+	try {
+		const token = localStorage.getItem('token');
+		const response = await request(`${BASE_URL}/auth/user`, {
+			method: 'PATCH',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`,
+			},
+			body: JSON.stringify(data),
+		});
+		dispatch(updateUserSuccess(response.user));
+	} catch (error) {
+		const message =
+			error instanceof Error ? error.message : 'Неизвестная ошибка';
+		dispatch(updateUserFailed(message));
+	}
+};

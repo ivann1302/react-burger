@@ -2,6 +2,7 @@ import React, { useState, ChangeEvent, FormEvent } from 'react';
 import { useDispatch } from 'react-redux';
 import { register } from '../../services/actions/auth-actions';
 import { useNavigate, Link } from 'react-router-dom';
+import { AppDispatch } from '@services/store';
 import styles from './register.module.scss';
 import {
 	Input,
@@ -10,11 +11,13 @@ import {
 	Button,
 } from '@ya.praktikum/react-developer-burger-ui-components';
 
+const useAppDispatch: () => AppDispatch = useDispatch;
+
 const RegisterPage = (): JSX.Element => {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [name, setName] = useState('');
-	const dispatch = useDispatch();
+	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
 
 	const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -31,7 +34,6 @@ const RegisterPage = (): JSX.Element => {
 
 	const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		// @ts-expect-error 'redux'
 		dispatch(register(email, password, name));
 		navigate('/login');
 	};

@@ -10,19 +10,20 @@ import {
 	moveIngredient,
 } from '../../services/actions/constructor-actions';
 import { TIngredient } from '@utils/ingredient-types';
+import { RootState, AppDispatch } from './../../services/store';
 import styles from './burger-constructor.module.scss';
 
 type TDragItem = TIngredient & { uniqueId?: string };
 
+const useAppDispatch: () => AppDispatch = useDispatch;
+
 export default function BurgerConstructor() {
-	const dispatch = useDispatch();
+	const dispatch = useAppDispatch();
 
 	// Получаем ингредиенты из Redux
-	// @ts-expect-error 'reudx'
-	const bun = useSelector((state) => state.burgerConstructor.bun);
+	const bun = useSelector((state: RootState) => state.burgerConstructor.bun);
 	const ingredients = useSelector(
-		// @ts-expect-error 'reudx'
-		(state) => state.burgerConstructor.ingredients ?? []
+		(state: RootState) => state.burgerConstructor.ingredients ?? []
 	);
 
 	const handleRemoveIngredient = (index: string) => {
