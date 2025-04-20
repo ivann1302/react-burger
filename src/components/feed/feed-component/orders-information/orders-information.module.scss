@@ -1,0 +1,15 @@
+.container {
+	width: 580px;
+	.queues {
+		display: flex;
+		flex-direction: row;
+		gap: 36px;
+		margin-bottom: 60px;
+	}
+
+	.counter {
+		display: flex;
+		flex-direction: column;
+		gap: 60px;
+	}
+}
