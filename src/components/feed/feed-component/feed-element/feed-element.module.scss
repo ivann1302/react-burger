@@ -1,0 +1,32 @@
+.container {
+	width: 584px;
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+	background-color: #1c1c21;
+	border-radius: 40px;
+
+	.firstBlock {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+
+		p {
+			color: #8585ad;
+		}
+	}
+
+	.secondBlock {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		gap: 24px;
+
+		.orderPrice {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			gap: 8px;
+		}
+	}
+}

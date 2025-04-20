@@ -27,7 +27,7 @@ const ForgotPasswordPage = (): JSX.Element => {
 
 		const success = await dispatch(forgotPassword(email));
 		if (success) {
-			sessionStorage.setItem('canResetPassword', 'true'); // 💾 флаг для /reset-password
+			sessionStorage.setItem('canResetPassword', 'true'); // флаг для /reset-password
 			navigate('/reset-password');
 		} else {
 			setError('Пользователь не найден или неверный email');

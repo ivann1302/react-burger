@@ -17,6 +17,7 @@ import ForgotPasswordPage from './../../pages/forgot-password/forgot-password';
 import ProfilePage from './../../pages/profile/profile';
 import PageNotFound from './../../pages/page-not-found/page-not-found';
 import IngredientPage from './../../pages/ingredient/ingredient';
+import FeedPage from './../../pages/feed/feed-page';
 
 import Modal from '../modal/modal';
 import OrderDetails from '../burger-constructor/order-details/oreder-details';
@@ -174,6 +175,7 @@ const AppContent = () => {
 						}
 					/>
 					<Route path='/ingredients/:id' element={<IngredientPage />} />
+					<Route path='/feed' element={<FeedPage />} />
 					<Route path='*' element={<PageNotFound />} />
 				</Routes>
 
