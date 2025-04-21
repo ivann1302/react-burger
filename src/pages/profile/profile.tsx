@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, ChangeEvent } from 'react';
 import { useDispatch, useSelector, TypedUseSelectorHook } from 'react-redux';
-import { useNavigate, Link } from 'react-router-dom';
+import { Outlet, useNavigate, Link, useLocation } from 'react-router-dom';
 import { logout } from '../../services/actions/auth-actions';
 import { getUser, updateUser } from '../../services/actions/user-actions';
 import { AppDispatch, RootState } from '@services/store';
@@ -24,6 +24,8 @@ type TUserUpdateData = {
 const ProfilePage = (): JSX.Element => {
 	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
+	const location = useLocation();
+	const isProfilePage = location.pathname === '/profile';
 
 	const { user } = useAppSelector((state) => state.auth);
 
@@ -97,16 +99,20 @@ const ProfilePage = (): JSX.Element => {
 	};
 
 	return (
-		<section className={styles.container}>
-			<div className={styles.tabs}>
+		<section className={`${styles.container}`}>
+			<nav className={styles.tabs}>
 				<Link
 					to='/profile'
-					className={`${styles.active} ${styles.link} text text_type_main-medium mt-4`}>
+					className={`${isProfilePage ? styles.active : ''} ${
+						styles.link
+					} text text_type_main-medium mt-4`}>
 					Профиль
 				</Link>
 				<Link
 					to='/profile/orders'
-					className={`${styles.link} text text_type_main-medium`}>
+					className={`${
+						location.pathname === '/profile/orders' ? styles.active : ''
+					} ${styles.link} text text_type_main-medium`}>
 					История заказов
 				</Link>
 				<button
@@ -117,47 +123,53 @@ const ProfilePage = (): JSX.Element => {
 				<p className={`${styles.description} text text_type_main-small`}>
 					В этом разделе вы можете изменить свои персональные данные
 				</p>
+			</nav>
+
+			<div className={styles.content}>
+				<Outlet /> {/* Здесь будут отображаться вложенные маршруты */}
 			</div>
 
-			<div className={styles.form}>
-				<Input
-					type='text'
-					placeholder='Имя'
-					onChange={handleChange}
-					value={formData.name || ''}
-					name='name'
-					icon='EditIcon'
-				/>
-				<EmailInput
-					onChange={handleChange}
-					value={formData.email || ''}
-					name='email'
-					placeholder='Логин'
-					isIcon={true}
-				/>
-				<PasswordInput
-					onChange={handleChange}
-					value={formData.password || ''}
-					name='password'
-					placeholder='Пароль'
-					icon='EditIcon'
-				/>
+			{isProfilePage && (
+				<div className={styles.form}>
+					<Input
+						type='text'
+						placeholder='Имя'
+						onChange={handleChange}
+						value={formData.name || ''}
+						name='name'
+						icon='EditIcon'
+					/>
+					<EmailInput
+						onChange={handleChange}
+						value={formData.email || ''}
+						name='email'
+						placeholder='Логин'
+						isIcon={true}
+					/>
+					<PasswordInput
+						onChange={handleChange}
+						value={formData.password || ''}
+						name='password'
+						placeholder='Пароль'
+						icon='EditIcon'
+					/>
 
-				{isEditing && (
-					<div className={styles.buttons}>
-						<Button type='secondary' htmlType='button' onClick={handleCancel}>
-							Отмена
-						</Button>
-						<Button
-							type='primary'
-							htmlType='button'
-							onClick={handleSave}
-							disabled={!formData.name || !formData.email}>
-							Сохранить
-						</Button>
-					</div>
-				)}
-			</div>
+					{isEditing && (
+						<div className={styles.buttons}>
+							<Button type='secondary' htmlType='button' onClick={handleCancel}>
+								Отмена
+							</Button>
+							<Button
+								type='primary'
+								htmlType='button'
+								onClick={handleSave}
+								disabled={!formData.name || !formData.email}>
+								Сохранить
+							</Button>
+						</div>
+					)}
+				</div>
+			)}
 		</section>
 	);
 };

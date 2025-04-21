@@ -15,6 +15,7 @@ import RegisterPage from './../../pages/register/register';
 import ResetPasswordPage from './../../pages/reset-password/reset-password';
 import ForgotPasswordPage from './../../pages/forgot-password/forgot-password';
 import ProfilePage from './../../pages/profile/profile';
+import ProfileOrders from './../../pages/profile/profle-orders/profile-orders';
 import PageNotFound from './../../pages/page-not-found/page-not-found';
 import IngredientPage from './../../pages/ingredient/ingredient';
 import FeedPage from './../../pages/feed/feed-page';
@@ -172,8 +173,9 @@ const AppContent = () => {
 							<ProtectedRoute>
 								<ProfilePage />
 							</ProtectedRoute>
-						}
-					/>
+						}>
+						<Route path='orders' element={<ProfileOrders />} />
+					</Route>
 					<Route path='/ingredients/:id' element={<IngredientPage />} />
 					<Route path='/feed' element={<FeedPage />} />
 					<Route path='*' element={<PageNotFound />} />
