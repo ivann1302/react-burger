@@ -1,0 +1,60 @@
+.container {
+	display: flex;
+	flex-direction: column;
+	width: 640px;
+
+	.number {
+		text-align: center;
+	}
+
+	.status {
+		color: #00cccc;
+	}
+
+	.squad {
+		margin-top: 60px;
+		margin-bottom: 24px;
+	}
+
+	.list {
+		list-style: none;
+		padding: 0;
+
+		li {
+			display: flex;
+			flex-direction: row;
+			justify-content: space-between;
+
+			.ingredient_block {
+				display: flex;
+				flex-direction: row;
+				gap: 16px;
+			}
+
+			.price_block {
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+				gap: 8px;
+			}
+		}
+	}
+
+	.bottom_container {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+
+		.data {
+			color: #8585ad;
+		}
+
+		.price_block {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			gap: 8px;
+		}
+	}
+}

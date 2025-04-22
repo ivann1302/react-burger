@@ -19,6 +19,7 @@ import ProfileOrders from './../../pages/profile/profle-orders/profile-orders';
 import PageNotFound from './../../pages/page-not-found/page-not-found';
 import IngredientPage from './../../pages/ingredient/ingredient';
 import FeedPage from './../../pages/feed/feed-page';
+import OrderPage from './../../pages/order/order-page';
 
 import Modal from '../modal/modal';
 import OrderDetails from '../burger-constructor/order-details/oreder-details';
@@ -178,6 +179,7 @@ const AppContent = () => {
 					</Route>
 					<Route path='/ingredients/:id' element={<IngredientPage />} />
 					<Route path='/feed' element={<FeedPage />} />
+					<Route path='/feed/id' element={<OrderPage />} />
 					<Route path='*' element={<PageNotFound />} />
 				</Routes>
 
