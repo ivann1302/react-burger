@@ -7,6 +7,7 @@ type TFeedElement = {
 	ingredients: any[];
 	price: number;
 	date?: string;
+	onClick?: () => void;
 };
 
 const FeedElement = ({
@@ -15,6 +16,7 @@ const FeedElement = ({
 	ingredients,
 	price,
 	date = 'Сегодня, 16:20',
+	onClick,
 }: TFeedElement) => {
 	// Функция для отображения ингредиентов
 	const renderIngredients = () => {
@@ -45,12 +47,27 @@ const FeedElement = ({
 		);
 	};
 
+	// Обработчик нажатия клавиш
+	const handleKeyDown = (e: React.KeyboardEvent) => {
+		if (e.key === 'Enter' || e.key === ' ') {
+			e.preventDefault();
+			onClick?.();
+		}
+	};
+
 	// Вычисляем общую стоимость
 	const totalPrice =
 		price || ingredients.reduce((sum, ing) => sum + ing.price, 0);
 
 	return (
-		<div className={`${styles.container} p-6`}>
+		<div
+			className={`${styles.container} p-6`}
+			onClick={onClick}
+			onKeyDown={handleKeyDown}
+			tabIndex={onClick ? 0 : -1}
+			role={onClick ? 'button' : undefined}
+			aria-label={onClick ? `Заказ ${number}: ${name}` : undefined} // Описание для screen readers
+			style={{ cursor: onClick ? 'pointer' : 'default' }}>
 			<div className={styles.header}>
 				<span className='text text_type_digits-default'>#{number}</span>
 				<span className='text text_type_main-default text_color_inactive'>
