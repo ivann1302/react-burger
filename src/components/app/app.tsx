@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import {
-	useDispatch,
+	useDispatch as useReduxDispatch,
 	useSelector,
 	Provider,
 	TypedUseSelectorHook,
@@ -38,7 +38,7 @@ import ResetPasswordGuardRoute from '../reset-password-guard-route/reset-passwor
 
 import styles from './app.module.scss';
 
-const useAppDispatch: () => AppDispatch = useDispatch;
+export const useAppDispatch = () => useReduxDispatch<AppDispatch>();
 const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
 const AppContent = () => {
@@ -179,7 +179,11 @@ const AppContent = () => {
 					</Route>
 					<Route path='/ingredients/:id' element={<IngredientPage />} />
 					<Route path='/feed' element={<FeedPage />} />
-					<Route path='/feed/id' element={<OrderPage />} />
+					<Route path='/feed/:id' element={<OrderPage />} />
+					<Route
+						path='/profile/orders/:id'
+						element={<OrderPage isProfileOrder />}
+					/>
 					<Route path='*' element={<PageNotFound />} />
 				</Routes>
 

@@ -1,4 +1,5 @@
-import { combineReducers } from 'redux';
+import { combineReducers, AnyAction } from 'redux';
+import { ThunkDispatch } from 'redux-thunk';
 import ingredientsReducer from './ingredients-reducer';
 import ingredientDetailsReducer from './ingredient-details-reducer';
 import orderReducer from './order-reducer';
@@ -7,18 +8,11 @@ import authReducer from './auth-reducer';
 import passwordReducer from './password-reducer';
 import userReducer from './user-reducer';
 import resetPasswordReducer from './reset-password-reducer';
+import feedOrdersReducer from './feed-order-reducer';
+import profileOrdersReducer from './profile-orders-reducer';
 
-// Создаем интерфейс для всего состояния приложения
-export interface RootState {
-	ingredients: ReturnType<typeof ingredientsReducer>;
-	ingredientDetails: ReturnType<typeof ingredientDetailsReducer>;
-	order: ReturnType<typeof orderReducer>;
-	burgerConstructor: ReturnType<typeof constructorReducer>;
-	auth: ReturnType<typeof authReducer>;
-	password: ReturnType<typeof passwordReducer>;
-	user: ReturnType<typeof userReducer>;
-	resetPassword: ReturnType<typeof resetPasswordReducer>;
-}
+// Тип для dispatch с поддержкой thunk
+export type AppDispatch = ThunkDispatch<RootState, unknown, AnyAction>;
 
 const rootReducer = combineReducers({
 	ingredients: ingredientsReducer,
@@ -29,9 +23,9 @@ const rootReducer = combineReducers({
 	password: passwordReducer,
 	user: userReducer,
 	resetPassword: resetPasswordReducer,
+	feedOrders: feedOrdersReducer,
+	profileOrders: profileOrdersReducer,
 });
 
-// Альтернативный способ получения RootState
-export type AppState = ReturnType<typeof rootReducer>;
-
-export { rootReducer };
+export type RootState = ReturnType<typeof rootReducer>;
+export default rootReducer;

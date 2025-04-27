@@ -2,32 +2,29 @@ import {
 	legacy_createStore as createStore,
 	applyMiddleware,
 	compose,
+	Reducer,
 	AnyAction,
 } from 'redux';
 import { thunk, ThunkDispatch } from 'redux-thunk';
-import { rootReducer } from './reducers/root-reducer';
+import rootReducer from './reducers/root-reducer';
+import feedOrdersWsMiddleware from './middlewares/feed-orders-ws-middlewares';
+import profileOrdersWsMiddleware from './middlewares/profile-orders-ws-middleware';
 
-// Добавляем поддержку Redux DevTools для TypeScript
 declare global {
 	interface Window {
 		__REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: typeof compose;
 	}
 }
 
-// Правильно типизируем состояние хранилища
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
+const middleware = [thunk, feedOrdersWsMiddleware, profileOrdersWsMiddleware()];
+
+export const store = createStore(
+	rootReducer as Reducer<Partial<RootState>>,
+	composeEnhancers(applyMiddleware(...middleware))
+);
+
 export type RootState = ReturnType<typeof rootReducer>;
 export type AppDispatch = ThunkDispatch<RootState, unknown, AnyAction>;
-
-// Настройка Redux DevTools
-const composeEnhancers =
-	(typeof window === 'object' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) ||
-	compose;
-
-// Создаем усилитель (enhancer) с middleware
-const enhancer = composeEnhancers(applyMiddleware(thunk));
-
-// Создаем хранилище
-// @ts-expect-error 'Доделать в конце'
-export const store = createStore(rootReducer, enhancer);
-
 export default store;

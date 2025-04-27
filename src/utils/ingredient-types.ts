@@ -12,3 +12,14 @@ export type TIngredient = {
 	image_large: string;
 	__v: number;
 };
+
+export type TOrder = {
+	_id?: string;
+	number: string;
+	name: string;
+	status: 'Выполнен' | 'Готовится' | 'Отменен';
+	ingredientIds: string[]; // Массив ID ингредиентов
+	createdAt?: string;
+	updatedAt?: string;
+	price?: number;
+};

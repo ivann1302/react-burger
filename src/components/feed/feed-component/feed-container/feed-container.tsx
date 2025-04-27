@@ -4,30 +4,7 @@ import ingredients from './../../../../utils/data';
 import style from './feed-container.module.scss';
 import Modal from './../../../modal/modal';
 import FeedModal from '../feed-modal/feed-modal';
-
-type TIngredient = {
-	_id: string;
-	name: string;
-	type: string;
-	proteins: number;
-	fat: number;
-	carbohydrates: number;
-	calories: number;
-	price: number;
-	image: string;
-	image_mobile: string;
-	image_large: string;
-	__v: number;
-};
-
-type TOrder = {
-	name: string;
-	number: string;
-	ingredients: TIngredient[];
-	price: number;
-	status: string;
-	createdAt?: string;
-};
+import { TOrder, TIngredient } from '@utils/ingredient-types';
 
 const FeedContainer = () => {
 	const [selectedOrder, setSelectedOrder] = useState<TOrder | null>(null);
@@ -40,33 +17,38 @@ const FeedContainer = () => {
 		setSelectedOrder(null);
 	};
 
+	// Преобразуем ингредиенты в массив ID
+	const typedIngredients = ingredients as TIngredient[];
+	const ingredientIds = typedIngredients.map((ing) => ing._id);
+
 	return (
 		<div className={`${style.container} pr-2`}>
 			<FeedElement
 				name={'Burger1'}
 				number={'333333'}
-				ingredients={ingredients}
+				ingredientIds={ingredientIds} // Передаем массив ID
 				price={480}
 				onClick={() =>
 					handleOrderClick({
 						name: 'Burger',
 						number: '12315',
-						ingredients,
+						ingredientIds: ingredientIds, // Соответствует TOrder
 						price: 480,
 						status: 'Выполнен',
 					})
 				}
 			/>
+
 			<FeedElement
 				name={'Burger2'}
 				number={'2222222'}
-				ingredients={ingredients}
+				ingredientIds={ingredientIds}
 				price={480}
 				onClick={() =>
 					handleOrderClick({
 						name: 'Burger',
 						number: '22222',
-						ingredients,
+						ingredientIds: ingredientIds,
 						price: 480,
 						status: 'Выполнен',
 					})
@@ -75,13 +57,13 @@ const FeedContainer = () => {
 			<FeedElement
 				name={'Burger3'}
 				number={'11111'}
-				ingredients={ingredients}
+				ingredientIds={ingredientIds}
 				price={480}
 				onClick={() =>
 					handleOrderClick({
 						name: 'Burger',
 						number: '12315',
-						ingredients,
+						ingredientIds: ingredientIds,
 						price: 480,
 						status: 'Выполнен',
 					})
@@ -90,13 +72,13 @@ const FeedContainer = () => {
 			<FeedElement
 				name={'Burger4'}
 				number={'555555'}
-				ingredients={ingredients}
+				ingredientIds={ingredientIds}
 				price={480}
 				onClick={() =>
 					handleOrderClick({
 						name: 'Burger',
 						number: '12315',
-						ingredients,
+						ingredientIds: ingredientIds,
 						price: 480,
 						status: 'Выполнен',
 					})
