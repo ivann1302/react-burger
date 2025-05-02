@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector, TypedUseSelectorHook } from 'react-redux';
-import { RootState } from './../../services/store';
+import { RootState } from '@services/reducers/root-reducer';
 import IngredientDetailsModal from '../../components/burger-ingredients/ingredient-details/ingredient-details';
 
 const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;

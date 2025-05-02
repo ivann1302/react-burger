@@ -7,7 +7,8 @@ import {
 	TypedUseSelectorHook,
 } from 'react-redux';
 
-import { store, AppDispatch, RootState } from './../../services/store';
+import { store, AppDispatch } from './../../services/store';
+import { RootState } from '@services/reducers/root-reducer';
 import AppHeader from './../app-header/app-header';
 import Home from './../../pages/home/home';
 import LoginPage from './../../pages/login/login';
@@ -42,7 +43,7 @@ export const useAppDispatch = () => useReduxDispatch<AppDispatch>();
 const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
 const AppContent = () => {
-	const dispatch = useAppDispatch();
+	const dispatch: AppDispatch = useAppDispatch();
 	const navigate = useNavigate();
 	const location = useLocation();
 

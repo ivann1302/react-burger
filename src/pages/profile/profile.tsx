@@ -3,7 +3,8 @@ import { useDispatch, useSelector, TypedUseSelectorHook } from 'react-redux';
 import { Outlet, useNavigate, Link, useLocation } from 'react-router-dom';
 import { logout } from '../../services/actions/auth-actions';
 import { getUser, updateUser } from '../../services/actions/user-actions';
-import { AppDispatch, RootState } from '@services/store';
+import { AppDispatch } from '@services/store';
+import { RootState } from '@services/reducers/root-reducer';
 import styles from './profile.module.scss';
 import {
 	Input,

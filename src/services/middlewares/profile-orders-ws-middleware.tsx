@@ -1,5 +1,4 @@
 import { Middleware } from 'redux';
-import { RootState } from './../reducers/root-reducer';
 import {
 	PROFILE_ORDERS_CONNECT,
 	PROFILE_ORDERS_DISCONNECT,
@@ -10,70 +9,64 @@ import {
 	PROFILE_ORDERS_WS_MESSAGE,
 } from '../actions/profile-orders-actions';
 
-const profileOrdersWsMiddleware = (): Middleware<unknown, RootState> => {
-	return (store) => {
-		let socket: WebSocket | null = null;
+// Type guards остаются без изменений
+const isConnectAction = (
+	action: any
+): action is { type: typeof PROFILE_ORDERS_CONNECT; payload: string } => {
+	return (
+		action.type === PROFILE_ORDERS_CONNECT && typeof action.payload === 'string'
+	);
+};
 
-		return (next) => (action: unknown) => {
-			const { dispatch } = store;
+const isDisconnectAction = (
+	action: any
+): action is { type: typeof PROFILE_ORDERS_DISCONNECT } => {
+	return action.type === PROFILE_ORDERS_DISCONNECT;
+};
 
-			// Проверяем, что action имеет нужную структуру
-			if (typeof action === 'object' && action !== null && 'type' in action) {
-				const typedAction = action as { type: string; payload?: unknown };
+// Упрощенная версия middleware без сложных generic-типов
+const profileOrdersWsMiddleware: Middleware = (store) => {
+	let socket: WebSocket | null = null;
 
-				// Обрабатываем только нужные actions
-				if (typedAction.type === PROFILE_ORDERS_CONNECT) {
-					if (typeof typedAction.payload === 'string') {
-						socket = new WebSocket(typedAction.payload);
-						dispatch({ type: PROFILE_ORDERS_WS_CONNECTING });
-					} else {
-						console.error('WebSocket URL must be a string');
-						return next(action);
-					}
-				}
+	return (next) => (action) => {
+		const { dispatch } = store;
 
-				if (socket) {
-					if (typedAction.type === PROFILE_ORDERS_DISCONNECT) {
-						socket.close();
-						socket = null;
-						return next(action);
-					}
+		if (isConnectAction(action)) {
+			socket = new WebSocket(action.payload);
+			dispatch({ type: PROFILE_ORDERS_WS_CONNECTING });
+		}
 
-					// Настройка обработчиков WebSocket
-					socket.onopen = () => {
-						dispatch({ type: PROFILE_ORDERS_WS_OPEN });
-					};
-
-					socket.onerror = (event) => {
-						dispatch({
-							type: PROFILE_ORDERS_WS_ERROR,
-							payload: `WebSocket error: ${event.type}`,
-						});
-					};
-
-					socket.onclose = () => {
-						dispatch({ type: PROFILE_ORDERS_WS_CLOSE });
-					};
-
-					socket.onmessage = (event) => {
-						try {
-							const data = JSON.parse(event.data);
-							dispatch({
-								type: PROFILE_ORDERS_WS_MESSAGE,
-								payload: data,
-							});
-						} catch (error) {
-							dispatch({
-								type: PROFILE_ORDERS_WS_ERROR,
-								payload: 'Failed to parse WebSocket message',
-							});
-						}
-					};
-				}
+		if (socket) {
+			if (isDisconnectAction(action)) {
+				socket.close();
+				socket = null;
+				return next(action);
 			}
 
-			return next(action);
-		};
+			socket.onopen = () => dispatch({ type: PROFILE_ORDERS_WS_OPEN });
+
+			socket.onerror = (event) =>
+				dispatch({
+					type: PROFILE_ORDERS_WS_ERROR,
+					payload: `WebSocket error: ${event.type}`,
+				});
+
+			socket.onclose = () => dispatch({ type: PROFILE_ORDERS_WS_CLOSE });
+
+			socket.onmessage = (event) => {
+				try {
+					const data = JSON.parse(event.data);
+					dispatch({ type: PROFILE_ORDERS_WS_MESSAGE, payload: data });
+				} catch (error) {
+					dispatch({
+						type: PROFILE_ORDERS_WS_ERROR,
+						payload: 'Failed to parse WebSocket message',
+					});
+				}
+			};
+		}
+
+		return next(action);
 	};
 };
 

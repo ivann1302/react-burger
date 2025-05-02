@@ -1,5 +1,6 @@
 import { Middleware, MiddlewareAPI } from 'redux';
-import { RootState, AppDispatch } from '../reducers/root-reducer';
+import { RootState } from '../reducers/root-reducer';
+import { AppDispatch } from '@services/store';
 import {
 	FEED_ORDERS_CONNECT,
 	FEED_ORDERS_DISCONNECT,

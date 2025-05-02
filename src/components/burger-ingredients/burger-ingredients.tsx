@@ -4,7 +4,7 @@ import { Tab } from '@ya.praktikum/react-developer-burger-ui-components';
 import styles from './burger-ingredients.module.scss';
 import IngredientsGroup from './ingredients-group/ingredients-group';
 import { TIngredient } from './../../utils/ingredient-types';
-import { RootState } from './../../services/store';
+import { RootState } from '@services/reducers/root-reducer';
 
 type TBurgerIngredientsProps = {
 	onIngredientClick: (ingredient: TIngredient) => void;

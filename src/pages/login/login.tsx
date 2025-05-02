@@ -2,7 +2,8 @@ import React, { useState, ChangeEvent, FormEvent } from 'react';
 import { useDispatch, useSelector, TypedUseSelectorHook } from 'react-redux';
 import { useNavigate, useLocation, Navigate, Link } from 'react-router-dom';
 import { login } from '../../services/actions/auth-actions';
-import { RootState, AppDispatch } from './../../services/store';
+import { AppDispatch } from './../../services/store';
+import { RootState } from '@services/reducers/root-reducer';
 import styles from './login.module.scss';
 import {
 	EmailInput,

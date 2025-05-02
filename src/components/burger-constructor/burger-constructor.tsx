@@ -10,7 +10,8 @@ import {
 	moveIngredient,
 } from '../../services/actions/constructor-actions';
 import { TIngredient } from '@utils/ingredient-types';
-import { RootState, AppDispatch } from './../../services/store';
+import { AppDispatch } from './../../services/store';
+import { RootState } from '@services/reducers/root-reducer';
 import styles from './burger-constructor.module.scss';
 
 type TDragItem = TIngredient & { uniqueId?: string };

@@ -1,5 +1,4 @@
-import { combineReducers, AnyAction } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
+import { combineReducers } from 'redux';
 import ingredientsReducer from './ingredients-reducer';
 import ingredientDetailsReducer from './ingredient-details-reducer';
 import orderReducer from './order-reducer';
@@ -10,9 +9,6 @@ import userReducer from './user-reducer';
 import resetPasswordReducer from './reset-password-reducer';
 import feedOrdersReducer from './feed-order-reducer';
 import profileOrdersReducer from './profile-orders-reducer';
-
-// Тип для dispatch с поддержкой thunk
-export type AppDispatch = ThunkDispatch<RootState, unknown, AnyAction>;
 
 const rootReducer = combineReducers({
 	ingredients: ingredientsReducer,

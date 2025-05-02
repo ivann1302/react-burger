@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../services/store';
+import { RootState } from '@services/reducers/root-reducer';
 import OrderComponent from '../../components/feed/feed-component/order/order-component';
 import style from './order-page.module.scss';
 import { FormattedDate } from '@ya.praktikum/react-developer-burger-ui-components';

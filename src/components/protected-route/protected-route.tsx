@@ -1,6 +1,6 @@
 import { useSelector, TypedUseSelectorHook } from 'react-redux';
 import { Navigate, useLocation } from 'react-router-dom';
-import { RootState } from './../../services/store';
+import { RootState } from '@services/reducers/root-reducer';
 
 type TProtectedRouteProps = {
 	children?: React.ReactNode;
