@@ -10,11 +10,14 @@ import {
 	feedOrdersConnect,
 	feedOrdersDisconnect,
 } from '../../../../services/actions/feed-orders-actions';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { TOrder } from '../../../../utils/ingredient-types';
 import { WS_ORDER_ALL_URL } from '@utils/api';
 
 const FeedContainer = () => {
 	const dispatch = useDispatch<AppDispatch>();
+	const navigate = useNavigate();
+	const location = useLocation();
 	const { orders, loading, error, wsConnected } = useSelector(
 		(state: RootState) => state.feedOrders
 	);
@@ -30,14 +33,18 @@ const FeedContainer = () => {
 	}, [dispatch]);
 
 	const handleOrderClick = (order: TOrder) => {
+		// Изменяем URL на номер заказа
+		navigate(`/feed/${order._id}`, {
+			state: { background: location }, // Сохраняем текущий location для возврата
+		});
 		setSelectedOrder(order);
 	};
 
 	const closeModal = () => {
 		setSelectedOrder(null);
+		// Возвращаемся на предыдущий URL при закрытии модалки
+		navigate(-1);
 	};
-
-	console.log('Current state:', { orders, loading, error, wsConnected });
 
 	if (loading && !wsConnected) {
 		return (

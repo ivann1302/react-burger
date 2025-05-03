@@ -3,7 +3,7 @@ import { TOrder } from '@utils/ingredient-types';
 
 type TOrderQueueProps = {
 	title: string;
-	orders: TOrder[]; // Теперь используем TOrder вместо конкретного типа
+	orders: TOrder[];
 };
 
 const OrderQueue = ({ title, orders }: TOrderQueueProps) => {

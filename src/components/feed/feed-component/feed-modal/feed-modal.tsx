@@ -55,7 +55,7 @@ const FeedModal = ({ order }: TFeedModalProps) => {
 					? 'Выполнен'
 					: order.status === 'Готовится'
 					? 'Готовится'
-					: 'Создан'}
+					: 'Выполнен'}
 			</p>
 
 			<p className='text text_type_main-default mb-2'>Состав:</p>

@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from '@services/reducers/root-reducer';
@@ -5,6 +6,9 @@ import OrderComponent from '../../components/feed/feed-component/order/order-com
 import style from './order-page.module.scss';
 import { FormattedDate } from '@ya.praktikum/react-developer-burger-ui-components';
 import { TOrder, TIngredient } from '../../utils/ingredient-types';
+import { fetchFeedOrders } from '../../services/actions/feed-orders-actions';
+import { fetchProfileOrders } from '../../services/actions/profile-orders-actions';
+import { useAppDispatch } from '../../services/store';
 
 type TOrderPageProps = {
 	isProfileOrder?: boolean;
@@ -12,6 +16,16 @@ type TOrderPageProps = {
 
 const OrderPage = ({ isProfileOrder = false }: TOrderPageProps) => {
 	const { id } = useParams<{ id: string }>();
+	const dispatch = useAppDispatch();
+
+	// Загружаем заказы при монтировании
+	useEffect(() => {
+		if (isProfileOrder) {
+			dispatch(fetchProfileOrders());
+		} else {
+			dispatch(fetchFeedOrders());
+		}
+	}, [dispatch, isProfileOrder]);
 
 	// Получаем заказы из соответствующего раздела store
 	const orders = useSelector((state: RootState) =>

@@ -1,6 +1,6 @@
 import { AppDispatch } from '../store';
 import { TOrder } from '../../utils/ingredient-types';
-import { BASE_URL } from '../../utils/api';
+import { WS_ORDER_ALL_URL } from '../../utils/api';
 
 // Типы для действий
 export const FEED_ORDERS_REQUEST = 'FEED_ORDERS_REQUEST';
@@ -15,8 +15,6 @@ export const FEED_ORDERS_WS_OPEN = 'FEED_ORDERS_WS_OPEN';
 export const FEED_ORDERS_WS_CLOSE = 'FEED_ORDERS_WS_CLOSE';
 export const FEED_ORDERS_WS_ERROR = 'FEED_ORDERS_WS_ERROR';
 export const FEED_ORDERS_WS_MESSAGE = 'FEED_ORDERS_WS_MESSAGE';
-
-const feedOrderApi = `${BASE_URL}/orders/all`;
 
 // Типы действий
 type TFeedOrdersRequestAction = {
@@ -122,7 +120,7 @@ export const feedOrdersDisconnect = (): TFeedOrdersDisconnectAction => ({
 export const fetchFeedOrders = () => async (dispatch: AppDispatch) => {
 	dispatch(feedOrdersRequest());
 	try {
-		const response = await fetch(feedOrderApi);
+		const response = await fetch(WS_ORDER_ALL_URL);
 		const data = await response.json();
 
 		if (data.success) {
