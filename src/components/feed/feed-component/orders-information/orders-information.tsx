@@ -1,18 +1,37 @@
+import { useSelector } from 'react-redux';
+import { RootState } from '@services/reducers/root-reducer';
 import OrderCounter from './order-counter/order-counter';
 import OrderQueue from './order-queue/order-queue';
 import styles from './orders-information.module.scss';
+
 const OrdersInformation = () => {
+	const { orders, total, totalToday } = useSelector(
+		(state: RootState) => state.feedOrders
+	);
+
+	// Добавим проверку на существование orders
+	if (!orders) {
+		return <div>Загрузка данных...</div>;
+	}
+
+	const doneOrders = orders.filter((order) => order.status === 'done');
+	const pendingOrders = orders.filter((order) => order.status !== 'done');
+
 	return (
 		<div className={styles.container}>
 			<div className={`${styles.queues}`}>
-				<OrderQueue title='Готовы:'></OrderQueue>
-				<OrderQueue title='В работе:'></OrderQueue>
+				<OrderQueue title='Готовы:' orders={doneOrders.slice(0, 7)} />
+				<OrderQueue title='В работе:' orders={pendingOrders.slice(0, 7)} />
 			</div>
 			<div className={`${styles.counter}`}>
 				<OrderCounter
 					name='Выполнено за все время'
-					count='28 752'></OrderCounter>
-				<OrderCounter name='Выполнено за сегодня' count='130'></OrderCounter>
+					count={total?.toString() || '0'}
+				/>
+				<OrderCounter
+					name='Выполнено за сегодня'
+					count={totalToday?.toString() || '0'}
+				/>
 			</div>
 		</div>
 	);

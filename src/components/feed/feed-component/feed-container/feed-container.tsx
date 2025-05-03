@@ -65,7 +65,7 @@ const FeedContainer = () => {
 	}
 
 	return (
-		<div className={`${style.container} pr-4`}>
+		<div className={`${style.container} pr-3`}>
 			{orders.map((order: TOrder) => (
 				<FeedElement
 					key={order._id}

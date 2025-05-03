@@ -1,18 +1,25 @@
 import styles from './order-queue.module.scss';
+import { TOrder } from '@utils/ingredient-types';
 
-const orderNumber = '03345';
+type TOrderQueueProps = {
+	title: string;
+	orders: TOrder[]; // Теперь используем TOrder вместо конкретного типа
+};
 
-const OrderQueue = (props: any) => {
+const OrderQueue = ({ title, orders }: TOrderQueueProps) => {
 	return (
 		<div className={styles.container}>
-			<h3 className='text text_type_main-medium'>{props.title}</h3>
+			<h3 className='text text_type_main-medium'>{title}</h3>
 			<ul>
-				<li className='text text_type_digits-small'>{orderNumber}</li>
-				<li>{orderNumber}</li>
-				<li>{orderNumber}</li>
-				<li>{orderNumber}</li>
-				<li>{orderNumber}</li>
-				<li>{orderNumber}</li>
+				{orders.map((order) => (
+					<li
+						key={order._id}
+						className={`text text_type_digits-small ${
+							title.includes('Готовы') ? styles.done : ''
+						}`}>
+						{order.number}
+					</li>
+				))}
 			</ul>
 		</div>
 	);

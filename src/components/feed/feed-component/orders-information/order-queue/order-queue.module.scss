@@ -15,9 +15,12 @@
 		gap: 8px;
 
 		li {
-			color: #00cccc;
 			font-family: 'Iceland' sans-serif;
 			margin: 4px 0;
+		}
+
+		.done {
+			color: #00cccc;
 		}
 	}
 }

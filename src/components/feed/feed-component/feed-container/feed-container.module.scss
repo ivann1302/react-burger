@@ -3,5 +3,6 @@
 	flex-direction: column;
 	gap: 16px;
 	max-height: 852px;
-	overflow-y: scroll;
+	overflow-y: auto;
+	overflow-x: hidden;
 }
