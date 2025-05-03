@@ -1,21 +1,27 @@
-// services/reducers/feed-orders-reducer.ts
 import {
-	FEED_ORDERS_REQUEST,
-	FEED_ORDERS_SUCCESS,
-	FEED_ORDERS_FAILURE,
-	FEED_ORDERS_UPDATE,
+	FEED_ORDERS_WS_CONNECTING,
+	FEED_ORDERS_WS_OPEN,
+	FEED_ORDERS_WS_CLOSE,
+	FEED_ORDERS_WS_ERROR,
+	FEED_ORDERS_WS_MESSAGE,
 	TFeedOrdersActions,
 } from '../actions/feed-orders-actions';
-import { TOrder } from './../../utils/ingredient-types';
+import { TOrder } from '../../utils/ingredient-types';
 
 type TFeedOrdersState = {
 	orders: TOrder[];
+	total: number;
+	totalToday: number;
+	wsConnected: boolean;
 	loading: boolean;
 	error: string | null;
 };
 
 const initialState: TFeedOrdersState = {
 	orders: [],
+	total: 0,
+	totalToday: 0,
+	wsConnected: false,
 	loading: false,
 	error: null,
 };
@@ -25,19 +31,40 @@ const feedOrdersReducer = (
 	action: TFeedOrdersActions
 ): TFeedOrdersState => {
 	switch (action.type) {
-		case FEED_ORDERS_REQUEST:
-			return { ...state, loading: true, error: null };
-
-		case FEED_ORDERS_SUCCESS:
-			return { ...state, loading: false, orders: action.payload };
-
-		case FEED_ORDERS_FAILURE:
-			return { ...state, loading: false, error: action.payload };
-
-		case FEED_ORDERS_UPDATE:
+		case FEED_ORDERS_WS_CONNECTING:
 			return {
 				...state,
-				orders: [action.payload, ...state.orders],
+				loading: true,
+				wsConnected: false,
+			};
+
+		case FEED_ORDERS_WS_OPEN:
+			return {
+				...state,
+				loading: false,
+				wsConnected: true,
+				error: null,
+			};
+
+		case FEED_ORDERS_WS_CLOSE:
+			return {
+				...initialState,
+			};
+
+		case FEED_ORDERS_WS_ERROR:
+			return {
+				...state,
+				loading: false,
+				error: action.payload,
+				wsConnected: false,
+			};
+
+		case FEED_ORDERS_WS_MESSAGE:
+			return {
+				...state,
+				orders: action.payload.orders,
+				total: action.payload.total,
+				totalToday: action.payload.totalToday,
 			};
 
 		default:

@@ -17,8 +17,8 @@ export type TOrder = {
 	_id?: string;
 	number: string;
 	name: string;
-	status: 'Выполнен' | 'Готовится' | 'Отменен';
-	ingredientIds: string[]; // Массив ID ингредиентов
+	status: string;
+	ingredients: string[];
 	createdAt?: string;
 	updatedAt?: string;
 	price?: number;

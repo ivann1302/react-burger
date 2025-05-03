@@ -1,6 +1,6 @@
-import { Middleware, MiddlewareAPI } from 'redux';
+import { Middleware } from 'redux';
 import { RootState } from '../reducers/root-reducer';
-import { AppDispatch } from '@services/store';
+import { AppDispatch } from '../store';
 import {
 	FEED_ORDERS_CONNECT,
 	FEED_ORDERS_DISCONNECT,
@@ -10,29 +10,22 @@ import {
 	FEED_ORDERS_WS_ERROR,
 	FEED_ORDERS_WS_MESSAGE,
 	TFeedOrdersActions,
-} from './../actions/feed-orders-actions';
+} from '../actions/feed-orders-actions';
 
-const feedOrdersWsMiddleware: Middleware<
-	unknown, // Тип для дополнительных свойств (не используем)
-	RootState, // Тип состояния
-	AppDispatch // Тип dispatch
-> = (store: MiddlewareAPI<AppDispatch, RootState>) => {
+const feedOrdersWsMiddleware: Middleware<object, RootState, AppDispatch> = (
+	store
+) => {
 	let socket: WebSocket | null = null;
 
-	return (next) => (action: unknown) => {
-		// Используем `unknown` вместо `TFeedOrdersActions`
+	return (next) => (action) => {
 		const { dispatch } = store;
 
-		// Проверяем, что action имеет тип TFeedOrdersActions
-		if (typeof action === 'object' && action !== null && 'type' in action) {
-			const typedAction = action as TFeedOrdersActions;
-
-			if (typedAction.type === FEED_ORDERS_CONNECT) {
-				socket = new WebSocket(typedAction.payload);
+		// Проверяем, что action имеет нужный тип
+		if (isFeedOrdersAction(action)) {
+			if (action.type === FEED_ORDERS_CONNECT) {
+				socket = new WebSocket(action.payload);
 				dispatch({ type: FEED_ORDERS_WS_CONNECTING });
-			}
 
-			if (socket) {
 				socket.onopen = () => {
 					dispatch({ type: FEED_ORDERS_WS_OPEN });
 				};
@@ -40,7 +33,7 @@ const feedOrdersWsMiddleware: Middleware<
 				socket.onerror = () => {
 					dispatch({
 						type: FEED_ORDERS_WS_ERROR,
-						payload: 'WebSocket error',
+						payload: 'Ошибка подключения к ленте заказов',
 					});
 				};
 
@@ -49,32 +42,45 @@ const feedOrdersWsMiddleware: Middleware<
 				};
 
 				socket.onmessage = (event) => {
+					console.log('Raw WebSocket message:', event.data);
 					try {
 						const data = JSON.parse(event.data);
+						console.log('Parsed WebSocket data:', data); // Логируем распарсенные данные
+
 						if (data.success) {
+							console.log('Dispatching orders:', data.orders); // Логируем перед отправкой
 							dispatch({
 								type: FEED_ORDERS_WS_MESSAGE,
-								payload: data,
+								payload: {
+									orders: data.orders,
+									total: data.total,
+									totalToday: data.totalToday,
+								},
 							});
 						}
-					} catch (err) {
-						console.error('Error parsing WebSocket message:', err);
+					} catch (error) {
+						console.error('WebSocket parse error:', error);
 						dispatch({
 							type: FEED_ORDERS_WS_ERROR,
-							payload: 'Invalid WebSocket message format',
+							payload: 'Ошибка формата данных',
 						});
 					}
 				};
 			}
 
-			if (typedAction.type === FEED_ORDERS_DISCONNECT && socket) {
+			if (action.type === FEED_ORDERS_DISCONNECT && socket) {
 				socket.close();
 				socket = null;
 			}
 		}
 
-		return next(action); // Пропускаем action дальше, даже если он не TFeedOrdersActions
+		return next(action);
 	};
 };
+
+// Type guard для проверки типа action
+function isFeedOrdersAction(action: unknown): action is TFeedOrdersActions {
+	return typeof action === 'object' && action !== null && 'type' in action;
+}
 
 export default feedOrdersWsMiddleware;

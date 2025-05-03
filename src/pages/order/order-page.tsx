@@ -33,9 +33,9 @@ const OrderPage = ({ isProfileOrder = false }: TOrderPageProps) => {
 	}
 
 	// Получаем полные данные об ингредиентах
-	const orderIngredients: TIngredient[] = order.ingredientIds
-		.map((orderIngredientId: string) =>
-			ingredients.find((ing: TIngredient) => ing._id === orderIngredientId)
+	const orderIngredients: TIngredient[] = order.ingredients
+		.map((orderIngredient: string) =>
+			ingredients.find((ing) => ing._id === orderIngredient)
 		)
 		.filter((ing): ing is TIngredient => ing !== undefined);
 

@@ -8,27 +8,25 @@ import style from './feed-modal.module.scss';
 import { TIngredient, TOrder } from '../../../../utils/ingredient-types';
 
 type TFeedModalProps = {
-	selectedOrder: TOrder | null;
+	order: TOrder;
 };
 
 // Определяем временный тип с дополнительным свойством count
 type TIngredientWithCount = TIngredient & { count: number };
 
-const FeedModal = ({ selectedOrder }: TFeedModalProps) => {
+const FeedModal = ({ order }: TFeedModalProps) => {
 	// Получаем все ингредиенты из Redux store
 	const allIngredients = useSelector(
 		(state: RootState) => state.ingredients.ingredients
 	);
 
-	if (!selectedOrder) {
+	if (!order) {
 		return null;
 	}
 
 	// Преобразуем ID ингредиентов в полные объекты
-	const ingredients = selectedOrder.ingredientIds
-		.map((id: string) =>
-			allIngredients.find((ing: TIngredient) => ing._id === id)
-		)
+	const ingredients = order.ingredients
+		.map((id: string) => allIngredients.find((ing) => ing._id === id))
 		.filter(Boolean) as TIngredient[];
 
 	// Группируем ингредиенты по количеству с использованием временного типа
@@ -47,15 +45,15 @@ const FeedModal = ({ selectedOrder }: TFeedModalProps) => {
 
 	// Подсчет общей стоимости
 	const totalPrice =
-		selectedOrder.price || ingredients.reduce((sum, ing) => sum + ing.price, 0);
+		order.price || ingredients.reduce((sum, ing) => sum + ing.price, 0);
 
 	return (
 		<div className={`${style.modal} p-10`}>
-			<h3 className='text text_type_main-medium mb-2'>{selectedOrder.name}</h3>
+			<h3 className='text text_type_main-medium mb-2'>{order.name}</h3>
 			<p className={`${style.status} text text_type_main-small`}>
-				{selectedOrder.status === 'Выполнен'
+				{order.status === 'Выполнен'
 					? 'Выполнен'
-					: selectedOrder.status === 'Готовится'
+					: order.status === 'Готовится'
 					? 'Готовится'
 					: 'Создан'}
 			</p>
@@ -90,8 +88,8 @@ const FeedModal = ({ selectedOrder }: TFeedModalProps) => {
 
 			<div className={style.bottom_container}>
 				<p className={`${style.date} text text_type_main-small`}>
-					{selectedOrder.createdAt ? (
-						<FormattedDate date={new Date(selectedOrder.createdAt)} />
+					{order.createdAt ? (
+						<FormattedDate date={new Date(order.createdAt)} />
 					) : (
 						'Сегодня'
 					)}
