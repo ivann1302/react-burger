@@ -33,9 +33,21 @@ const FeedContainer = () => {
 	}, [dispatch]);
 
 	const handleOrderClick = (order: TOrder) => {
-		// Изменяем URL на номер заказа
-		navigate(`/feed/${order._id}`, {
-			state: { background: location }, // Сохраняем текущий location для возврата
+		const currentPath = location.pathname;
+
+		// Определяем, откуда открывается заказ
+		const isFromProfileOrders = currentPath.includes('/profile/orders');
+		const isFromFeed = currentPath.includes('/feed');
+
+		// Формируем URL в зависимости от источника
+		const orderUrl = isFromFeed
+			? `/feed/${order.number}` // если открыто из /feed → /feed/number
+			: isFromProfileOrders
+			? `/profile/orders/${order.number}` // если из /profile/orders → /profile/orders/number
+			: `/orders/${order.number}`; // fallback (на случай других путей)
+
+		navigate(orderUrl, {
+			state: { background: location }, // сохраняем текущий location для модалки
 		});
 		setSelectedOrder(order);
 	};

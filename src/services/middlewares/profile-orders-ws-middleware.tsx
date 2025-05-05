@@ -24,7 +24,6 @@ const isDisconnectAction = (
 	return action.type === PROFILE_ORDERS_DISCONNECT;
 };
 
-// Упрощенная версия middleware без сложных generic-типов
 const profileOrdersWsMiddleware: Middleware = (store) => {
 	let socket: WebSocket | null = null;
 

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from '@services/reducers/root-reducer';
@@ -6,42 +6,103 @@ import OrderComponent from '../../components/feed/feed-component/order/order-com
 import style from './order-page.module.scss';
 import { FormattedDate } from '@ya.praktikum/react-developer-burger-ui-components';
 import { TOrder, TIngredient } from '../../utils/ingredient-types';
-import { fetchFeedOrders } from '../../services/actions/feed-orders-actions';
-import { fetchProfileOrders } from '../../services/actions/profile-orders-actions';
 import { useAppDispatch } from '../../services/store';
+import {
+	connectProfileOrders,
+	disconnectProfileOrders,
+} from '../../services/actions/profile-orders-actions';
+import {
+	feedOrdersConnect,
+	feedOrdersDisconnect,
+} from '../../services/actions/feed-orders-actions';
+import { WS_ORDER_ALL_URL } from '@utils/api';
 
 type TOrderPageProps = {
 	isProfileOrder?: boolean;
 };
 
 const OrderPage = ({ isProfileOrder = false }: TOrderPageProps) => {
-	const { id } = useParams<{ id: string }>();
+	const { number } = useParams<{ number: string }>();
 	const dispatch = useAppDispatch();
+	const [isLoading, setIsLoading] = useState(true);
+	const [error, setError] = useState<string | null>(null);
 
-	// Загружаем заказы при монтировании
-	useEffect(() => {
-		if (isProfileOrder) {
-			dispatch(fetchProfileOrders());
-		} else {
-			dispatch(fetchFeedOrders());
-		}
-	}, [dispatch, isProfileOrder]);
+	// Получаем данные из store
+	const {
+		orders: feedOrders,
+		wsConnected: feedConnected,
+		error: feedError,
+	} = useSelector((state: RootState) => state.feedOrders);
 
-	// Получаем заказы из соответствующего раздела store
-	const orders = useSelector((state: RootState) =>
-		isProfileOrder ? state.profileOrders.orders : state.feedOrders.orders
-	);
+	const {
+		orders: profileOrders,
+		wsConnected: profileConnected,
+		error: profileError,
+	} = useSelector((state: RootState) => state.profileOrders);
+
 	const ingredients = useSelector(
 		(state: RootState) => state.ingredients.ingredients
 	);
 
+	// Устанавливаем WebSocket соединение
+	useEffect(() => {
+		if (isProfileOrder) {
+			dispatch(connectProfileOrders(WS_ORDER_ALL_URL));
+		} else {
+			dispatch(feedOrdersConnect(WS_ORDER_ALL_URL));
+		}
+
+		return () => {
+			if (isProfileOrder) {
+				dispatch(disconnectProfileOrders());
+			} else {
+				dispatch(feedOrdersDisconnect());
+			}
+		};
+	}, [dispatch, isProfileOrder]);
+
+	// Проверяем статус подключения и загрузки данных
+	useEffect(() => {
+		if (isProfileOrder ? profileConnected : feedConnected) {
+			setIsLoading(false);
+		}
+	}, [feedConnected, profileConnected, isProfileOrder]);
+
+	// Обрабатываем ошибки
+	useEffect(() => {
+		const currentError = isProfileOrder ? profileError : feedError;
+		setError(currentError ?? null); // Преобразует undefined в null
+		if (currentError) {
+			setIsLoading(false);
+		}
+	}, [profileError, feedError, isProfileOrder]);
+
 	// Находим нужный заказ по номеру
-	const order = orders.find((order: TOrder) => order.number.toString() === id);
+	const order = (isProfileOrder ? profileOrders : feedOrders).find(
+		(order: TOrder) => order.number.toString() === number
+	);
+
+	// Состояния загрузки и ошибки
+	if (isLoading) {
+		return (
+			<section className={style.container}>
+				<p className='text text_type_main-medium'>Загрузка данных...</p>
+			</section>
+		);
+	}
+
+	if (error) {
+		return (
+			<section className={style.container}>
+				<p className='text text_type_main-medium text_color_error'>{error}</p>
+			</section>
+		);
+	}
 
 	if (!order) {
 		return (
 			<section className={style.container}>
-				<p className='text text_type_main-medium'>Заказ не найден</p>
+				<p className='text text_type_main-medium'>Заказ #{number} не найден</p>
 			</section>
 		);
 	}
@@ -86,9 +147,9 @@ const OrderPage = ({ isProfileOrder = false }: TOrderPageProps) => {
 				number={`#${order.number}`}
 				name={order.name}
 				status={
-					order.status === 'Выполнен'
+					order.status === 'done'
 						? 'Выполнен'
-						: order.status === 'Готовится'
+						: order.status === 'pending'
 						? 'Готовится'
 						: 'Создан'
 				}

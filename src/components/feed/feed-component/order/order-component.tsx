@@ -29,12 +29,12 @@ const OrderComponent = ({
 			<h3 className={`${style.number} text text_type_digits-default mb-10`}>
 				{number}
 			</h3>
-			<h3 className='text text_type_main-medium mt-0 mb-3'>{name}</h3>
+			<h3 className='text text_type_main-medium mt-0 mb-2'>{name}</h3>
 			<p className={`${style.status} text text_type_main-small mt-0 mb-0`}>
 				{status}
 			</p>
 
-			<h3 className={`${style.squad} text text_type_main-medium mt-15 mb-6`}>
+			<h3 className={`${style.squad} text text_type_main-default mb-2`}>
 				Состав:
 			</h3>
 			<ul className={`${style.list} custom-scroll`}>
@@ -48,10 +48,13 @@ const OrderComponent = ({
 									className={style.ingredientImage}
 								/>
 							</div>
-							<h4 className='text text_type_main-small'>{ingredient.name}</h4>
+							<h4
+								className={`${style.ingredient_name} 'text text_type_main-small`}>
+								{ingredient.name}
+							</h4>
 						</div>
 						<div className={style.price_block}>
-							<p className='text text_type_digits-small'>
+							<p className='text text_type_digits-small mr-2'>
 								{ingredient.count} x {ingredient.price}
 							</p>
 							<CurrencyIcon type='primary' />

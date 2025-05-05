@@ -186,7 +186,6 @@ const AppContent = () => {
 					<Route path='/ingredients/:id' element={<IngredientPage />} />
 					<Route path='/feed' element={<FeedPage />} />
 					<Route path='/feed/:number' element={<OrderPage />} />
-
 					<Route path='*' element={<PageNotFound />} />
 				</Routes>
 
