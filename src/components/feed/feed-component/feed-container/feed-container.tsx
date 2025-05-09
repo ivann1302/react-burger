@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { AppDispatch } from '../... /../../../../services/store';
-import { RootState } from '@services/reducers/root-reducer';
+import { AppDispatch } from '../../../../services/store';
+import { RootState } from '../../../../services/reducers/root-reducer';
 import FeedElement from '../feed-element/feed-element';
 import style from './feed-container.module.scss';
 import Modal from '../../../modal/modal';
@@ -12,53 +12,61 @@ import {
 } from '../../../../services/actions/feed-orders-actions';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { TOrder } from '../../../../utils/ingredient-types';
-import { WS_ORDER_ALL_URL } from '@utils/api';
+import { WS_ORDER_ALL_URL } from '../../../../utils/api';
 
-const FeedContainer = () => {
+interface FeedContainerProps {
+	mode?: 'feed' | 'profile';
+	showStatus?: boolean;
+}
+
+const FeedContainer = ({
+	mode = 'feed',
+	showStatus = false,
+}: FeedContainerProps) => {
 	const dispatch = useDispatch<AppDispatch>();
 	const navigate = useNavigate();
 	const location = useLocation();
-	const { orders, loading, error, wsConnected } = useSelector(
-		(state: RootState) => state.feedOrders
+
+	// Выбираем нужный стейт в зависимости от режима
+	const { orders, error, wsConnected } = useSelector((state: RootState) =>
+		mode === 'profile' ? state.profileOrders : state.feedOrders
 	);
 
 	const [selectedOrder, setSelectedOrder] = useState<TOrder | null>(null);
 
 	useEffect(() => {
-		dispatch(feedOrdersConnect(WS_ORDER_ALL_URL));
+		if (mode === 'feed') {
+			dispatch(feedOrdersConnect(WS_ORDER_ALL_URL));
+		}
 
 		return () => {
-			dispatch(feedOrdersDisconnect());
+			if (mode === 'feed') {
+				dispatch(feedOrdersDisconnect());
+			}
 		};
-	}, [dispatch]);
+	}, [dispatch, mode]);
 
 	const handleOrderClick = (order: TOrder) => {
-		const currentPath = location.pathname;
+		let orderUrl = '';
 
-		// Определяем, откуда открывается заказ
-		const isFromProfileOrders = currentPath.includes('/profile/orders');
-		const isFromFeed = currentPath.includes('/feed');
-
-		// Формируем URL в зависимости от источника
-		const orderUrl = isFromFeed
-			? `/feed/${order.number}` // если открыто из /feed → /feed/number
-			: isFromProfileOrders
-			? `/profile/orders/${order.number}` // если из /profile/orders → /profile/orders/number
-			: `/orders/${order.number}`; // fallback (на случай других путей)
+		if (mode === 'profile') {
+			orderUrl = `/profile/orders/${order.number}`;
+		} else {
+			orderUrl = `/feed/${order.number}`;
+		}
 
 		navigate(orderUrl, {
-			state: { background: location }, // сохраняем текущий location для модалки
+			state: { background: location },
 		});
 		setSelectedOrder(order);
 	};
 
 	const closeModal = () => {
 		setSelectedOrder(null);
-		// Возвращаемся на предыдущий URL при закрытии модалки
 		navigate(-1);
 	};
 
-	if (loading && !wsConnected) {
+	if (!wsConnected) {
 		return (
 			<div className={`${style.status} text text_type_main-default`}>
 				Подключение к ленте заказов...
@@ -70,7 +78,9 @@ const FeedContainer = () => {
 		return (
 			<div
 				className={`${style.status} text text_type_main-default text_color_error`}>
-				{error}
+				{error.includes('Invalid or missing token')
+					? 'Ошибка авторизации. Пожалуйста, войдите снова'
+					: error}
 			</div>
 		);
 	}
@@ -88,14 +98,9 @@ const FeedContainer = () => {
 			{orders.map((order: TOrder) => (
 				<FeedElement
 					key={order._id}
-					_id={order._id}
-					name={order.name}
-					number={order.number}
-					ingredients={order.ingredients}
-					status={order.status}
-					createdAt={order.createdAt}
-					updatedAt={order.updatedAt}
+					order={order}
 					onClick={() => handleOrderClick(order)}
+					showStatus={showStatus}
 				/>
 			))}
 

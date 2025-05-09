@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from '@services/reducers/root-reducer';
@@ -15,7 +15,7 @@ import {
 	feedOrdersConnect,
 	feedOrdersDisconnect,
 } from '../../services/actions/feed-orders-actions';
-import { WS_ORDER_ALL_URL } from '@utils/api';
+import { WS_ORDER_ALL_URL, API_ORDERS_URL } from '@utils/api';
 
 type TOrderPageProps = {
 	isProfileOrder?: boolean;
@@ -26,6 +26,8 @@ const OrderPage = ({ isProfileOrder = false }: TOrderPageProps) => {
 	const dispatch = useAppDispatch();
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
+	const [order, setOrder] = useState<TOrder | null>(null);
+	const [shouldFetchDirectly, setShouldFetchDirectly] = useState(false);
 
 	// Получаем данные из store
 	const {
@@ -42,6 +44,38 @@ const OrderPage = ({ isProfileOrder = false }: TOrderPageProps) => {
 
 	const ingredients = useSelector(
 		(state: RootState) => state.ingredients.ingredients
+	);
+
+	// Функция для прямого запроса заказа
+	const fetchOrderDirectly = useCallback(
+		async (orderNumber: string) => {
+			try {
+				const url = `${API_ORDERS_URL}/${orderNumber}`;
+				const response = await fetch(url, {
+					headers: isProfileOrder
+						? { Authorization: localStorage.getItem('accessToken') || '' }
+						: {},
+				});
+
+				if (!response.ok)
+					throw new Error(`HTTP error! status: ${response.status}`);
+
+				const data = await response.json();
+
+				if (data.success && data.orders?.length > 0) {
+					setOrder(data.orders[0]);
+				} else {
+					setError(`Заказ #${orderNumber} не найден`);
+				}
+			} catch (err) {
+				setError(
+					err instanceof Error ? err.message : 'Ошибка при запросе заказа'
+				);
+			} finally {
+				setIsLoading(false);
+			}
+		},
+		[isProfileOrder]
 	);
 
 	// Устанавливаем WebSocket соединение
@@ -61,26 +95,59 @@ const OrderPage = ({ isProfileOrder = false }: TOrderPageProps) => {
 		};
 	}, [dispatch, isProfileOrder]);
 
-	// Проверяем статус подключения и загрузки данных
+	// Поиск заказа в WebSocket данных или планирование прямого запроса
 	useEffect(() => {
-		if (isProfileOrder ? profileConnected : feedConnected) {
+		if (!number) {
+			setError('Номер заказа не указан');
 			setIsLoading(false);
+			return;
 		}
-	}, [feedConnected, profileConnected, isProfileOrder]);
 
-	// Обрабатываем ошибки
+		const currentOrders = isProfileOrder ? profileOrders : feedOrders;
+		const foundOrder = currentOrders.find(
+			(o) => o.number.toString() === number
+		);
+
+		if (foundOrder) {
+			setOrder(foundOrder);
+			setIsLoading(false);
+			setShouldFetchDirectly(false);
+		} else if (
+			(isProfileOrder ? profileConnected : feedConnected) &&
+			!shouldFetchDirectly
+		) {
+			// Если WebSocket подключен, но заказ не найден - планируем прямой запрос
+			const timer = setTimeout(() => {
+				setShouldFetchDirectly(true);
+			}, 1000); // Даем 1 секунду на получение данных через WebSocket
+
+			return () => clearTimeout(timer);
+		}
+	}, [
+		feedOrders,
+		profileOrders,
+		number,
+		isProfileOrder,
+		feedConnected,
+		profileConnected,
+		shouldFetchDirectly,
+	]);
+
+	// Выполняем прямой запрос, если заказ не найден через WebSocket
+	useEffect(() => {
+		if (shouldFetchDirectly && number) {
+			fetchOrderDirectly(number);
+		}
+	}, [shouldFetchDirectly, number, fetchOrderDirectly]);
+
+	// Обрабатываем ошибки WebSocket
 	useEffect(() => {
 		const currentError = isProfileOrder ? profileError : feedError;
-		setError(currentError ?? null); // Преобразует undefined в null
 		if (currentError) {
+			setError(currentError);
 			setIsLoading(false);
 		}
 	}, [profileError, feedError, isProfileOrder]);
-
-	// Находим нужный заказ по номеру
-	const order = (isProfileOrder ? profileOrders : feedOrders).find(
-		(order: TOrder) => order.number.toString() === number
-	);
 
 	// Состояния загрузки и ошибки
 	if (isLoading) {

@@ -1,46 +1,43 @@
-import {
-	CurrencyIcon,
-	FormattedDate,
-} from '@ya.praktikum/react-developer-burger-ui-components';
+// feed-element.module.tsx
+import { CurrencyIcon } from '@ya.praktikum/react-developer-burger-ui-components';
 import { useSelector } from 'react-redux';
 import { RootState } from '@services/reducers/root-reducer';
 import styles from './feed-element.module.scss';
 import { TOrder } from '@utils/ingredient-types';
+import { FormattedDate } from '@ya.praktikum/react-developer-burger-ui-components';
 
-type TFeedElementProps = TOrder & {
+interface FeedElementProps {
+	order: TOrder;
 	onClick?: () => void;
-};
+	showStatus?: boolean;
+}
 
 const FeedElement = ({
-	_id,
-	name,
-	number,
-	ingredients,
-	status,
-	createdAt,
+	order,
 	onClick,
-}: TFeedElementProps) => {
+	showStatus = false,
+}: FeedElementProps) => {
 	const allIngredients = useSelector(
 		(state: RootState) => state.ingredients.ingredients
 	);
 
-	// Получаем полные данные об ингредиентах
-	const orderIngredients = ingredients
+	const orderIngredients = order.ingredients
 		.map((id: string) => allIngredients.find((ing) => ing._id === id))
 		.filter(Boolean);
 
-	console.log('Все ингредиенты в хранилище:', allIngredients);
-	console.log('ID ингредиентов в заказе:', ingredients);
-
-	// Вычисляем общую стоимость
 	const totalPrice = orderIngredients.reduce(
 		(sum: number, ing) => sum + (ing?.price || 0),
 		0
 	);
 
-	// Отображаем первые 6 ингредиентов
 	const visibleIngredients = orderIngredients.slice(0, 6);
 	const remainingCount = orderIngredients.length - 6;
+
+	const statusText = {
+		done: 'Выполнен',
+		pending: 'Готовится',
+		created: 'Создан',
+	}[order.status || 'created'];
 
 	return (
 		<div
@@ -54,22 +51,23 @@ const FeedElement = ({
 			role='button'
 			tabIndex={0}>
 			<div className={styles.header}>
-				<span className='text text_type_digits-default'>#{number}</span>
+				<span className='text text_type_digits-default'>#{order.number}</span>
 				<span className='text text_type_main-default text_color_inactive'>
-					{createdAt && FormattedDate({ date: new Date(createdAt) })}
+					{order.createdAt &&
+						FormattedDate({ date: new Date(order.createdAt) })}
 				</span>
 			</div>
 
 			<h3 className={`${styles.title} text text_type_main-medium mt-6`}>
-				{name}
+				{order.name}
 			</h3>
 
-			{status && (
+			{showStatus && (
 				<p
 					className={`text text_type_main-default mt-2 ${
-						status === 'done' ? styles.statusDone : ''
+						order.status === 'done' ? styles.statusDone : ''
 					}`}>
-					{status === 'done' ? 'Выполнен' : 'Готовится'}
+					{statusText}
 				</p>
 			)}
 
@@ -77,12 +75,20 @@ const FeedElement = ({
 				<div className={styles.ingredients}>
 					{visibleIngredients.map((ing, index: number) => (
 						<div
-							key={`${_id}-${index}`}
+							key={`${order._id}-${index}`}
 							className={styles.ingredient}
 							style={{ zIndex: visibleIngredients.length - index }}>
-							<img src={ing?.image} alt={ing?.name} className={styles.image} />
-							{index === 5 && remainingCount > 0 && (
-								<div className={styles.remaining}>+{remainingCount}</div>
+							{ing && (
+								<>
+									<img
+										src={ing.image}
+										alt={ing.name}
+										className={styles.image}
+									/>
+									{index === 5 && remainingCount > 0 && (
+										<div className={styles.remaining}>+{remainingCount}</div>
+									)}
+								</>
 							)}
 						</div>
 					))}
