@@ -36,6 +36,10 @@ export const createOrder =
 
 		try {
 			console.log('Отправка запроса на создание заказа:', { ingredients });
+
+			alert('Заказ обрабатывается!');
+			await new Promise((resolve) => setTimeout(resolve, 15000));
+
 			const data = await request(BASE_URL_ORDERS, {
 				method: 'POST',
 				headers: {

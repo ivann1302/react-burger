@@ -1,10 +1,12 @@
 // feed-element.module.tsx
-import { CurrencyIcon } from '@ya.praktikum/react-developer-burger-ui-components';
+import {
+	CurrencyIcon,
+	FormattedDate,
+} from '@ya.praktikum/react-developer-burger-ui-components';
 import { useSelector } from 'react-redux';
 import { RootState } from '@services/reducers/root-reducer';
 import styles from './feed-element.module.scss';
 import { TOrder } from '@utils/ingredient-types';
-import { FormattedDate } from '@ya.praktikum/react-developer-burger-ui-components';
 
 interface FeedElementProps {
 	order: TOrder;

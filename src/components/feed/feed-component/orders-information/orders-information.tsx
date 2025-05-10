@@ -20,8 +20,8 @@ const OrdersInformation = () => {
 	return (
 		<div className={styles.container}>
 			<div className={`${styles.queues}`}>
-				<OrderQueue title='Готовы:' orders={doneOrders.slice(0, 7)} />
-				<OrderQueue title='В работе:' orders={pendingOrders.slice(0, 7)} />
+				<OrderQueue title='Готовы:' orders={doneOrders.slice(0, 10)} />
+				<OrderQueue title='В работе:' orders={pendingOrders.slice(0, 10)} />
 			</div>
 			<div className={`${styles.counter}`}>
 				<OrderCounter

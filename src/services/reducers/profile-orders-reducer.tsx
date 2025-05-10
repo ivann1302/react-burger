@@ -60,12 +60,14 @@ type TProfileOrdersState = {
 	wsConnected: boolean;
 	orders: TOrder[];
 	error?: string;
+	connectionStatus: 'idle' | 'connecting' | 'connected' | 'error';
 };
 
 const initialState: TProfileOrdersState = {
 	wsConnected: false,
 	orders: [],
 	error: undefined,
+	connectionStatus: 'idle',
 };
 
 const profileOrdersReducer = (

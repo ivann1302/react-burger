@@ -8,7 +8,7 @@ import {
 } from '@ya.praktikum/react-developer-burger-ui-components';
 import { TIngredient } from './../../../utils/ingredient-types';
 import { AppDispatch } from './../../../services/store';
-import { RootState } from '@services/reducers/root-reducer';
+import { RootState } from './../../../services/reducers/root-reducer';
 import styles from './order-block.module.scss';
 
 const useAppDispatch: () => AppDispatch = useDispatch;
