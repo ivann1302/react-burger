@@ -35,7 +35,7 @@ export const updateUserFailed = (error: unknown) => ({
 export const getUser = () => async (dispatch: AppDispatch) => {
 	dispatch(getUserRequest());
 	try {
-		const token = localStorage.getItem('token');
+		const token = localStorage.getItem('accessToken');
 		const response = await request(`${BASE_URL}/auth/user`, {
 			method: 'GET',
 			headers: {
@@ -55,7 +55,7 @@ export const getUser = () => async (dispatch: AppDispatch) => {
 export const updateUser = (data: IUser) => async (dispatch: AppDispatch) => {
 	dispatch(updateUserRequest());
 	try {
-		const token = localStorage.getItem('token');
+		const token = localStorage.getItem('accessToken');
 		const response = await request(`${BASE_URL}/auth/user`, {
 			method: 'PATCH',
 			headers: {

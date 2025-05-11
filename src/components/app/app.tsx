@@ -60,7 +60,9 @@ const AppContent = () => {
 		(state) => state.ingredientDetails
 	);
 
-	const { orderData } = useAppSelector((state) => state.order);
+	const { orderData, loading: orderLoading } = useAppSelector(
+		(state) => state.order
+	);
 
 	// Определяем фон — откуда мы пришли, если был клик по ингредиенту
 	const background = location.state?.background || null;
@@ -70,9 +72,9 @@ const AppContent = () => {
 		dispatch(fetchIngredients());
 		dispatch(checkAuth());
 
-		const token = localStorage.getItem('token');
+		const token = localStorage.getItem('accessToken');
 		if (token?.startsWith('Bearer ')) {
-			localStorage.setItem('token', token.replace(/^Bearer\s/, ''));
+			localStorage.setItem('accessToken', token.replace(/^Bearer\s/, ''));
 		}
 	}, [dispatch]);
 
@@ -198,7 +200,7 @@ const AppContent = () => {
 					</Modal>
 				)}
 
-				{orderData && (
+				{(orderData || orderLoading) && (
 					<Modal onClose={handleOrderModalClose}>
 						<OrderDetails />
 					</Modal>

@@ -1,21 +1,26 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { RootState } from '@services/reducers/root-reducer';
+import { RootState } from '../../services/reducers/root-reducer';
+import { TOrder, TIngredient } from '../../utils/ingredient-types';
+import { FormattedDate } from '@ya.praktikum/react-developer-burger-ui-components';
 import OrderComponent from '../../components/feed/feed-component/order/order-component';
 import style from './order-page.module.scss';
-import { FormattedDate } from '@ya.praktikum/react-developer-burger-ui-components';
-import { TOrder, TIngredient } from '../../utils/ingredient-types';
 import { useAppDispatch } from '../../services/store';
 import {
 	connectProfileOrders,
 	disconnectProfileOrders,
 } from '../../services/actions/profile-orders-actions';
 import {
+	WS_API_WITH_TOKEN,
+	WS_ORDER_ALL_URL,
+	API_ORDERS_URL,
+} from '../../utils/api';
+
+import {
 	feedOrdersConnect,
 	feedOrdersDisconnect,
 } from '../../services/actions/feed-orders-actions';
-import { WS_ORDER_ALL_URL, API_ORDERS_URL } from '@utils/api';
 
 type TOrderPageProps = {
 	isProfileOrder?: boolean;
@@ -24,12 +29,12 @@ type TOrderPageProps = {
 const OrderPage = ({ isProfileOrder = false }: TOrderPageProps) => {
 	const { number } = useParams<{ number: string }>();
 	const dispatch = useAppDispatch();
+
+	const [order, setOrder] = useState<TOrder | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
-	const [order, setOrder] = useState<TOrder | null>(null);
 	const [shouldFetchDirectly, setShouldFetchDirectly] = useState(false);
 
-	// Получаем данные из store
 	const {
 		orders: feedOrders,
 		wsConnected: feedConnected,
@@ -46,7 +51,41 @@ const OrderPage = ({ isProfileOrder = false }: TOrderPageProps) => {
 		(state: RootState) => state.ingredients.ingredients
 	);
 
-	// Функция для прямого запроса заказа
+	const initTimer = useRef<NodeJS.Timeout | null>(null);
+	const connectedOnce = useRef(false);
+
+	useEffect(() => {
+		if (connectedOnce.current) return;
+
+		initTimer.current = setTimeout(() => {
+			if (isProfileOrder) {
+				const token = localStorage.getItem('accessToken');
+				if (token) {
+					const clean = token.replace(/^Bearer\s?/, '').replace(/['"]/g, '');
+					dispatch(connectProfileOrders(`${WS_API_WITH_TOKEN}${clean}`));
+				}
+			} else {
+				dispatch(feedOrdersConnect(WS_ORDER_ALL_URL));
+			}
+			connectedOnce.current = true;
+		}, 100); // Подождать 100мс — даём шанс StrictMode отработать оба mount
+
+		return () => {
+			if (initTimer.current) {
+				clearTimeout(initTimer.current);
+			}
+
+			if (connectedOnce.current) {
+				if (isProfileOrder) {
+					dispatch(disconnectProfileOrders());
+				} else {
+					dispatch(feedOrdersDisconnect());
+				}
+				connectedOnce.current = false;
+			}
+		};
+	}, [dispatch, isProfileOrder]);
+
 	const fetchOrderDirectly = useCallback(
 		async (orderNumber: string) => {
 			try {
@@ -56,12 +95,8 @@ const OrderPage = ({ isProfileOrder = false }: TOrderPageProps) => {
 						? { Authorization: localStorage.getItem('accessToken') || '' }
 						: {},
 				});
-
-				if (!response.ok)
-					throw new Error(`HTTP error! status: ${response.status}`);
-
+				if (!response.ok) throw new Error(`Ошибка HTTP: ${response.status}`);
 				const data = await response.json();
-
 				if (data.success && data.orders?.length > 0) {
 					setOrder(data.orders[0]);
 				} else {
@@ -78,69 +113,50 @@ const OrderPage = ({ isProfileOrder = false }: TOrderPageProps) => {
 		[isProfileOrder]
 	);
 
-	// Устанавливаем WebSocket соединение
-	useEffect(() => {
-		if (isProfileOrder) {
-			dispatch(connectProfileOrders(WS_ORDER_ALL_URL));
-		} else {
-			dispatch(feedOrdersConnect(WS_ORDER_ALL_URL));
-		}
-
-		return () => {
-			if (isProfileOrder) {
-				dispatch(disconnectProfileOrders());
-			} else {
-				dispatch(feedOrdersDisconnect());
-			}
-		};
-	}, [dispatch, isProfileOrder]);
-
-	// Поиск заказа в WebSocket данных или планирование прямого запроса
 	useEffect(() => {
 		if (!number) {
-			setError('Номер заказа не указан');
+			setError('Некорректный номер заказа');
 			setIsLoading(false);
 			return;
 		}
 
-		const currentOrders = isProfileOrder ? profileOrders : feedOrders;
-		const foundOrder = currentOrders.find(
-			(o) => o.number.toString() === number
+		const orders = isProfileOrder ? profileOrders : feedOrders;
+		console.log('[ORDER PAGE] Ищем заказ с номером:', number);
+		console.log(
+			'[ORDER PAGE] Доступные заказы:',
+			orders.map((o) => o.number)
 		);
 
-		if (foundOrder) {
-			setOrder(foundOrder);
+		const found = orders.find((o) => o.number.toString() === number);
+
+		if (found) {
+			console.log('[ORDER PAGE] Найден заказ:', found);
+			setOrder(found);
 			setIsLoading(false);
 			setShouldFetchDirectly(false);
 		} else if (
 			(isProfileOrder ? profileConnected : feedConnected) &&
 			!shouldFetchDirectly
 		) {
-			// Если WebSocket подключен, но заказ не найден - планируем прямой запрос
-			const timer = setTimeout(() => {
-				setShouldFetchDirectly(true);
-			}, 1000); // Даем 1 секунду на получение данных через WebSocket
-
+			const timer = setTimeout(() => setShouldFetchDirectly(true), 1000);
 			return () => clearTimeout(timer);
 		}
 	}, [
+		number,
 		feedOrders,
 		profileOrders,
-		number,
-		isProfileOrder,
 		feedConnected,
 		profileConnected,
+		isProfileOrder,
 		shouldFetchDirectly,
 	]);
 
-	// Выполняем прямой запрос, если заказ не найден через WebSocket
 	useEffect(() => {
 		if (shouldFetchDirectly && number) {
 			fetchOrderDirectly(number);
 		}
 	}, [shouldFetchDirectly, number, fetchOrderDirectly]);
 
-	// Обрабатываем ошибки WebSocket
 	useEffect(() => {
 		const currentError = isProfileOrder ? profileError : feedError;
 		if (currentError) {
@@ -149,7 +165,6 @@ const OrderPage = ({ isProfileOrder = false }: TOrderPageProps) => {
 		}
 	}, [profileError, feedError, isProfileOrder]);
 
-	// Состояния загрузки и ошибки
 	if (isLoading) {
 		return (
 			<section className={style.container}>
@@ -174,34 +189,28 @@ const OrderPage = ({ isProfileOrder = false }: TOrderPageProps) => {
 		);
 	}
 
-	// Получаем полные данные об ингредиентах
 	const orderIngredients: TIngredient[] = order.ingredients
-		.map((orderIngredient: string) =>
-			ingredients.find((ing) => ing._id === orderIngredient)
-		)
-		.filter((ing): ing is TIngredient => ing !== undefined);
+		.map((id) => ingredients.find((i) => i._id === id))
+		.filter((i): i is TIngredient => Boolean(i));
 
-	// Группируем ингредиенты по количеству
 	const groupedIngredients = orderIngredients.reduce(
-		(acc: (TIngredient & { count: number })[], ingredient: TIngredient) => {
-			const existing = acc.find((item) => item._id === ingredient._id);
+		(acc: (TIngredient & { count: number })[], ing) => {
+			const existing = acc.find((item) => item._id === ing._id);
 			if (existing) {
 				existing.count += 1;
 			} else {
-				acc.push({ ...ingredient, count: 1 });
+				acc.push({ ...ing, count: 1 });
 			}
 			return acc;
 		},
 		[]
 	);
 
-	// Подсчет общей стоимости
 	const totalPrice = orderIngredients.reduce(
-		(sum: number, ingredient: TIngredient) => sum + ingredient.price,
+		(sum, item) => sum + item.price,
 		0
 	);
 
-	// Форматирование даты
 	const orderDate = order.createdAt ? (
 		<FormattedDate date={new Date(order.createdAt)} />
 	) : (

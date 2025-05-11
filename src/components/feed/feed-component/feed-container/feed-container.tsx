@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { AppDispatch } from '../../../../services/store';
 import { RootState } from '../../../../services/reducers/root-reducer';
@@ -34,14 +34,18 @@ const FeedContainer = ({
 
 	const [selectedOrder, setSelectedOrder] = useState<TOrder | null>(null);
 
+	const connectedOnce = useRef(false);
+
 	useEffect(() => {
-		if (mode === 'feed') {
+		if (mode === 'feed' && !connectedOnce.current) {
 			dispatch(feedOrdersConnect(WS_ORDER_ALL_URL));
+			connectedOnce.current = true;
 		}
 
 		return () => {
 			if (mode === 'feed') {
 				dispatch(feedOrdersDisconnect());
+				connectedOnce.current = false; // сбрасываем при размонтировании
 			}
 		};
 	}, [dispatch, mode]);

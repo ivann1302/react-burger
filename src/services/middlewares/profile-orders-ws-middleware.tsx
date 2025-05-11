@@ -12,10 +12,11 @@ import {
 import { WS_API_WITH_TOKEN } from '../../utils/api';
 import { updateToken } from '../../services/actions/auth-actions';
 import { RootState } from '../reducers/root-reducer';
+import { TOrder } from '@utils/ingredient-types';
 
 interface WebSocketMessage {
 	message?: string;
-	orders?: any[];
+	orders?: TOrder[];
 	total?: number;
 	totalToday?: number;
 }
@@ -72,13 +73,15 @@ const profileOrdersWsMiddleware: Middleware<
 						if (!token) throw new Error('Token not found in URL');
 
 						console.log('[WS] Connecting to:', typedAction.payload);
+						console.log('[WS] Creating WebSocket...');
+
 						socket = new WebSocket(typedAction.payload);
 						isManualClose = false;
 						dispatch({ type: PROFILE_ORDERS_WS_CONNECTING });
 
 						socket.onopen = () => {
 							reconnectAttempt = 0;
-							console.log('[WS] Connected');
+							console.log('[WS OPENED]');
 							dispatch({ type: PROFILE_ORDERS_WS_OPEN });
 						};
 
@@ -119,6 +122,7 @@ const profileOrdersWsMiddleware: Middleware<
 
 							try {
 								const data = JSON.parse(event.data) as WebSocketMessage;
+								console.log('[WS PARSED DATA]', data);
 
 								if (data.message?.includes('Invalid or missing token')) {
 									console.warn(
@@ -126,7 +130,7 @@ const profileOrdersWsMiddleware: Middleware<
 									);
 
 									dispatch(updateToken() as any).then(() => {
-										const newToken = localStorage.getItem('token');
+										const newToken = localStorage.getItem('accessToken');
 										if (newToken) {
 											const cleanToken = newToken.replace(/['"]/g, '').trim();
 											const wsUrl = `${WS_API_WITH_TOKEN}${cleanToken}`;

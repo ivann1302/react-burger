@@ -9,7 +9,7 @@ type TOrder = {
 	number: number;
 };
 
-type TOrderData = {
+export type TOrderData = {
 	order?: TOrder;
 };
 

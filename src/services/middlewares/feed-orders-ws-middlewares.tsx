@@ -12,65 +12,102 @@ import {
 	TFeedOrdersActions,
 } from '../actions/feed-orders-actions';
 
+let socket: WebSocket | null = null;
+let connectTimer: NodeJS.Timeout | null = null;
+let lastUrl: string | null = null;
+
 const feedOrdersWsMiddleware: Middleware<object, RootState, AppDispatch> = (
 	store
 ) => {
-	let socket: WebSocket | null = null;
-
 	return (next) => (action) => {
 		const { dispatch } = store;
 
-		// Проверяем, что action имеет нужный тип
 		if (isFeedOrdersAction(action)) {
 			if (action.type === FEED_ORDERS_CONNECT) {
-				socket = new WebSocket(action.payload);
-				dispatch({ type: FEED_ORDERS_WS_CONNECTING });
+				console.log('[WS INIT]', action.payload);
 
-				socket.onopen = () => {
-					dispatch({ type: FEED_ORDERS_WS_OPEN });
-				};
+				// Защита от повторного подключения к тому же URL
+				if (
+					socket &&
+					(socket.readyState === WebSocket.OPEN ||
+						socket.readyState === WebSocket.CONNECTING)
+				) {
+					if (action.payload === lastUrl) {
+						console.warn(
+							'[WS] Already connecting or open to same URL. Skipping.'
+						);
+						return next(action);
+					}
+				}
 
-				socket.onerror = () => {
-					dispatch({
-						type: FEED_ORDERS_WS_ERROR,
-						payload: 'Ошибка подключения к ленте заказов',
-					});
-				};
+				// Если уже был запущен таймер на соединение — отменяем
+				if (connectTimer) {
+					clearTimeout(connectTimer);
+					connectTimer = null;
+				}
 
-				socket.onclose = () => {
-					dispatch({ type: FEED_ORDERS_WS_CLOSE });
-				};
+				lastUrl = action.payload;
 
-				socket.onmessage = (event) => {
-					console.log('Raw WebSocket message:', event.data);
-					try {
-						const data = JSON.parse(event.data);
-						console.log('Parsed WebSocket data:', data); // Логируем распарсенные данные
+				// Откладываем подключение — предотвращает StrictMode двойные вызовы
+				connectTimer = setTimeout(() => {
+					socket = new WebSocket(action.payload);
+					dispatch({ type: FEED_ORDERS_WS_CONNECTING });
 
-						if (data.success) {
-							console.log('Dispatching orders:', data.orders); // Логируем перед отправкой
-							dispatch({
-								type: FEED_ORDERS_WS_MESSAGE,
-								payload: {
-									orders: data.orders,
-									total: data.total,
-									totalToday: data.totalToday,
-								},
-							});
-						}
-					} catch (error) {
-						console.error('WebSocket parse error:', error);
+					socket.onopen = () => {
+						console.log('[WS OPENED]');
+						dispatch({ type: FEED_ORDERS_WS_OPEN });
+					};
+
+					socket.onerror = (e) => {
+						console.error('[WS ERROR]', e);
 						dispatch({
 							type: FEED_ORDERS_WS_ERROR,
-							payload: 'Ошибка формата данных',
+							payload: 'Ошибка подключения к ленте заказов',
 						});
-					}
-				};
+					};
+
+					socket.onclose = (e) => {
+						console.warn('[WS CLOSED]', e.code, e.reason);
+						dispatch({ type: FEED_ORDERS_WS_CLOSE });
+					};
+
+					socket.onmessage = (event) => {
+						try {
+							const data = JSON.parse(event.data);
+							if (data.success) {
+								dispatch({
+									type: FEED_ORDERS_WS_MESSAGE,
+									payload: {
+										orders: data.orders,
+										total: data.total,
+										totalToday: data.totalToday,
+									},
+								});
+							}
+						} catch (error) {
+							console.error('[WS PARSE ERROR]', error);
+							dispatch({
+								type: FEED_ORDERS_WS_ERROR,
+								payload: 'Ошибка формата данных',
+							});
+						}
+					};
+				}, 300); // Задержка: предотвращает ошибку в StrictMode
 			}
 
-			if (action.type === FEED_ORDERS_DISCONNECT && socket) {
-				socket.close();
-				socket = null;
+			if (action.type === FEED_ORDERS_DISCONNECT) {
+				console.log('[WS DISCONNECT]');
+
+				if (connectTimer) {
+					clearTimeout(connectTimer);
+					connectTimer = null;
+				}
+
+				if (socket) {
+					socket.close(1000, 'Normal closure');
+					socket = null;
+					lastUrl = null;
+				}
 			}
 		}
 
@@ -78,7 +115,6 @@ const feedOrdersWsMiddleware: Middleware<object, RootState, AppDispatch> = (
 	};
 };
 
-// Type guard для проверки типа action
 function isFeedOrdersAction(action: unknown): action is TFeedOrdersActions {
 	return typeof action === 'object' && action !== null && 'type' in action;
 }

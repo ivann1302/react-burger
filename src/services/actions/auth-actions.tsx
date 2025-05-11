@@ -102,7 +102,7 @@ export const register =
 				dispatch(registerSuccess(response.user));
 				setCookie('refreshToken', response.refreshToken, { maxAge: 120000 });
 				const cleanToken = response.accessToken.replace(/^Bearer\s/, '');
-				localStorage.setItem('token', cleanToken);
+				localStorage.setItem('accessToken', cleanToken);
 			} else {
 				dispatch(registerFailed(response.message));
 			}
@@ -129,7 +129,7 @@ export const login =
 				dispatch(loginSuccess(response.user));
 				setCookie('refreshToken', response.refreshToken, { maxAge: 120000 });
 				const cleanToken = response.accessToken.replace(/^Bearer\s/, '');
-				localStorage.setItem('token', cleanToken);
+				localStorage.setItem('accessToken', cleanToken);
 				return true;
 			} else {
 				dispatch(loginFailed(response.message));
@@ -167,7 +167,7 @@ export const logout = () => async (dispatch: AppDispatch) => {
 		if (response.success) {
 			dispatch(logoutSuccess());
 			deleteCookie('refreshToken');
-			localStorage.removeItem('token');
+			localStorage.removeItem('accessToken');
 		} else {
 			dispatch(logoutFailed(response.message));
 		}
@@ -198,7 +198,7 @@ export const updateToken = () => async (dispatch: AppDispatch) => {
 			dispatch(updateTokenSuccess(response));
 			setCookie('refreshToken', response.refreshToken, { maxAge: 120000 });
 			const cleanToken = response.accessToken.replace(/^Bearer\s/, '');
-			localStorage.setItem('token', cleanToken);
+			localStorage.setItem('accessToken', cleanToken);
 		} else {
 			dispatch(updateTokenFailed(response.message));
 		}
@@ -213,7 +213,7 @@ export const updateToken = () => async (dispatch: AppDispatch) => {
 export const getUser = () => async (dispatch: AppDispatch) => {
 	dispatch(getUserRequest());
 	try {
-		let token = localStorage.getItem('token');
+		let token = localStorage.getItem('accessToken');
 		if (!token) {
 			throw new Error('Токен отсутствует');
 		}
@@ -231,7 +231,7 @@ export const getUser = () => async (dispatch: AppDispatch) => {
 		// Если токен истек, обновляем его
 		if (!response.success && response.message === 'jwt malformed') {
 			await dispatch(updateToken()); // Обновляем токен
-			token = localStorage.getItem('token'); // Получаем новый токен
+			token = localStorage.getItem('accessToken'); // Получаем новый токен
 
 			// Повторяем запрос с новым токеном
 			response = await request(USER_URL, {
@@ -268,7 +268,7 @@ export const checkAuthFailed = (error: string) => ({
 export const checkAuth = () => async (dispatch: AppDispatch) => {
 	dispatch(checkAuthRequest());
 	try {
-		const token = localStorage.getItem('token');
+		const token = localStorage.getItem('accessToken');
 		if (token) {
 			const response = await request(USER_URL, {
 				method: 'GET',

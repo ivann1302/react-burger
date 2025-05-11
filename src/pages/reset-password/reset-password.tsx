@@ -51,7 +51,7 @@ const ResetPasswordPage = (): JSX.Element => {
 					placeholder={'Введите код из письма'}
 					onChange={handleTokenChange}
 					value={token}
-					name={'token'}
+					name={'accessToken'}
 					error={false}
 					errorText={'Ошибка'}
 					size={'default'}

@@ -36,8 +36,6 @@ export const createOrder =
 
 		try {
 			console.log('Отправка запроса на создание заказа:', { ingredients });
-
-			alert('Заказ обрабатывается!');
 			await new Promise((resolve) => setTimeout(resolve, 15000));
 
 			const data = await request(BASE_URL_ORDERS, {
@@ -49,6 +47,7 @@ export const createOrder =
 			});
 			console.log('Ответ сервера:', data);
 			dispatch(setOrderData(data)); // Сохраняем данные заказа
+			console.log(data);
 			dispatch(clearConstructor()); // Сбрасываем конструктор
 		} catch (error) {
 			console.error('Ошибка при создании заказа:', error);

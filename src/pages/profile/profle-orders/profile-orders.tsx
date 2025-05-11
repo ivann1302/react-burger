@@ -29,7 +29,7 @@ const ProfileOrders = () => {
 	useEffect(() => {
 		if (connectedOnce) return;
 
-		const token = localStorage.getItem('token');
+		const token = localStorage.getItem('accessToken');
 		if (!token) {
 			console.error('Token not found');
 			return;
