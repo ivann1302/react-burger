@@ -92,7 +92,7 @@ const feedOrdersWsMiddleware: Middleware<object, RootState, AppDispatch> = (
 							});
 						}
 					};
-				}, 300); // Задержка: предотвращает ошибку в StrictMode
+				}, 300);
 			}
 
 			if (action.type === FEED_ORDERS_DISCONNECT) {

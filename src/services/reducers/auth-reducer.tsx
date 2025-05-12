@@ -13,13 +13,13 @@ import {
 	UPDATE_TOKEN_FAILED,
 	CHECK_AUTH_REQUEST,
 	CHECK_AUTH_SUCCESS,
-	CHECK_AUTH_FAILED, // ← добавь эти
+	CHECK_AUTH_FAILED,
 } from '../actions/auth-actions';
 import { IUser } from './../../utils/types';
 
 const initialState = {
 	user: null,
-	isAuthenticated: null, // ← стартовое состояние: null (ещё не знаем)
+	isAuthenticated: null,
 	isLoading: false,
 	error: null,
 };
@@ -47,7 +47,7 @@ const authReducer = (state = initialState, action: TAuthActionTypes) => {
 		case LOGIN_REQUEST:
 		case LOGOUT_REQUEST:
 		case UPDATE_TOKEN_REQUEST:
-		case CHECK_AUTH_REQUEST: // ← добавь
+		case CHECK_AUTH_REQUEST:
 			return {
 				...state,
 				isLoading: true,
@@ -56,7 +56,7 @@ const authReducer = (state = initialState, action: TAuthActionTypes) => {
 
 		case REGISTER_SUCCESS:
 		case LOGIN_SUCCESS:
-		case CHECK_AUTH_SUCCESS: // ← добавь
+		case CHECK_AUTH_SUCCESS:
 			return {
 				...state,
 				user: action.payload,
@@ -85,10 +85,10 @@ const authReducer = (state = initialState, action: TAuthActionTypes) => {
 		case LOGIN_FAILED:
 		case LOGOUT_FAILED:
 		case UPDATE_TOKEN_FAILED:
-		case CHECK_AUTH_FAILED: // ← добавь
+		case CHECK_AUTH_FAILED:
 			return {
 				...state,
-				isAuthenticated: false, // ← важно!
+				isAuthenticated: false,
 				isLoading: false,
 				error: action.payload,
 			};

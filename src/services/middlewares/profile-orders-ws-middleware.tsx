@@ -52,7 +52,7 @@ const profileOrdersWsMiddleware: Middleware<
 				if (isConnectAction(typedAction)) {
 					console.log('[WS] Existing socket state:', socket?.readyState);
 
-					// 🛡 Защита от повторного подключения
+					// Защита от повторного подключения
 					if (
 						socket &&
 						(socket.readyState === WebSocket.CONNECTING ||

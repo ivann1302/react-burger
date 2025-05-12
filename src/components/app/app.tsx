@@ -178,13 +178,17 @@ const AppContent = () => {
 								<ProfilePage />
 							</ProtectedRoute>
 						}>
-						<Route path='orders' element={<ProfileOrders />}>
-							<Route
-								path='/profile/orders/:number'
-								element={<OrderPage isProfileOrder />}
-							/>
-						</Route>
+						<Route path='orders' element={<ProfileOrders />}></Route>
 					</Route>
+					<Route
+						path='/profile/orders/:number'
+						element={
+							<ProtectedRoute>
+								<OrderPage />
+							</ProtectedRoute>
+						}
+					/>
+
 					<Route path='/ingredients/:id' element={<IngredientPage />} />
 					<Route path='/feed' element={<FeedPage />} />
 					<Route path='/feed/:number' element={<OrderPage />} />
