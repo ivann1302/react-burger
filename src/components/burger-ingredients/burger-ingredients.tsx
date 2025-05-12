@@ -1,18 +1,15 @@
 import { useState, useEffect, useRef } from 'react';
-import { useSelector, TypedUseSelectorHook } from 'react-redux';
 import { Tab } from '@ya.praktikum/react-developer-burger-ui-components';
 import styles from './burger-ingredients.module.scss';
 import IngredientsGroup from './ingredients-group/ingredients-group';
 import { TIngredient } from './../../utils/ingredient-types';
-import { RootState } from '@services/reducers/root-reducer';
+import { useAppSelector } from '../../hooks/typed-hookes';
 
 type TBurgerIngredientsProps = {
 	onIngredientClick: (ingredient: TIngredient) => void;
 };
 
 type TIngredientSection = 'Булки' | 'Соусы' | 'Начинки';
-
-const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
 export default function BurgerIngredients({
 	onIngredientClick,

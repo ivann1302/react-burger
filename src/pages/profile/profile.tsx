@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useRef, ChangeEvent } from 'react';
-import { useDispatch, useSelector, TypedUseSelectorHook } from 'react-redux';
 import { Outlet, useNavigate, Link, useLocation } from 'react-router-dom';
 import { logout } from '../../services/actions/auth-actions';
 import { getUser, updateUser } from '../../services/actions/user-actions';
-import { AppDispatch } from '@services/store';
-import { RootState } from '@services/reducers/root-reducer';
+import { useAppSelector, useAppDispatch } from '../../hooks/typed-hookes';
+
 import styles from './profile.module.scss';
 import {
 	Input,
@@ -12,9 +11,6 @@ import {
 	PasswordInput,
 	Button,
 } from '@ya.praktikum/react-developer-burger-ui-components';
-
-const useAppDispatch: () => AppDispatch = useDispatch;
-const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
 type TUserUpdateData = {
 	name?: string;

@@ -3,10 +3,9 @@ import {
 	CurrencyIcon,
 	FormattedDate,
 } from '@ya.praktikum/react-developer-burger-ui-components';
-import { useSelector } from 'react-redux';
-import { RootState } from '@services/reducers/root-reducer';
 import styles from './feed-element.module.scss';
 import { TOrder } from '@utils/ingredient-types';
+import { useAppSelector } from '../../../../hooks/typed-hookes';
 
 interface FeedElementProps {
 	order: TOrder;
@@ -19,8 +18,8 @@ const FeedElement = ({
 	onClick,
 	showStatus = false,
 }: FeedElementProps) => {
-	const allIngredients = useSelector(
-		(state: RootState) => state.ingredients.ingredients
+	const allIngredients = useAppSelector(
+		(state) => state.ingredients.ingredients
 	);
 
 	const orderIngredients = order.ingredients

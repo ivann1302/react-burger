@@ -1,10 +1,9 @@
-import { useSelector } from 'react-redux';
 import styles from './order-details.module.scss';
 import doneImage from './../../../images/done.svg';
-import { RootState } from '../../../services/reducers/root-reducer';
+import { useAppSelector } from '../../../hooks/typed-hookes';
 
 const OrderDetails = () => {
-	const { orderData, loading } = useSelector((state: RootState) => state.order);
+	const { orderData, loading } = useAppSelector((state) => state.order);
 
 	if (loading) {
 		return (

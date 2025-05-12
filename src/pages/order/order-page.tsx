@@ -1,7 +1,6 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../services/reducers/root-reducer';
+import { useAppSelector } from '../../hooks/typed-hookes';
 import { TOrder, TIngredient } from '../../utils/ingredient-types';
 import { FormattedDate } from '@ya.praktikum/react-developer-burger-ui-components';
 import OrderComponent from '../../components/feed/feed-component/order/order-component';
@@ -39,17 +38,15 @@ const OrderPage = ({ isProfileOrder = false }: TOrderPageProps) => {
 		orders: feedOrders,
 		wsConnected: feedConnected,
 		error: feedError,
-	} = useSelector((state: RootState) => state.feedOrders);
+	} = useAppSelector((state) => state.feedOrders);
 
 	const {
 		orders: profileOrders,
 		wsConnected: profileConnected,
 		error: profileError,
-	} = useSelector((state: RootState) => state.profileOrders);
+	} = useAppSelector((state) => state.profileOrders);
 
-	const ingredients = useSelector(
-		(state: RootState) => state.ingredients.ingredients
-	);
+	const ingredients = useAppSelector((state) => state.ingredients.ingredients);
 
 	const initTimer = useRef<NodeJS.Timeout | null>(null);
 	const connectedOnce = useRef(false);

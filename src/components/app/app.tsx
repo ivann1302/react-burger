@@ -1,14 +1,8 @@
 import React, { useEffect } from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
-import {
-	useDispatch as useReduxDispatch,
-	useSelector,
-	Provider,
-	TypedUseSelectorHook,
-} from 'react-redux';
+import { Provider } from 'react-redux';
 
 import { store, AppDispatch } from './../../services/store';
-import { RootState } from '@services/reducers/root-reducer';
 import AppHeader from './../app-header/app-header';
 import Home from './../../pages/home/home';
 import LoginPage from './../../pages/login/login';
@@ -21,6 +15,7 @@ import PageNotFound from './../../pages/page-not-found/page-not-found';
 import IngredientPage from './../../pages/ingredient/ingredient';
 import FeedPage from './../../pages/feed/feed-page';
 import OrderPage from './../../pages/order/order-page';
+import { useAppDispatch, useAppSelector } from '../../hooks/typed-hookes';
 
 import Modal from '../modal/modal';
 import OrderDetails from '../burger-constructor/order-details/oreder-details';
@@ -38,9 +33,6 @@ import ProtectedRoute from './../protected-route/protected-route';
 import ResetPasswordGuardRoute from '../reset-password-guard-route/reset-password-guard-route';
 
 import styles from './app.module.scss';
-
-export const useAppDispatch = () => useReduxDispatch<AppDispatch>();
-const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
 const AppContent = () => {
 	const dispatch: AppDispatch = useAppDispatch();

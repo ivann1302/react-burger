@@ -1,7 +1,4 @@
 import { useEffect, useState, useRef } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { AppDispatch } from '../../../../services/store';
-import { RootState } from '../../../../services/reducers/root-reducer';
 import FeedElement from '../feed-element/feed-element';
 import style from './feed-container.module.scss';
 import Modal from '../../../modal/modal';
@@ -11,6 +8,8 @@ import {
 	feedOrdersDisconnect,
 } from '../../../../services/actions/feed-orders-actions';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useAppSelector, useAppDispatch } from '../../../../hooks/typed-hookes';
+
 import { TOrder } from '../../../../utils/ingredient-types';
 import { WS_ORDER_ALL_URL } from '../../../../utils/api';
 
@@ -23,12 +22,12 @@ const FeedContainer = ({
 	mode = 'feed',
 	showStatus = false,
 }: FeedContainerProps) => {
-	const dispatch = useDispatch<AppDispatch>();
+	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
 	const location = useLocation();
 
 	// Выбираем нужный стейт в зависимости от режима
-	const { orders, error, wsConnected } = useSelector((state: RootState) =>
+	const { orders, error, wsConnected } = useAppSelector((state) =>
 		mode === 'profile' ? state.profileOrders : state.feedOrders
 	);
 

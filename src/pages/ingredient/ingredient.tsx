@@ -1,10 +1,8 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { useSelector, TypedUseSelectorHook } from 'react-redux';
-import { RootState } from '@services/reducers/root-reducer';
-import IngredientDetailsModal from '../../components/burger-ingredients/ingredient-details/ingredient-details';
+import { useAppSelector } from '../../hooks/typed-hookes';
 
-const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
+import IngredientDetailsModal from '../../components/burger-ingredients/ingredient-details/ingredient-details';
 
 export default function IngredientPage(): JSX.Element {
 	const { id } = useParams();

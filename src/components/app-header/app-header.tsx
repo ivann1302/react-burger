@@ -50,8 +50,9 @@ const AppHeader: React.FC<TAppHeaderProps> = () => {
 						</p>
 					</NavLink>
 				</div>
-
-				<Logo className={styles.logo} />
+				<NavLink to='/'>
+					<Logo className={styles.logo} />
+				</NavLink>
 
 				<NavLink
 					to='/profile'

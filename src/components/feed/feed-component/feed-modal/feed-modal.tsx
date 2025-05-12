@@ -2,9 +2,9 @@ import {
 	CurrencyIcon,
 	FormattedDate,
 } from '@ya.praktikum/react-developer-burger-ui-components';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../../../services/reducers/root-reducer';
 import style from './feed-modal.module.scss';
+import { useAppSelector } from '../../../../hooks/typed-hookes';
+
 import { TIngredient, TOrder } from '../../../../utils/ingredient-types';
 
 type TFeedModalProps = {
@@ -16,8 +16,8 @@ type TIngredientWithCount = TIngredient & { count: number };
 
 const FeedModal = ({ order }: TFeedModalProps) => {
 	// Получаем все ингредиенты из Redux store
-	const allIngredients = useSelector(
-		(state: RootState) => state.ingredients.ingredients
+	const allIngredients = useAppSelector(
+		(state) => state.ingredients.ingredients
 	);
 
 	if (!order) {

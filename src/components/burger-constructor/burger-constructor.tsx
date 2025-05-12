@@ -1,5 +1,4 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { useDrop } from 'react-dnd';
 import ConstructorItems from './constructor-items/constructor-items';
 import OrderBlock from './order-block/order-block';
@@ -10,21 +9,18 @@ import {
 	moveIngredient,
 } from '../../services/actions/constructor-actions';
 import { TIngredient } from '@utils/ingredient-types';
-import { AppDispatch } from './../../services/store';
-import { RootState } from '@services/reducers/root-reducer';
 import styles from './burger-constructor.module.scss';
+import { useAppDispatch, useAppSelector } from '../../hooks/typed-hookes';
 
 type TDragItem = TIngredient & { uniqueId?: string };
-
-const useAppDispatch: () => AppDispatch = useDispatch;
 
 export default function BurgerConstructor() {
 	const dispatch = useAppDispatch();
 
 	// Получаем ингредиенты из Redux
-	const bun = useSelector((state: RootState) => state.burgerConstructor.bun);
-	const ingredients = useSelector(
-		(state: RootState) => state.burgerConstructor.ingredients ?? []
+	const bun = useAppSelector((state) => state.burgerConstructor.bun);
+	const ingredients = useAppSelector(
+		(state) => state.burgerConstructor.ingredients ?? []
 	);
 
 	const handleRemoveIngredient = (index: string) => {

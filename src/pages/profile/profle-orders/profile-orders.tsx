@@ -1,6 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch } from '../../../services/store';
 import FeedContainer from '../../../components/feed/feed-component/feed-container/feed-container';
 import {
 	connectProfileOrders,
@@ -8,14 +6,14 @@ import {
 } from '../../../services/actions/profile-orders-actions';
 import { WS_API_WITH_TOKEN } from '../../../utils/api';
 import styles from './profile-orders.module.scss';
-import { RootState } from '../../../services/reducers/root-reducer';
+import { useAppSelector, useAppDispatch } from '../../../hooks/typed-hookes';
 
 const ProfileOrders = () => {
-	const dispatch = useDispatch<AppDispatch>();
+	const dispatch = useAppDispatch();
 	const [connectedOnce, setConnectedOnce] = useState(false);
 
-	const wsConnected = useSelector(
-		(state: RootState) => state.profileOrders.wsConnected
+	const wsConnected = useAppSelector(
+		(state) => state.profileOrders.wsConnected
 	);
 
 	const didConnect = useRef(false);

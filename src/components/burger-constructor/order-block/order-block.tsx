@@ -1,5 +1,4 @@
 import React from 'react';
-import { useDispatch, useSelector, TypedUseSelectorHook } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { createOrder } from '../../../services/actions/order-actions';
 import {
@@ -7,12 +6,9 @@ import {
 	CurrencyIcon,
 } from '@ya.praktikum/react-developer-burger-ui-components';
 import { TIngredient } from './../../../utils/ingredient-types';
-import { AppDispatch } from './../../../services/store';
-import { RootState } from './../../../services/reducers/root-reducer';
-import styles from './order-block.module.scss';
+import { useAppDispatch, useAppSelector } from '../../../hooks/typed-hookes';
 
-const useAppDispatch: () => AppDispatch = useDispatch;
-const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
+import styles from './order-block.module.scss';
 
 export default function OrderBlock(): JSX.Element {
 	const dispatch = useAppDispatch();

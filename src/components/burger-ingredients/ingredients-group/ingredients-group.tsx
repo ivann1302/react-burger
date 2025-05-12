@@ -1,5 +1,5 @@
 import React, { forwardRef } from 'react';
-import { useSelector } from 'react-redux';
+import { useAppSelector } from '../../../hooks/typed-hookes';
 import IngredientItem from '../ingredient-item/ingredient-item';
 import IngredientInformation from '../ingredient-information/ingredient-information';
 import styles from './ingredients-group.module.scss';
@@ -15,10 +15,9 @@ type IngredientsGroupProps = {
 const IngredientsGroup = forwardRef<HTMLHeadingElement, IngredientsGroupProps>(
 	({ type, groupName, onIngredientClick }, ref) => {
 		// Получаем данные из конструктора
-		const { bun, ingredients = [] } = useSelector(
-			// @ts-expect-error 'redux'
+		const { bun, ingredients = [] } = useAppSelector(
 			(state) => state.burgerConstructor
-		); // Используем пустой массив по умолчанию
+		);
 
 		// Функция для подсчета количества ингредиентов
 		const countIngredients = (id: string) => {

@@ -1,18 +1,14 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
-import { useDispatch, useSelector, TypedUseSelectorHook } from 'react-redux';
 import { useNavigate, useLocation, Navigate, Link } from 'react-router-dom';
 import { login } from '../../services/actions/auth-actions';
-import { AppDispatch } from './../../services/store';
-import { RootState } from '@services/reducers/root-reducer';
+import { useAppSelector, useAppDispatch } from '../../hooks/typed-hookes';
+
 import styles from './login.module.scss';
 import {
 	EmailInput,
 	PasswordInput,
 	Button,
 } from '@ya.praktikum/react-developer-burger-ui-components';
-
-const useAppDispatch: () => AppDispatch = useDispatch;
-const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
 const LoginPage = (): JSX.Element => {
 	const [email, setEmail] = useState('');
