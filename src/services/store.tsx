@@ -4,20 +4,46 @@ import {
 	compose,
 	Store,
 	AnyAction,
-	Middleware,
-	Dispatch,
 } from 'redux';
 import { useDispatch } from 'react-redux';
 import {
 	thunk,
-	ThunkAction,
-	ThunkDispatch,
 	ThunkMiddleware,
+	ThunkDispatch,
+	ThunkAction,
 } from 'redux-thunk';
+
 import rootReducer, { RootState } from './reducers/root-reducer';
+import { socketMiddleware } from './middlewares/socket-middleware';
+import { TFeedOrdersActions } from './actions/feed-orders-actions';
 import { TProfileOrdersActions } from './actions/profile-orders-actions';
-import feedOrdersWsMiddleware from './middlewares/feed-orders-ws-middlewares';
-import profileOrdersWsMiddleware from './middlewares/profile-orders-ws-middleware';
+
+export const profileOrdersWsActions = {
+	WS_CONNECT: 'PROFILE_ORDERS_CONNECT',
+	WS_DISCONNECT: 'PROFILE_ORDERS_DISCONNECT',
+	WS_CONNECTING: 'PROFILE_ORDERS_WS_CONNECTING',
+	WS_OPEN: 'PROFILE_ORDERS_WS_OPEN',
+	WS_CLOSE: 'PROFILE_ORDERS_WS_CLOSE',
+	WS_ERROR: 'PROFILE_ORDERS_WS_ERROR',
+	WS_MESSAGE: 'PROFILE_ORDERS_WS_MESSAGE',
+} as const;
+
+export const feedOrdersWsActions = {
+	WS_CONNECT: 'FEED_ORDERS_CONNECT',
+	WS_DISCONNECT: 'FEED_ORDERS_DISCONNECT',
+	WS_CONNECTING: 'FEED_ORDERS_WS_CONNECTING',
+	WS_OPEN: 'FEED_ORDERS_WS_OPEN',
+	WS_CLOSE: 'FEED_ORDERS_WS_CLOSE',
+	WS_ERROR: 'FEED_ORDERS_WS_ERROR',
+	WS_MESSAGE: 'FEED_ORDERS_WS_MESSAGE',
+	WS_SEND_MESSAGE: 'FEED_ORDERS_WS_SEND',
+} as const;
+
+// Объединённый тип всех action'ов
+export type TApplicationActions =
+	| TFeedOrdersActions
+	| TProfileOrdersActions
+	| AnyAction;
 
 declare global {
 	interface Window {
@@ -31,28 +57,20 @@ const composeEnhancers =
 	compose;
 
 const middleware = [
-	thunk as ThunkMiddleware<RootState, TProfileOrdersActions | AnyAction>,
-	feedOrdersWsMiddleware as Middleware<
-		object,
-		RootState,
-		Dispatch<TProfileOrdersActions | AnyAction>
-	>,
-	profileOrdersWsMiddleware,
+	thunk as ThunkMiddleware<RootState, TApplicationActions>,
+	socketMiddleware(profileOrdersWsActions),
+	socketMiddleware(feedOrdersWsActions),
 ];
 
-// Явно используем перегрузку createStore с тремя параметрами
 export const store = createStore(
 	rootReducer,
-	undefined, // Явно передаем undefined как preloadedState
+	undefined,
 	composeEnhancers(applyMiddleware(...middleware))
-) as Store<RootState, TProfileOrdersActions | AnyAction> & {
-	dispatch: ThunkDispatch<
-		RootState,
-		unknown,
-		TProfileOrdersActions | AnyAction
-	>;
+) as Store<RootState, TApplicationActions> & {
+	dispatch: ThunkDispatch<RootState, unknown, TApplicationActions>;
 };
 
+// Типы для хуков и Thunk'ов
 export type AppDispatch = typeof store.dispatch;
 export const useAppDispatch = () => useDispatch<AppDispatch>();
 
@@ -60,7 +78,7 @@ export type AppThunk<ReturnType = void> = ThunkAction<
 	ReturnType,
 	RootState,
 	unknown,
-	AnyAction
+	TApplicationActions
 >;
 
 export default store;
