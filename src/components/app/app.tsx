@@ -5,7 +5,7 @@ import {
 	useNavigate,
 	useLocation,
 	useNavigationType,
-	matchPath,
+	useMatch,
 } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { store, AppDispatch } from './../../services/store';
@@ -70,9 +70,8 @@ const AppContent = () => {
 		navigationType === 'PUSH';
 
 	// Роуты с номерами заказов
-	const feedMatch = matchPath('/feed/:number', location.pathname);
-	const profileMatch = matchPath('/profile/orders/:number', location.pathname);
-
+	const feedMatch = useMatch('/feed/:number');
+	const profileMatch = useMatch('/profile/orders/:number');
 	useEffect(() => {
 		dispatch(fetchIngredients());
 		dispatch(checkAuth());
@@ -210,17 +209,20 @@ const AppContent = () => {
 					</Modal>
 				)}
 
-				{/* Только если :number найден в path */}
 				{isModalRoute && feedMatch?.params?.number && (
 					<Modal onClose={() => navigate('/feed')}>
-						<OrderPage isModal />
+						<OrderPage isModal numberFromProps={feedMatch.params.number} />
 					</Modal>
 				)}
 
 				{isModalRoute && profileMatch?.params?.number && (
 					<Modal onClose={() => navigate('/profile/orders')}>
 						<ProtectedRoute>
-							<OrderPage isProfileOrder isModal />
+							<OrderPage
+								isModal
+								isProfileOrder
+								numberFromProps={profileMatch.params.number}
+							/>
 						</ProtectedRoute>
 					</Modal>
 				)}

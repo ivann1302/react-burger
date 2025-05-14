@@ -1,8 +1,6 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import FeedElement from '../feed-element/feed-element';
 import style from './feed-container.module.scss';
-import Modal from '../../../modal/modal';
-import FeedModal from '../feed-modal/feed-modal';
 import {
 	feedOrdersConnect,
 	feedOrdersDisconnect,
@@ -26,12 +24,9 @@ const FeedContainer = ({
 	const navigate = useNavigate();
 	const location = useLocation();
 
-	// Выбираем нужный стейт в зависимости от режима
 	const { orders, error, wsConnected } = useAppSelector((state) =>
 		mode === 'profile' ? state.profileOrders : state.feedOrders
 	);
-
-	const [selectedOrder, setSelectedOrder] = useState<TOrder | null>(null);
 
 	const connectedOnce = useRef(false);
 
@@ -44,29 +39,20 @@ const FeedContainer = ({
 		return () => {
 			if (mode === 'feed') {
 				dispatch(feedOrdersDisconnect());
-				connectedOnce.current = false; // сбрасываем при размонтировании
+				connectedOnce.current = false;
 			}
 		};
 	}, [dispatch, mode]);
 
 	const handleOrderClick = (order: TOrder) => {
-		let orderUrl = '';
-
-		if (mode === 'profile') {
-			orderUrl = `/profile/orders/${order.number}`;
-		} else {
-			orderUrl = `/feed/${order.number}`;
-		}
+		const orderUrl =
+			mode === 'profile'
+				? `/profile/orders/${order.number}`
+				: `/feed/${order.number}`;
 
 		navigate(orderUrl, {
 			state: { background: location },
 		});
-		setSelectedOrder(order);
-	};
-
-	const closeModal = () => {
-		setSelectedOrder(null);
-		navigate(-1);
 	};
 
 	if (!wsConnected) {
@@ -106,12 +92,6 @@ const FeedContainer = ({
 					showStatus={showStatus}
 				/>
 			))}
-
-			{selectedOrder && (
-				<Modal onClose={closeModal} header={`#${selectedOrder.number}`}>
-					<FeedModal order={selectedOrder} />
-				</Modal>
-			)}
 		</div>
 	);
 };

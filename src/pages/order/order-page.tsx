@@ -24,16 +24,23 @@ import {
 type TOrderPageProps = {
 	isProfileOrder?: boolean;
 	isModal?: boolean;
+	numberFromProps?: string;
 };
 
 const OrderPage = ({
 	isProfileOrder = false,
 	isModal = false,
+	numberFromProps,
 }: TOrderPageProps) => {
-	const { number } = useParams<{ number: string }>();
-	const dispatch = useAppDispatch();
+	const params = useParams<{ number: string }>();
+	const number = numberFromProps || params.number;
 
 	console.log('[OrderPage] mount', { isProfileOrder, isModal });
+	console.log('[OrderPage] numberFromProps:', numberFromProps);
+	console.log('[OrderPage] paramNumber (from useParams):', params.number);
+	console.log('[OrderPage] final number:', number);
+
+	const dispatch = useAppDispatch();
 
 	const [order, setOrder] = useState<TOrder | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
@@ -130,7 +137,6 @@ const OrderPage = ({
 		}
 
 		const orders = isProfileOrder ? profileOrders : feedOrders;
-
 		const found = orders.find((o) => o.number.toString() === number);
 
 		if (found) {
@@ -219,6 +225,9 @@ const OrderPage = ({
 	) : (
 		'Сегодня'
 	);
+	console.log('[OrderPage] numberFromProps:', numberFromProps);
+	console.log('[OrderPage] paramNumber (from useParams):', params.number);
+	console.log('[OrderPage] final number:', number);
 
 	return (
 		<section className={style.container}>
