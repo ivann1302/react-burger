@@ -1,7 +1,13 @@
-// import styles from './feed-page.module.scss';
+import { Outlet } from 'react-router-dom';
 import FeedComponent from '../../components/feed/feed-component';
+
 const FeedPage = () => {
-	return <FeedComponent />;
+	return (
+		<div>
+			<FeedComponent />
+			<Outlet />
+		</div>
+	);
 };
 
 export default FeedPage;

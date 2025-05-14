@@ -1,33 +1,39 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
-import { useAppSelector } from '../../hooks/typed-hookes';
+import { useAppSelector, useAppDispatch } from '../../hooks/typed-hookes';
 import { TOrder, TIngredient } from '../../utils/ingredient-types';
 import { FormattedDate } from '@ya.praktikum/react-developer-burger-ui-components';
 import OrderComponent from '../../components/feed/feed-component/order/order-component';
 import style from './order-page.module.scss';
-import { useAppDispatch } from '../../services/store';
+
 import {
 	connectProfileOrders,
 	disconnectProfileOrders,
 } from '../../services/actions/profile-orders-actions';
+import {
+	feedOrdersConnect,
+	feedOrdersDisconnect,
+} from '../../services/actions/feed-orders-actions';
+
 import {
 	WS_API_WITH_TOKEN,
 	WS_ORDER_ALL_URL,
 	API_ORDERS_URL,
 } from '../../utils/api';
 
-import {
-	feedOrdersConnect,
-	feedOrdersDisconnect,
-} from '../../services/actions/feed-orders-actions';
-
 type TOrderPageProps = {
 	isProfileOrder?: boolean;
+	isModal?: boolean;
 };
 
-const OrderPage = ({ isProfileOrder = false }: TOrderPageProps) => {
+const OrderPage = ({
+	isProfileOrder = false,
+	isModal = false,
+}: TOrderPageProps) => {
 	const { number } = useParams<{ number: string }>();
 	const dispatch = useAppDispatch();
+
+	console.log('[OrderPage] mount', { isProfileOrder, isModal });
 
 	const [order, setOrder] = useState<TOrder | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
@@ -52,7 +58,15 @@ const OrderPage = ({ isProfileOrder = false }: TOrderPageProps) => {
 	const connectedOnce = useRef(false);
 
 	useEffect(() => {
-		if (connectedOnce.current) return;
+		if (connectedOnce.current || isModal) {
+			console.log('[OrderPage] skipping WS connect', {
+				isModal,
+				connectedOnce: connectedOnce.current,
+			});
+			return;
+		}
+
+		console.log('[OrderPage] connecting WS...');
 
 		initTimer.current = setTimeout(() => {
 			if (isProfileOrder) {
@@ -65,14 +79,12 @@ const OrderPage = ({ isProfileOrder = false }: TOrderPageProps) => {
 				dispatch(feedOrdersConnect(WS_ORDER_ALL_URL));
 			}
 			connectedOnce.current = true;
-		}, 100); // Подождать 100мс — даём шанс StrictMode отработать оба mount
+		}, 100);
 
 		return () => {
-			if (initTimer.current) {
-				clearTimeout(initTimer.current);
-			}
+			if (initTimer.current) clearTimeout(initTimer.current);
 
-			if (connectedOnce.current) {
+			if (connectedOnce.current && !isModal) {
 				if (isProfileOrder) {
 					dispatch(disconnectProfileOrders());
 				} else {
@@ -81,7 +93,7 @@ const OrderPage = ({ isProfileOrder = false }: TOrderPageProps) => {
 				connectedOnce.current = false;
 			}
 		};
-	}, [dispatch, isProfileOrder]);
+	}, [dispatch, isProfileOrder, isModal]);
 
 	const fetchOrderDirectly = useCallback(
 		async (orderNumber: string) => {
@@ -118,16 +130,10 @@ const OrderPage = ({ isProfileOrder = false }: TOrderPageProps) => {
 		}
 
 		const orders = isProfileOrder ? profileOrders : feedOrders;
-		console.log('[ORDER PAGE] Ищем заказ с номером:', number);
-		console.log(
-			'[ORDER PAGE] Доступные заказы:',
-			orders.map((o) => o.number)
-		);
 
 		const found = orders.find((o) => o.number.toString() === number);
 
 		if (found) {
-			console.log('[ORDER PAGE] Найден заказ:', found);
 			setOrder(found);
 			setIsLoading(false);
 			setShouldFetchDirectly(false);

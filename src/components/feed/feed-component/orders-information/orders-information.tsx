@@ -1,12 +1,11 @@
-import { useSelector } from 'react-redux';
-import { RootState } from '@services/reducers/root-reducer';
+import { useAppSelector } from '../../../../hooks/typed-hookes';
 import OrderCounter from './order-counter/order-counter';
 import OrderQueue from './order-queue/order-queue';
 import styles from './orders-information.module.scss';
 
 const OrdersInformation = () => {
-	const { orders, total, totalToday } = useSelector(
-		(state: RootState) => state.feedOrders
+	const { orders, total, totalToday } = useAppSelector(
+		(state) => state.feedOrders
 	);
 
 	// Добавим проверку на существование orders

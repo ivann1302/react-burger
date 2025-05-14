@@ -1,7 +1,13 @@
 import React, { useEffect } from 'react';
-import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import {
+	Routes,
+	Route,
+	useNavigate,
+	useLocation,
+	useNavigationType,
+	matchPath,
+} from 'react-router-dom';
 import { Provider } from 'react-redux';
-
 import { store, AppDispatch } from './../../services/store';
 import AppHeader from './../app-header/app-header';
 import Home from './../../pages/home/home';
@@ -15,7 +21,6 @@ import PageNotFound from './../../pages/page-not-found/page-not-found';
 import IngredientPage from './../../pages/ingredient/ingredient';
 import FeedPage from './../../pages/feed/feed-page';
 import OrderPage from './../../pages/order/order-page';
-import { useAppDispatch, useAppSelector } from '../../hooks/typed-hookes';
 
 import Modal from '../modal/modal';
 import OrderDetails from '../burger-constructor/order-details/oreder-details';
@@ -32,12 +37,14 @@ import { CLEAR_ORDER_DATA } from './../../services/actions/order-actions';
 import ProtectedRoute from './../protected-route/protected-route';
 import ResetPasswordGuardRoute from '../reset-password-guard-route/reset-password-guard-route';
 
+import { useAppDispatch, useAppSelector } from '../../hooks/typed-hookes';
 import styles from './app.module.scss';
 
 const AppContent = () => {
 	const dispatch: AppDispatch = useAppDispatch();
 	const navigate = useNavigate();
 	const location = useLocation();
+	const navigationType = useNavigationType();
 
 	const isIngredientPage = location.pathname.startsWith('/ingredients/');
 	const ingredientIdFromUrl = isIngredientPage
@@ -51,15 +58,21 @@ const AppContent = () => {
 	const { selectedIngredient } = useAppSelector(
 		(state) => state.ingredientDetails
 	);
-
 	const { orderData, loading: orderLoading } = useAppSelector(
 		(state) => state.order
 	);
 
-	// Определяем фон — откуда мы пришли, если был клик по ингредиенту
-	const background = location.state?.background || null;
+	// Определяем background только если это переход внутри SPA
+	const background = location.state?.background;
+	const isModalRoute =
+		background &&
+		background.pathname !== location.pathname &&
+		navigationType === 'PUSH';
 
-	// Загружаем ингредиенты и авторизацию
+	// Роуты с номерами заказов
+	const feedMatch = matchPath('/feed/:number', location.pathname);
+	const profileMatch = matchPath('/profile/orders/:number', location.pathname);
+
 	useEffect(() => {
 		dispatch(fetchIngredients());
 		dispatch(checkAuth());
@@ -70,14 +83,12 @@ const AppContent = () => {
 		}
 	}, [dispatch]);
 
-	// Если пользователь не авторизован, а находится на закрытой странице
 	useEffect(() => {
 		if (isAuthenticated === false && location.pathname.startsWith('/profile')) {
 			navigate('/login');
 		}
 	}, [isAuthenticated, location.pathname, navigate]);
 
-	// Если модалка открыта по ссылке — подгружаем нужный ингредиент вручную
 	useEffect(() => {
 		if (isIngredientPage && !selectedIngredient && ingredients.length > 0) {
 			const found = ingredients.find(
@@ -95,22 +106,18 @@ const AppContent = () => {
 		ingredientIdFromUrl,
 	]);
 
-	// Клик по ингредиенту
 	const handleIngredientClick = (ingredient: TIngredient) => {
 		dispatch({ type: SET_SELECTED_INGREDIENT, payload: ingredient });
-
 		navigate(`/ingredients/${ingredient._id}`, {
 			state: { background: location },
 		});
 	};
 
-	// Закрытие модалки ингредиента
 	const handleIngredientModalClose = () => {
 		dispatch({ type: CLEAR_SELECTED_INGREDIENT });
 		navigate('/', { replace: true });
 	};
 
-	// Закрытие модалки заказа
 	const handleOrderModalClose = () => {
 		dispatch({ type: CLEAR_ORDER_DATA });
 		navigate(-1);
@@ -119,12 +126,14 @@ const AppContent = () => {
 	if (loading) return <div>Загрузка...</div>;
 	if (error) return <div>Ошибка: {error.message}</div>;
 
+	console.log('Current location:', location);
+	console.log('Background (state):', location.state?.background);
+
 	return (
 		<>
 			<AppHeader />
 			<main className={styles.main}>
-				{/* Основные маршруты */}
-				<Routes location={background || location}>
+				<Routes location={isModalRoute ? background : location}>
 					<Route
 						path='/'
 						element={<Home onIngredientClick={handleIngredientClick} />}
@@ -170,29 +179,49 @@ const AppContent = () => {
 								<ProfilePage />
 							</ProtectedRoute>
 						}>
-						<Route path='orders' element={<ProfileOrders />}></Route>
+						<Route path='orders' element={<ProfileOrders />} />
 					</Route>
-					<Route
-						path='/profile/orders/:number'
-						element={
-							<ProtectedRoute>
-								<OrderPage />
-							</ProtectedRoute>
-						}
-					/>
 
+					{/* Только если не модалка */}
+					{!isModalRoute && (
+						<Route
+							path='/profile/orders/:number'
+							element={
+								<ProtectedRoute>
+									<OrderPage isProfileOrder />
+								</ProtectedRoute>
+							}
+						/>
+					)}
 					<Route path='/ingredients/:id' element={<IngredientPage />} />
 					<Route path='/feed' element={<FeedPage />} />
-					<Route path='/feed/:number' element={<OrderPage />} />
+					{!isModalRoute && (
+						<Route path='/feed/:number' element={<OrderPage />} />
+					)}
 					<Route path='*' element={<PageNotFound />} />
 				</Routes>
 
-				{/* Модалка с ингредиентом, если был переход из фона */}
-				{background && selectedIngredient && (
+				{/* Модалки */}
+				{isModalRoute && selectedIngredient && (
 					<Modal
 						onClose={handleIngredientModalClose}
 						header='Детали ингредиента'>
 						<IngredientDetailsModal ingredient={selectedIngredient} />
+					</Modal>
+				)}
+
+				{/* Только если :number найден в path */}
+				{isModalRoute && feedMatch?.params?.number && (
+					<Modal onClose={() => navigate('/feed')}>
+						<OrderPage isModal />
+					</Modal>
+				)}
+
+				{isModalRoute && profileMatch?.params?.number && (
+					<Modal onClose={() => navigate('/profile/orders')}>
+						<ProtectedRoute>
+							<OrderPage isProfileOrder isModal />
+						</ProtectedRoute>
 					</Modal>
 				)}
 
