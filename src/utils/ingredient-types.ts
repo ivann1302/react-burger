@@ -12,3 +12,14 @@ export type TIngredient = {
 	image_large: string;
 	__v: number;
 };
+
+export type TOrder = {
+	_id?: string;
+	number: string;
+	name: string;
+	status: string;
+	ingredients: string[];
+	createdAt?: string;
+	updatedAt?: string;
+	price?: number;
+};

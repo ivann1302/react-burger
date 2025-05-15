@@ -7,11 +7,14 @@ import {
 	EmailInput,
 	Button,
 } from '@ya.praktikum/react-developer-burger-ui-components';
+import { AppDispatch } from './../../services/store';
+
+const useAppDispatch: () => AppDispatch = useDispatch;
 
 const ForgotPasswordPage = (): JSX.Element => {
 	const [error, setError] = useState('');
 	const [email, setEmail] = useState('');
-	const dispatch = useDispatch();
+	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
 
 	const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -22,10 +25,9 @@ const ForgotPasswordPage = (): JSX.Element => {
 		e.preventDefault();
 		setError(''); // сброс ошибки перед запросом
 
-		// @ts-expect-error 'redux'
 		const success = await dispatch(forgotPassword(email));
 		if (success) {
-			sessionStorage.setItem('canResetPassword', 'true'); // 💾 флаг для /reset-password
+			sessionStorage.setItem('canResetPassword', 'true'); // флаг для /reset-password
 			navigate('/reset-password');
 		} else {
 			setError('Пользователь не найден или неверный email');

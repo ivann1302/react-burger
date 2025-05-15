@@ -1,29 +1,28 @@
-import { useSelector } from 'react-redux';
 import styles from './order-details.module.scss';
 import doneImage from './../../../images/done.svg';
-
-interface IOrder {
-	number: number;
-}
-
-interface IOrderData {
-	order?: IOrder;
-}
+import { useAppSelector } from '../../../hooks/typed-hookes';
 
 const OrderDetails = () => {
-	const orderData = useSelector<
-		{ order: { orderData?: IOrderData } },
-		IOrderData | undefined
-	>((state) => state.order.orderData);
+	const { orderData, loading } = useAppSelector((state) => state.order);
 
-	if (!orderData) {
+	if (loading) {
+		return (
+			<div className={styles.orderContainer}>
+				<p className='text text_type_main-medium mt-10 mb-30'>
+					Секундочку... оформляем Ваш заказ...
+				</p>
+			</div>
+		);
+	}
+
+	if (!orderData || !orderData.order) {
 		return null;
 	}
 
 	return (
 		<div className={styles.orderContainer}>
 			<p className={`${styles.text} text text_type_digits-large mt-4 mb-0`}>
-				{orderData?.order?.number ?? '—'}
+				{orderData.order.number}
 			</p>
 			<p className='text text_type_main-medium mt-8 mb-0'>
 				Идентификатор заказа
@@ -34,6 +33,7 @@ const OrderDetails = () => {
 				src={doneImage}
 				alt='done'
 			/>
+
 			<p className='text text_type_main-default mt-15 mb-0'>
 				Ваш заказ начали готовить
 			</p>

@@ -1,0 +1,77 @@
+.container {
+	width: 584px;
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+	background-color: #1c1c21;
+	border-radius: 40px;
+
+	.header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	.title {
+		margin: 0;
+	}
+
+	.statusDone {
+		color: #00cccc;
+	}
+
+	.content {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+
+		.ingredients {
+			display: flex;
+			align-items: center;
+			flex-direction: row;
+
+			.ingredient {
+				width: 64px;
+				height: 64px;
+				border-radius: 50%;
+				background: linear-gradient(45deg, #801ab2, #4c4cff);
+				padding: 2px;
+				position: relative;
+				margin-right: -16px;
+
+				&:last-child {
+					margin-right: 0;
+				}
+
+				.image {
+					width: 100%;
+					height: 100%;
+					object-fit: cover;
+					border-radius: 50%;
+					background: #131316;
+				}
+
+				.remaining {
+					position: absolute;
+					top: 50%;
+					left: 50%;
+					transform: translate(-50%, -50%);
+					background: rgba(28, 28, 33, 0.6);
+					width: 100%;
+					height: 100%;
+					border-radius: 50%;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					font-size: 16px;
+				}
+			}
+		}
+
+		.price {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+		}
+	}
+}
