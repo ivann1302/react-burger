@@ -70,7 +70,7 @@ export const store = createStore(
 	dispatch: ThunkDispatch<RootState, unknown, TApplicationActions>;
 };
 
-// Типы для хуков и Thunk'ов
+// Типы для хуков и Thunks
 export type AppDispatch = typeof store.dispatch;
 export const useAppDispatch = () => useDispatch<AppDispatch>();
 
