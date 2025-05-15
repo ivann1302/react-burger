@@ -1,16 +1,13 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
-import { useDispatch } from 'react-redux';
+import { useAppDispatch } from './../../services/store';
 import { resetPassword } from './../../services/actions/password-action';
 import { useNavigate, Link } from 'react-router-dom';
-import { AppDispatch } from '@services/store';
 import styles from './reset-password.module.scss';
 import {
 	Input,
 	PasswordInput,
 	Button,
 } from '@ya.praktikum/react-developer-burger-ui-components';
-
-const useAppDispatch: () => AppDispatch = useDispatch;
 
 const ResetPasswordPage = (): JSX.Element => {
 	const [password, setPassword] = useState('');
