@@ -1,5 +1,6 @@
 import ingredientDetailsReducer, {
 	TIngredientDetailsActions,
+	initialState,
 } from './ingredient-details-reducer';
 import {
 	SET_SELECTED_INGREDIENT,
@@ -8,10 +9,6 @@ import {
 import { TIngredient } from '../../utils/ingredient-types';
 
 describe('ingredientDetailsReducer', () => {
-	const initialState = {
-		selectedIngredient: null,
-	};
-
 	const sampleIngredient: TIngredient = {
 		_id: 'abc123',
 		name: 'Test Sauce',

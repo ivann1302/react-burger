@@ -1,4 +1,4 @@
-import authReducer from './auth-reducer';
+import authReducer, { TAuthState } from './auth-reducer';
 import {
 	REGISTER_REQUEST,
 	REGISTER_SUCCESS,
@@ -18,13 +18,6 @@ import {
 } from '../actions/auth-actions';
 import { IUser } from './../../utils/types';
 
-type IAuthState = {
-	user: IUser | null;
-	isAuthenticated: boolean | null;
-	isLoading: boolean;
-	error: string | null;
-};
-
 const user: IUser = {
 	email: 'test@example.com',
 	name: 'Test User',
@@ -33,11 +26,32 @@ const user: IUser = {
 const error = 'Something went wrong';
 
 describe('authReducer', () => {
-	const initialState: IAuthState = {
+	const initialState: TAuthState = {
 		user: null,
 		isAuthenticated: null,
 		isLoading: false,
 		error: null,
+	};
+
+	const loadingState: TAuthState = {
+		...initialState,
+		isLoading: true,
+		error: null,
+	};
+
+	const successAuthState: TAuthState = {
+		...initialState,
+		user,
+		isAuthenticated: true,
+		isLoading: false,
+		error: null,
+	};
+
+	const failedState: TAuthState = {
+		...initialState,
+		isAuthenticated: false,
+		isLoading: false,
+		error,
 	};
 
 	it('should return the initial state', () => {
@@ -51,11 +65,7 @@ describe('authReducer', () => {
 		UPDATE_TOKEN_REQUEST,
 		CHECK_AUTH_REQUEST,
 	] as const)('should handle %s', (type) => {
-		expect(authReducer(initialState, { type })).toEqual({
-			...initialState,
-			isLoading: true,
-			error: null,
-		});
+		expect(authReducer(initialState, { type })).toEqual(loadingState);
 	});
 
 	it.each([
@@ -63,17 +73,13 @@ describe('authReducer', () => {
 		[LOGIN_SUCCESS, user],
 		[CHECK_AUTH_SUCCESS, user],
 	] as const)('should handle %s', (type, payload) => {
-		expect(authReducer(initialState, { type, payload })).toEqual({
-			...initialState,
-			user: payload,
-			isAuthenticated: true,
-			isLoading: false,
-			error: null,
-		});
+		expect(authReducer(initialState, { type, payload })).toEqual(
+			successAuthState
+		);
 	});
 
 	it('should handle LOGOUT_SUCCESS', () => {
-		const stateWithUser: IAuthState = {
+		const stateWithUser: TAuthState = {
 			...initialState,
 			user,
 			isAuthenticated: true,
@@ -88,10 +94,6 @@ describe('authReducer', () => {
 	});
 
 	it('should handle UPDATE_TOKEN_SUCCESS', () => {
-		const loadingState: IAuthState = {
-			...initialState,
-			isLoading: true,
-		};
 		expect(authReducer(loadingState, { type: UPDATE_TOKEN_SUCCESS })).toEqual({
 			...initialState,
 			isLoading: false,
@@ -106,11 +108,8 @@ describe('authReducer', () => {
 		UPDATE_TOKEN_FAILED,
 		CHECK_AUTH_FAILED,
 	] as const)('should handle %s', (type) => {
-		expect(authReducer(initialState, { type, payload: error })).toEqual({
-			...initialState,
-			isAuthenticated: false,
-			isLoading: false,
-			error,
-		});
+		expect(authReducer(initialState, { type, payload: error })).toEqual(
+			failedState
+		);
 	});
 });

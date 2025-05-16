@@ -1,4 +1,4 @@
-import feedOrdersReducer from './feed-order-reducer';
+import feedOrdersReducer, { initialState } from './feed-order-reducer';
 import {
 	FEED_ORDERS_WS_CONNECTING,
 	FEED_ORDERS_WS_OPEN,
@@ -10,15 +10,6 @@ import {
 import { TOrder } from '../../utils/ingredient-types';
 
 describe('feedOrdersReducer', () => {
-	const initialState = {
-		orders: [],
-		total: 0,
-		totalToday: 0,
-		wsConnected: false,
-		loading: false,
-		error: null,
-	};
-
 	const mockOrders: TOrder[] = [
 		{
 			_id: '1',
@@ -27,36 +18,57 @@ describe('feedOrdersReducer', () => {
 			ingredients: ['a', 'b', 'c'],
 			createdAt: '2024-01-01T00:00:00Z',
 			updatedAt: '2024-01-01T00:00:00Z',
-			number: '1001', // ✅
+			number: '1001',
 		},
 	];
+
+	const connectingState = {
+		...initialState,
+		loading: true,
+		wsConnected: false,
+	};
+
+	const openState = {
+		...initialState,
+		wsConnected: true,
+		loading: false,
+		error: null,
+	};
+
+	const errorMessage = 'Connection failed';
+
+	const errorState = {
+		...initialState,
+		error: errorMessage,
+		wsConnected: false,
+		loading: false,
+	};
+
+	const messageState = {
+		...initialState,
+		orders: mockOrders,
+		total: 123,
+		totalToday: 45,
+	};
 
 	it('should return the initial state if action is unknown', () => {
 		const fakeAction = {
 			type: 'UNKNOWN_ACTION',
 		} as unknown as TFeedOrdersActions;
+
 		expect(feedOrdersReducer(undefined, fakeAction)).toEqual(initialState);
 	});
 
 	it('should handle FEED_ORDERS_WS_CONNECTING', () => {
-		const action: TFeedOrdersActions = { type: FEED_ORDERS_WS_CONNECTING };
-		const result = feedOrdersReducer(initialState, action);
-		expect(result).toEqual({
-			...initialState,
-			loading: true,
-			wsConnected: false,
-		});
+		expect(
+			feedOrdersReducer(initialState, { type: FEED_ORDERS_WS_CONNECTING })
+		).toEqual(connectingState);
 	});
 
 	it('should handle FEED_ORDERS_WS_OPEN', () => {
-		const action: TFeedOrdersActions = { type: FEED_ORDERS_WS_OPEN };
-		const result = feedOrdersReducer(initialState, action);
-		expect(result).toEqual({
-			...initialState,
-			wsConnected: true,
-			loading: false,
-			error: null,
-		});
+		expect(
+			feedOrdersReducer(initialState, { type: FEED_ORDERS_WS_OPEN })
+		).toEqual(openState);
 	});
 
 	it('should handle FEED_ORDERS_WS_CLOSE', () => {
@@ -67,40 +79,31 @@ describe('feedOrdersReducer', () => {
 			total: 10,
 			totalToday: 5,
 		};
-		const action: TFeedOrdersActions = { type: FEED_ORDERS_WS_CLOSE };
-		const result = feedOrdersReducer(modifiedState, action);
-		expect(result).toEqual(initialState);
+
+		expect(
+			feedOrdersReducer(modifiedState, { type: FEED_ORDERS_WS_CLOSE })
+		).toEqual(initialState);
 	});
 
 	it('should handle FEED_ORDERS_WS_ERROR', () => {
-		const action: TFeedOrdersActions = {
-			type: FEED_ORDERS_WS_ERROR,
-			payload: 'Connection failed',
-		};
-		const result = feedOrdersReducer(initialState, action);
-		expect(result).toEqual({
-			...initialState,
-			error: 'Connection failed',
-			wsConnected: false,
-			loading: false,
-		});
+		expect(
+			feedOrdersReducer(initialState, {
+				type: FEED_ORDERS_WS_ERROR,
+				payload: errorMessage,
+			})
+		).toEqual(errorState);
 	});
 
 	it('should handle FEED_ORDERS_WS_MESSAGE', () => {
-		const action: TFeedOrdersActions = {
-			type: FEED_ORDERS_WS_MESSAGE,
-			payload: {
-				orders: mockOrders,
-				total: 123,
-				totalToday: 45,
-			},
-		};
-		const result = feedOrdersReducer(initialState, action);
-		expect(result).toEqual({
-			...initialState,
-			orders: mockOrders,
-			total: 123,
-			totalToday: 45,
-		});
+		expect(
+			feedOrdersReducer(initialState, {
+				type: FEED_ORDERS_WS_MESSAGE,
+				payload: {
+					orders: mockOrders,
+					total: 123,
+					totalToday: 45,
+				},
+			})
+		).toEqual(messageState);
 	});
 });

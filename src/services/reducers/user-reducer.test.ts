@@ -1,4 +1,4 @@
-import userReducer from './user-reducer';
+import userReducer, { initialState } from './user-reducer';
 import {
 	GET_USER_REQUEST,
 	GET_USER_SUCCESS,
@@ -10,18 +10,31 @@ import {
 import { IUser } from '../../utils/types';
 
 describe('userReducer', () => {
-	const initialState = {
-		user: null,
-		isLoading: false,
-		error: null,
-	};
-
 	const sampleUser: IUser = {
 		email: 'test@example.com',
 		name: 'Test User',
 	};
 
 	const sampleError = new Error('Something went wrong');
+
+	const loadingState = {
+		...initialState,
+		isLoading: true,
+		error: null,
+	};
+
+	const successState = {
+		...initialState,
+		user: sampleUser,
+		isLoading: false,
+		error: null,
+	};
+
+	const failedState = {
+		...initialState,
+		isLoading: false,
+		error: sampleError,
+	};
 
 	it('should return initial state by default', () => {
 		const unknownAction = { type: 'UNKNOWN' } as any;
@@ -30,63 +43,31 @@ describe('userReducer', () => {
 
 	it('should handle GET_USER_REQUEST', () => {
 		const action = { type: GET_USER_REQUEST } as const;
-		const result = userReducer(initialState, action);
-		expect(result).toEqual({
-			...initialState,
-			isLoading: true,
-			error: null,
-		});
+		expect(userReducer(initialState, action)).toEqual(loadingState);
 	});
 
 	it('should handle UPDATE_USER_REQUEST', () => {
 		const action = { type: UPDATE_USER_REQUEST } as const;
-		const result = userReducer(initialState, action);
-		expect(result).toEqual({
-			...initialState,
-			isLoading: true,
-			error: null,
-		});
+		expect(userReducer(initialState, action)).toEqual(loadingState);
 	});
 
 	it('should handle GET_USER_SUCCESS', () => {
 		const action = { type: GET_USER_SUCCESS, payload: sampleUser } as const;
-		const result = userReducer(initialState, action);
-		expect(result).toEqual({
-			...initialState,
-			user: sampleUser,
-			isLoading: false,
-			error: null,
-		});
+		expect(userReducer(initialState, action)).toEqual(successState);
 	});
 
 	it('should handle UPDATE_USER_SUCCESS', () => {
 		const action = { type: UPDATE_USER_SUCCESS, payload: sampleUser } as const;
-		const result = userReducer(initialState, action);
-		expect(result).toEqual({
-			...initialState,
-			user: sampleUser,
-			isLoading: false,
-			error: null,
-		});
+		expect(userReducer(initialState, action)).toEqual(successState);
 	});
 
 	it('should handle GET_USER_FAILED', () => {
 		const action = { type: GET_USER_FAILED, payload: sampleError } as const;
-		const result = userReducer(initialState, action);
-		expect(result).toEqual({
-			...initialState,
-			isLoading: false,
-			error: sampleError,
-		});
+		expect(userReducer(initialState, action)).toEqual(failedState);
 	});
 
 	it('should handle UPDATE_USER_FAILED', () => {
 		const action = { type: UPDATE_USER_FAILED, payload: sampleError } as const;
-		const result = userReducer(initialState, action);
-		expect(result).toEqual({
-			...initialState,
-			isLoading: false,
-			error: sampleError,
-		});
+		expect(userReducer(initialState, action)).toEqual(failedState);
 	});
 });

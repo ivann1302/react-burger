@@ -1,4 +1,4 @@
-import profileOrdersReducer from './profile-orders-reducer';
+import profileOrdersReducer, { initialState } from './profile-orders-reducer';
 import {
 	PROFILE_ORDERS_CONNECT,
 	PROFILE_ORDERS_DISCONNECT,
@@ -11,13 +11,6 @@ import {
 import { TOrder } from '../../utils/ingredient-types';
 
 describe('profileOrdersReducer', () => {
-	const initialState = {
-		wsConnected: false,
-		orders: [],
-		error: undefined,
-		connectionStatus: 'idle' as const,
-	};
-
 	const mockOrders: TOrder[] = [
 		{
 			_id: '1',
@@ -30,6 +23,36 @@ describe('profileOrdersReducer', () => {
 		},
 	];
 
+	const connectingState = {
+		...initialState,
+		wsConnected: false,
+		error: undefined,
+	};
+
+	const connectedState = {
+		...initialState,
+		wsConnected: true,
+		error: undefined,
+	};
+
+	const errorState = {
+		...initialState,
+		wsConnected: false,
+		error: 'Connection error',
+	};
+
+	const closedState = {
+		...initialState,
+		wsConnected: false,
+		error: undefined,
+	};
+
+	const messageReceivedState = {
+		...initialState,
+		orders: mockOrders,
+		error: undefined,
+	};
+
 	it('should return initial state on unknown action', () => {
 		const unknownAction = { type: 'UNKNOWN' } as any;
 		expect(profileOrdersReducer(undefined, unknownAction)).toEqual(
@@ -38,50 +61,43 @@ describe('profileOrdersReducer', () => {
 	});
 
 	it('should return same state for PROFILE_ORDERS_CONNECT and DISCONNECT', () => {
-		const result1 = profileOrdersReducer(initialState, {
-			type: PROFILE_ORDERS_CONNECT,
-			payload: 'ws://example.com',
-		});
-		const result2 = profileOrdersReducer(initialState, {
-			type: PROFILE_ORDERS_DISCONNECT,
-		});
+		expect(
+			profileOrdersReducer(initialState, {
+				type: PROFILE_ORDERS_CONNECT,
+				payload: 'ws://example.com',
+			})
+		).toEqual(initialState);
 
-		expect(result1).toEqual(initialState);
-		expect(result2).toEqual(initialState);
+		expect(
+			profileOrdersReducer(initialState, {
+				type: PROFILE_ORDERS_DISCONNECT,
+			})
+		).toEqual(initialState);
 	});
 
 	it('should handle PROFILE_ORDERS_WS_CONNECTING', () => {
-		const result = profileOrdersReducer(initialState, {
-			type: PROFILE_ORDERS_WS_CONNECTING,
-		});
-		expect(result).toEqual({
-			...initialState,
-			wsConnected: false,
-			error: undefined,
-		});
+		expect(
+			profileOrdersReducer(initialState, {
+				type: PROFILE_ORDERS_WS_CONNECTING,
+			})
+		).toEqual(connectingState);
 	});
 
 	it('should handle PROFILE_ORDERS_WS_OPEN', () => {
-		const result = profileOrdersReducer(initialState, {
-			type: PROFILE_ORDERS_WS_OPEN,
-		});
-		expect(result).toEqual({
-			...initialState,
-			wsConnected: true,
-			error: undefined,
-		});
+		expect(
+			profileOrdersReducer(initialState, {
+				type: PROFILE_ORDERS_WS_OPEN,
+			})
+		).toEqual(connectedState);
 	});
 
 	it('should handle PROFILE_ORDERS_WS_ERROR', () => {
-		const result = profileOrdersReducer(initialState, {
-			type: PROFILE_ORDERS_WS_ERROR,
-			payload: 'Connection error',
-		});
-		expect(result).toEqual({
-			...initialState,
-			wsConnected: false,
-			error: 'Connection error',
-		});
+		expect(
+			profileOrdersReducer(initialState, {
+				type: PROFILE_ORDERS_WS_ERROR,
+				payload: 'Connection error',
+			})
+		).toEqual(errorState);
 	});
 
 	it('should handle PROFILE_ORDERS_WS_CLOSE', () => {
@@ -91,31 +107,23 @@ describe('profileOrdersReducer', () => {
 			error: 'Something went wrong',
 		};
 
-		const result = profileOrdersReducer(modifiedState, {
-			type: PROFILE_ORDERS_WS_CLOSE,
-		});
-
-		expect(result).toEqual({
-			...modifiedState,
-			wsConnected: false,
-			error: undefined,
-		});
+		expect(
+			profileOrdersReducer(modifiedState, {
+				type: PROFILE_ORDERS_WS_CLOSE,
+			})
+		).toEqual(closedState);
 	});
 
 	it('should handle PROFILE_ORDERS_WS_MESSAGE', () => {
-		const result = profileOrdersReducer(initialState, {
-			type: PROFILE_ORDERS_WS_MESSAGE,
-			payload: {
-				orders: mockOrders,
-				total: 5,
-				totalToday: 2,
-			},
-		});
-
-		expect(result).toEqual({
-			...initialState,
-			orders: mockOrders,
-			error: undefined,
-		});
+		expect(
+			profileOrdersReducer(initialState, {
+				type: PROFILE_ORDERS_WS_MESSAGE,
+				payload: {
+					orders: mockOrders,
+					total: 5,
+					totalToday: 2,
+				},
+			})
+		).toEqual(messageReceivedState);
 	});
 });

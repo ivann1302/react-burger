@@ -1,4 +1,4 @@
-import orderReducer from './order-reducer';
+import orderReducer, { initialState } from './order-reducer';
 import {
 	SET_ORDER_DATA,
 	CLEAR_ORDER_DATA,
@@ -8,22 +8,32 @@ import {
 import type { TOrderTypes } from './order-reducer';
 
 describe('orderReducer', () => {
-	const initialState = {
-		orderData: null,
-		loading: false,
-		error: null,
-	};
-
 	const sampleOrder = {
 		order: {
 			number: 12345,
 		},
 	};
 
+	const stateWithOrder = {
+		...initialState,
+		orderData: sampleOrder,
+	};
+
+	const loadingState = {
+		...initialState,
+		loading: true,
+	};
+
+	const errorMessage = 'Something went wrong';
+
+	const errorState = {
+		...initialState,
+		error: errorMessage,
+	};
+
 	it('should return initial state on unknown action', () => {
 		const unknownAction = { type: 'UNKNOWN_ACTION' } as unknown as TOrderTypes;
-		const result = orderReducer(undefined, unknownAction);
-		expect(result).toEqual(initialState);
+		expect(orderReducer(undefined, unknownAction)).toEqual(initialState);
 	});
 
 	it('should handle SET_ORDER_DATA', () => {
@@ -31,21 +41,12 @@ describe('orderReducer', () => {
 			type: SET_ORDER_DATA,
 			payload: sampleOrder,
 		};
-		const result = orderReducer(initialState, action);
-		expect(result).toEqual({
-			...initialState,
-			orderData: sampleOrder,
-		});
+		expect(orderReducer(initialState, action)).toEqual(stateWithOrder);
 	});
 
 	it('should handle CLEAR_ORDER_DATA', () => {
-		const state = {
-			...initialState,
-			orderData: sampleOrder,
-		};
 		const action: TOrderTypes = { type: CLEAR_ORDER_DATA };
-		const result = orderReducer(state, action);
-		expect(result).toEqual({
+		expect(orderReducer(stateWithOrder, action)).toEqual({
 			...initialState,
 			orderData: null,
 		});
@@ -53,22 +54,14 @@ describe('orderReducer', () => {
 
 	it('should handle SET_ORDER_LOADING', () => {
 		const action: TOrderTypes = { type: SET_ORDER_LOADING, payload: true };
-		const result = orderReducer(initialState, action);
-		expect(result).toEqual({
-			...initialState,
-			loading: true,
-		});
+		expect(orderReducer(initialState, action)).toEqual(loadingState);
 	});
 
 	it('should handle SET_ORDER_ERROR', () => {
 		const action: TOrderTypes = {
 			type: SET_ORDER_ERROR,
-			payload: 'Something went wrong',
+			payload: errorMessage,
 		};
-		const result = orderReducer(initialState, action);
-		expect(result).toEqual({
-			...initialState,
-			error: 'Something went wrong',
-		});
+		expect(orderReducer(initialState, action)).toEqual(errorState);
 	});
 });

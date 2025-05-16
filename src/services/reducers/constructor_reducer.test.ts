@@ -7,13 +7,11 @@ import {
 	CLEAR_CONSTRUCTOR,
 } from '../actions/constructor-actions';
 import { TIngredient } from '@utils/ingredient-types';
-// import { v4 as uuidv4 } from 'uuid';
 
 jest.mock('uuid', () => ({
 	v4: () => 'test-uuid',
 }));
 
-// Пример ингредиента
 const sampleIngredient: TIngredient = {
 	_id: '1',
 	name: 'Test Ingredient',
@@ -29,10 +27,16 @@ const sampleIngredient: TIngredient = {
 	__v: 0,
 };
 
+const initialState = {
+	bun: null,
+	ingredients: [],
+};
+
 describe('constructorReducer', () => {
-	const initialState = {
-		bun: null,
-		ingredients: [],
+	const ingredientWithUuid = {
+		...sampleIngredient,
+		uniqueId: 'test-uuid',
+		index: 0,
 	};
 
 	it('should return the initial state', () => {
@@ -44,7 +48,6 @@ describe('constructorReducer', () => {
 			type: ADD_BUN,
 			payload: sampleIngredient,
 		});
-
 		expect(result).toEqual({
 			...initialState,
 			bun: sampleIngredient,
@@ -59,13 +62,7 @@ describe('constructorReducer', () => {
 				uniqueId: 'test-uuid',
 			},
 		});
-
-		expect(result.ingredients.length).toBe(1);
-		expect(result.ingredients[0]).toEqual({
-			...sampleIngredient,
-			uniqueId: 'test-uuid',
-			index: 0,
-		});
+		expect(result.ingredients).toEqual([ingredientWithUuid]);
 	});
 
 	it('should handle REMOVE_INGREDIENT', () => {
@@ -76,14 +73,13 @@ describe('constructorReducer', () => {
 				{ ...sampleIngredient, uniqueId: 'keep', index: 1 },
 			],
 		};
-
 		const result = constructorReducer(state, {
 			type: REMOVE_INGREDIENT,
 			payload: 'to-remove',
 		});
-
-		expect(result.ingredients).toHaveLength(1);
-		expect(result.ingredients[0].uniqueId).toBe('keep');
+		expect(result.ingredients).toEqual([
+			{ ...sampleIngredient, uniqueId: 'keep', index: 1 },
+		]);
 	});
 
 	it('should handle MOVE_INGREDIENT', () => {
@@ -95,14 +91,16 @@ describe('constructorReducer', () => {
 				{ ...sampleIngredient, uniqueId: '3', index: 2 },
 			],
 		};
+		const expectedOrder = ['2', '3', '1'];
+		const expectedIndexes = [0, 1, 2];
 
 		const result = constructorReducer(state, {
 			type: MOVE_INGREDIENT,
 			payload: { fromIndex: 0, toIndex: 2 },
 		});
 
-		expect(result.ingredients.map((i) => i.uniqueId)).toEqual(['2', '3', '1']);
-		expect(result.ingredients.map((i) => i.index)).toEqual([0, 1, 2]);
+		expect(result.ingredients.map((i) => i.uniqueId)).toEqual(expectedOrder);
+		expect(result.ingredients.map((i) => i.index)).toEqual(expectedIndexes);
 	});
 
 	it('should handle MOVE_INGREDIENT with invalid indexes (no-op)', () => {
@@ -113,13 +111,11 @@ describe('constructorReducer', () => {
 				{ ...sampleIngredient, uniqueId: '2', index: 1 },
 			],
 		};
-
 		const result = constructorReducer(state, {
 			type: MOVE_INGREDIENT,
 			payload: { fromIndex: -1, toIndex: 5 },
 		});
-
-		expect(result).toEqual(state); // не должно быть изменений
+		expect(result).toEqual(state);
 	});
 
 	it('should handle CLEAR_CONSTRUCTOR', () => {
@@ -127,11 +123,9 @@ describe('constructorReducer', () => {
 			bun: sampleIngredient,
 			ingredients: [{ ...sampleIngredient, uniqueId: '1', index: 0 }],
 		};
-
 		const result = constructorReducer(state, {
 			type: CLEAR_CONSTRUCTOR,
 		});
-
 		expect(result).toEqual(initialState);
 	});
 });

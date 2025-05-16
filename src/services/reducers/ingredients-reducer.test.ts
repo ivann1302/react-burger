@@ -1,4 +1,4 @@
-import ingredientsReducer from './ingredients-reducer';
+import ingredientsReducer, { initialState } from './ingredients-reducer';
 import {
 	FETCH_INGREDIENTS_REQUEST,
 	FETCH_INGREDIENTS_SUCCESS,
@@ -7,12 +7,6 @@ import {
 import { TIngredient } from '../../utils/ingredient-types';
 
 describe('ingredientsReducer', () => {
-	const initialState = {
-		ingredients: [],
-		loading: false,
-		error: null,
-	};
-
 	const sampleIngredients: TIngredient[] = [
 		{
 			_id: '123',
@@ -30,68 +24,67 @@ describe('ingredientsReducer', () => {
 		},
 	];
 
+	const loadingState = {
+		...initialState,
+		loading: true,
+		error: null,
+	};
+
+	const successState = {
+		...initialState,
+		ingredients: sampleIngredients,
+		loading: false,
+	};
+
+	const error = new Error('Fetch failed');
+
+	const errorState = {
+		...initialState,
+		loading: false,
+		error,
+	};
+
 	it('should return initial state when action is unknown', () => {
-		const unknownAction = { type: 'UNKNOWN_ACTION' } as unknown;
-		const result = ingredientsReducer(undefined, unknownAction as any);
-		expect(result).toEqual(initialState);
+		const unknownAction = { type: 'UNKNOWN_ACTION' } as any;
+		expect(ingredientsReducer(undefined, unknownAction)).toEqual(initialState);
 	});
 
 	it('should handle FETCH_INGREDIENTS_REQUEST', () => {
-		const result = ingredientsReducer(initialState, {
-			type: FETCH_INGREDIENTS_REQUEST,
-		});
-		expect(result).toEqual({
-			...initialState,
-			loading: true,
-			error: null,
-		});
+		expect(
+			ingredientsReducer(initialState, {
+				type: FETCH_INGREDIENTS_REQUEST,
+			})
+		).toEqual(loadingState);
 	});
 
 	it('should handle FETCH_INGREDIENTS_SUCCESS', () => {
-		const result = ingredientsReducer(
-			{ ...initialState, loading: true },
-			{
+		const prevState = loadingState;
+		expect(
+			ingredientsReducer(prevState, {
 				type: FETCH_INGREDIENTS_SUCCESS,
 				payload: sampleIngredients,
-			}
-		);
-		expect(result).toEqual({
-			...initialState,
-			ingredients: sampleIngredients,
-			loading: false,
-		});
+			})
+		).toEqual(successState);
 	});
 
 	it('should handle FETCH_INGREDIENTS_FAILURE (error in "error")', () => {
-		const error = new Error('Fetch failed');
-		const result = ingredientsReducer(
-			{ ...initialState, loading: true },
-			{
+		const prevState = loadingState;
+		expect(
+			ingredientsReducer(prevState, {
 				type: FETCH_INGREDIENTS_FAILURE,
 				error,
-			}
-		);
-		expect(result).toEqual({
-			...initialState,
-			loading: false,
-			error,
-		});
+			})
+		).toEqual(errorState);
 	});
 
 	it('should handle FETCH_INGREDIENTS_FAILURE (error in "payload")', () => {
-		const error = new Error('Fetch failed from payload');
-		const result = ingredientsReducer(
-			{ ...initialState, loading: true },
-			{
+		const prevState = loadingState;
+		expect(
+			ingredientsReducer(prevState, {
 				type: FETCH_INGREDIENTS_FAILURE,
-				error: error,
+				error,
 				payload: error,
-			}
-		);
-		expect(result).toEqual({
-			...initialState,
-			loading: false,
-			error,
-		});
+			})
+		).toEqual(errorState);
 	});
 });

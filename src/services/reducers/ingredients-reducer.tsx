@@ -31,7 +31,7 @@ type TIngredientsState = {
 	error: null | Error;
 };
 
-const initialState: TIngredientsState = {
+export const initialState: TIngredientsState = {
 	ingredients: [],
 	loading: false,
 	error: null,

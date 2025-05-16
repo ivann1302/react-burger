@@ -44,7 +44,7 @@ type TInitialState = {
 	error: null;
 };
 
-const initialState: TInitialState = {
+export const initialState: TInitialState = {
 	orderData: null, // Данные заказа
 	loading: false, // Состояние загрузки
 	error: null, // Ошибка

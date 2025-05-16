@@ -9,7 +9,7 @@ interface IIngredientDetailsState {
 }
 
 // Начальное состояние
-const initialState: IIngredientDetailsState = {
+export const initialState: IIngredientDetailsState = {
 	selectedIngredient: null,
 };
 
