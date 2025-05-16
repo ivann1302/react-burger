@@ -34,12 +34,13 @@ const IngredientsGroup = forwardRef<HTMLHeadingElement, IngredientsGroupProps>(
 				<h3 ref={ref} className={`${styles.title} text text_type_main-medium`}>
 					{groupName}
 				</h3>
-				<ul className={styles.gridContainer}>
+				<ul className={styles.gridContainer} data-testid={`group-${groupName}`}>
 					{type.map((ingredient) => (
 						// eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
 						<li
 							key={ingredient._id}
 							className={styles.container}
+							data-testid={'ingredient-item'}
 							onClick={() => onIngredientClick(ingredient)}
 							onKeyPress={(e) => {
 								if (e.key === 'Enter' || e.key === ' ') {

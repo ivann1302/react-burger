@@ -17,7 +17,14 @@ import {
 } from '../actions/auth-actions';
 import { IUser } from './../../utils/types';
 
-const initialState = {
+export type TAuthState = {
+	user: IUser | null;
+	isAuthenticated: boolean | null;
+	isLoading: boolean;
+	error: string | null;
+};
+
+const initialState: TAuthState = {
 	user: null,
 	isAuthenticated: null,
 	isLoading: false,

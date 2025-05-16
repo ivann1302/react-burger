@@ -5,7 +5,7 @@ import {
 	SET_ORDER_ERROR,
 } from '../actions/order-actions';
 
-type TOrder = {
+export type TOrder = {
 	number: number;
 };
 
@@ -32,14 +32,14 @@ type TSetOrderError = {
 	payload: string | null;
 };
 
-type TOrderTypes =
+export type TOrderTypes =
 	| TSetOrderData
 	| TClearOrderData
 	| TSetOrderLoading
 	| TSetOrderError;
 
 type TInitialState = {
-	orderData: null;
+	orderData: null | TOrderData;
 	loading: boolean;
 	error: null;
 };
