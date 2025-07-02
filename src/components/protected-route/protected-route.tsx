@@ -1,6 +1,5 @@
-import { useSelector } from 'react-redux';
+import { useAppSelector } from '../../hooks/typed-hookes';
 import { Navigate, useLocation } from 'react-router-dom';
-
 type TProtectedRouteProps = {
 	children?: React.ReactNode;
 	anonymous?: boolean;
@@ -10,8 +9,7 @@ const ProtectedRoute = ({
 	children,
 	anonymous = false,
 }: TProtectedRouteProps) => {
-	// @ts-expect-error 'redux'
-	const { isAuthenticated, isLoading } = useSelector((state) => state.auth);
+	const { isAuthenticated, isLoading } = useAppSelector((state) => state.auth);
 	const location = useLocation();
 	const from = location.state?.from || '/';
 

@@ -1,5 +1,4 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { useDrop } from 'react-dnd';
 import ConstructorItems from './constructor-items/constructor-items';
 import OrderBlock from './order-block/order-block';
@@ -11,17 +10,16 @@ import {
 } from '../../services/actions/constructor-actions';
 import { TIngredient } from '@utils/ingredient-types';
 import styles from './burger-constructor.module.scss';
+import { useAppDispatch, useAppSelector } from '../../hooks/typed-hookes';
 
 type TDragItem = TIngredient & { uniqueId?: string };
 
 export default function BurgerConstructor() {
-	const dispatch = useDispatch();
+	const dispatch = useAppDispatch();
 
 	// Получаем ингредиенты из Redux
-	// @ts-expect-error 'reudx'
-	const bun = useSelector((state) => state.burgerConstructor.bun);
-	const ingredients = useSelector(
-		// @ts-expect-error 'reudx'
+	const bun = useAppSelector((state) => state.burgerConstructor.bun);
+	const ingredients = useAppSelector(
 		(state) => state.burgerConstructor.ingredients ?? []
 	);
 

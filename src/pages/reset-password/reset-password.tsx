@@ -1,6 +1,6 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
-import { useDispatch } from 'react-redux';
-import { resetPassword } from '../../services/actions/password-action';
+import { useAppDispatch } from './../../services/store';
+import { resetPassword } from './../../services/actions/password-action';
 import { useNavigate, Link } from 'react-router-dom';
 import styles from './reset-password.module.scss';
 import {
@@ -12,7 +12,7 @@ import {
 const ResetPasswordPage = (): JSX.Element => {
 	const [password, setPassword] = useState('');
 	const [token, setToken] = useState('');
-	const dispatch = useDispatch();
+	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
 
 	const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -25,8 +25,7 @@ const ResetPasswordPage = (): JSX.Element => {
 
 	const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		// @ts-expect-error 'redux'
-		dispatch(resetPassword(password, token)).then((success) => {
+		dispatch(resetPassword({ password, token })).then((success) => {
 			if (success) {
 				sessionStorage.removeItem('canResetPassword');
 				navigate('/login');
@@ -49,7 +48,7 @@ const ResetPasswordPage = (): JSX.Element => {
 					placeholder={'Введите код из письма'}
 					onChange={handleTokenChange}
 					value={token}
-					name={'token'}
+					name={'accessToken'}
 					error={false}
 					errorText={'Ошибка'}
 					size={'default'}

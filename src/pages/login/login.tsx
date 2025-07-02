@@ -1,7 +1,8 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useLocation, Navigate, Link } from 'react-router-dom';
 import { login } from '../../services/actions/auth-actions';
+import { useAppSelector, useAppDispatch } from '../../hooks/typed-hookes';
+
 import styles from './login.module.scss';
 import {
 	EmailInput,
@@ -12,11 +13,10 @@ import {
 const LoginPage = (): JSX.Element => {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
-	const dispatch = useDispatch();
+	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
 	const location = useLocation();
-	// @ts-expect-error 'redux'
-	const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+	const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
 
 	// Если пользователь уже авторизован, перенаправляем его на главную страницу
 	if (isAuthenticated) {
@@ -33,7 +33,6 @@ const LoginPage = (): JSX.Element => {
 
 	const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		// @ts-expect-error 'redux'
 		const success = await dispatch(login(email, password));
 		if (success) {
 			const from = location.state?.from?.pathname || '/';

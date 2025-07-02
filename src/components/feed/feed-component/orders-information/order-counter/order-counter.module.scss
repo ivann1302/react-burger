@@ -1,0 +1,14 @@
+@font-face {
+	font-family: 'Iceland';
+	src: url('./../../../../../fonts//Iceland/Iceland-Regular.ttf');
+	font-weight: normal;
+	font-style: normal;
+}
+
+.container {
+	.count {
+		text-shadow: 0 0 5px #4c4cff, 0 0 10px #4c4cff, 0 0 5px #4c4cff,
+			0 0 0 #4c4cff;
+		font-family: 'Iceland' sans-serif;
+	}
+}

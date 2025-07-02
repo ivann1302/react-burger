@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
-import { useSelector } from 'react-redux'; // Добавляем useSelector
 import { Tab } from '@ya.praktikum/react-developer-burger-ui-components';
 import styles from './burger-ingredients.module.scss';
 import IngredientsGroup from './ingredients-group/ingredients-group';
-import { TIngredient } from '@utils/ingredient-types';
+import { TIngredient } from './../../utils/ingredient-types';
+import { useAppSelector } from '../../hooks/typed-hookes';
 
 type TBurgerIngredientsProps = {
 	onIngredientClick: (ingredient: TIngredient) => void;
@@ -15,8 +15,7 @@ export default function BurgerIngredients({
 	onIngredientClick,
 }: TBurgerIngredientsProps) {
 	// Получаем ингредиенты из Redux
-	// @ts-expect-error 'redux'
-	const { ingredients } = useSelector((state) => state.ingredients);
+	const { ingredients } = useAppSelector((state) => state.ingredients);
 
 	// Храним активный таб (по умолчанию "Булки")
 	const [current, setCurrent] = useState('Булки');

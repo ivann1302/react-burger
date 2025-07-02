@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef, ChangeEvent } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate, Link } from 'react-router-dom';
+import { Outlet, useNavigate, Link, useLocation } from 'react-router-dom';
 import { logout } from '../../services/actions/auth-actions';
 import { getUser, updateUser } from '../../services/actions/user-actions';
+import { useAppSelector, useAppDispatch } from '../../hooks/typed-hookes';
+
 import styles from './profile.module.scss';
 import {
 	Input,
@@ -11,86 +12,104 @@ import {
 	Button,
 } from '@ya.praktikum/react-developer-burger-ui-components';
 
+type TUserUpdateData = {
+	name?: string;
+	email?: string;
+	password?: string;
+};
+
 const ProfilePage = (): JSX.Element => {
-	const dispatch = useDispatch();
+	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
-	// @ts-expect-error 'resux'
-	const { user } = useSelector((state) => state.auth);
+	const location = useLocation();
+	const isProfilePage = location.pathname === '/profile';
 
-	const [name, setName] = useState('');
-	const [email, setEmail] = useState('');
-	const [password, setPassword] = useState('');
+	const { user } = useAppSelector((state) => state.auth);
+
+	const [formData, setFormData] = useState<TUserUpdateData>({
+		name: '',
+		email: '',
+		password: '',
+	});
 	const [isEditing, setIsEditing] = useState(false);
+	const initialData = useRef<TUserUpdateData>({ name: '', email: '' });
 
-	// refs для начальных значений
-	const initialName = useRef('');
-	const initialEmail = useRef('');
-
-	// Получаем данные пользователя при загрузке страницы
+	// Получаем данные пользователя
 	useEffect(() => {
-		// @ts-expect-error 'redux'
 		dispatch(getUser());
 	}, [dispatch]);
 
-	// Сохраняем начальные значения и обновляем поля
+	// Обновляем форму при получении данных пользователя
 	useEffect(() => {
 		if (user) {
-			initialName.current = user.name;
-			initialEmail.current = user.email;
-			setName(user.name);
-			setEmail(user.email);
+			initialData.current = {
+				name: user.name,
+				email: user.email,
+			};
+			setFormData({
+				name: user.name,
+				email: user.email,
+				password: '',
+			});
 		}
 	}, [user]);
 
-	const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
-		setName(e.target.value);
-		setIsEditing(true);
-	};
-
-	const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
-		setEmail(e.target.value);
-		setIsEditing(true);
-	};
-
-	const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
-		setPassword(e.target.value);
+	const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+		const { name, value } = e.target;
+		setFormData((prev) => ({
+			...prev,
+			[name]: value,
+		}));
 		setIsEditing(true);
 	};
 
 	const handleSave = () => {
-		// @ts-expect-error 'redux'
-		dispatch(updateUser({ name, email, password })).then(() => {
-			initialName.current = name;
-			initialEmail.current = email;
-			setPassword('');
+		// Убираем пустые поля перед отправкой
+		const updateData: TUserUpdateData = {};
+		if (formData.name !== initialData.current.name)
+			updateData.name = formData.name;
+		if (formData.email !== initialData.current.email)
+			updateData.email = formData.email;
+		if (formData.password) updateData.password = formData.password;
+
+		dispatch(updateUser(updateData)).then(() => {
+			initialData.current = {
+				name: formData.name || initialData.current.name,
+				email: formData.email || initialData.current.email,
+			};
+			setFormData((prev) => ({ ...prev, password: '' }));
 			setIsEditing(false);
 		});
 	};
 
-	const handleCancel = (): void => {
-		setName(initialName.current);
-		setEmail(initialEmail.current);
-		setPassword('');
+	const handleCancel = () => {
+		setFormData({
+			name: initialData.current.name,
+			email: initialData.current.email,
+			password: '',
+		});
 		setIsEditing(false);
 	};
 
-	const handleLogout = async () => {
-		// @ts-expect-error 'redux'
-		await dispatch(logout());
-		navigate('/login', { replace: true });
+	const handleLogout = () => {
+		dispatch(logout()).then(() => navigate('/login', { replace: true }));
 	};
 
 	return (
-		<section className={styles.container}>
-			<div className={styles.tabs}>
+		<section className={`${styles.container}`}>
+			<nav className={styles.tabs}>
 				<Link
 					to='/profile'
-					className={`${styles.active} ${styles.link} text text_type_main-medium mt-4`}>
+					className={`${isProfilePage ? styles.active : ''} ${
+						styles.link
+					} text text_type_main-medium mt-4`}>
 					Профиль
 				</Link>
 				<Link
 					to='/profile/orders'
-					className={`${styles.link} text text_type_main-medium`}>
+					className={`${
+						location.pathname === '/profile/orders' ? styles.active : ''
+					} ${styles.link} text text_type_main-medium`}>
 					История заказов
 				</Link>
 				<button
@@ -101,43 +120,53 @@ const ProfilePage = (): JSX.Element => {
 				<p className={`${styles.description} text text_type_main-small`}>
 					В этом разделе вы можете изменить свои персональные данные
 				</p>
+			</nav>
+
+			<div className={styles.content}>
+				<Outlet /> {/* Здесь будут отображаться вложенные маршруты */}
 			</div>
 
-			<div className={styles.form}>
-				<Input
-					type='text'
-					placeholder='Имя'
-					onChange={handleNameChange}
-					value={name}
-					name='name'
-					icon='EditIcon'
-				/>
-				<EmailInput
-					onChange={handleEmailChange}
-					value={email}
-					name='email'
-					placeholder='Логин'
-					isIcon={true}
-				/>
-				<PasswordInput
-					onChange={handlePasswordChange}
-					value={password}
-					name='password'
-					placeholder='Пароль'
-					icon='EditIcon'
-				/>
+			{isProfilePage && (
+				<div className={styles.form}>
+					<Input
+						type='text'
+						placeholder='Имя'
+						onChange={handleChange}
+						value={formData.name || ''}
+						name='name'
+						icon='EditIcon'
+					/>
+					<EmailInput
+						onChange={handleChange}
+						value={formData.email || ''}
+						name='email'
+						placeholder='Логин'
+						isIcon={true}
+					/>
+					<PasswordInput
+						onChange={handleChange}
+						value={formData.password || ''}
+						name='password'
+						placeholder='Пароль'
+						icon='EditIcon'
+					/>
 
-				{isEditing && (
-					<div className={styles.buttons}>
-						<Button type='secondary' htmlType='button' onClick={handleCancel}>
-							Отмена
-						</Button>
-						<Button type='primary' htmlType='button' onClick={handleSave}>
-							Сохранить
-						</Button>
-					</div>
-				)}
-			</div>
+					{isEditing && (
+						<div className={styles.buttons}>
+							<Button type='secondary' htmlType='button' onClick={handleCancel}>
+								Отмена
+							</Button>
+							<Button
+								type='primary'
+								htmlType='button'
+								onClick={handleSave}
+								disabled={!formData.name || !formData.email}>
+								Сохранить
+							</Button>
+						</div>
+					)}
+				</div>
+			)}
 		</section>
 	);
 };
