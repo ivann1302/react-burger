@@ -17,7 +17,7 @@ type TInitialState = {
 	canReset: boolean;
 };
 
-const initialState: TInitialState = {
+export const initialState: TInitialState = {
 	canReset: false,
 };
 

@@ -22,10 +22,11 @@ const IngredientItem: React.FC<TIngredientItemProps> = ({
 			isDragging: monitor.isDragging(),
 		}),
 	});
-
+	console.log('ingredient type:', ingredient.type);
 	return (
 		// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
 		<div
+			data-testid={`ingredient-${ingredient.type}`}
 			ref={drag}
 			style={{ opacity: isDragging ? 0.5 : 1 }}
 			className={styles.container}

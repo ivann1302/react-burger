@@ -50,7 +50,7 @@ type TInitialState = {
 	error: Error | null;
 };
 
-const initialState = {
+export const initialState = {
 	user: null,
 	isLoading: false,
 	error: null,

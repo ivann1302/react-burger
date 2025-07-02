@@ -48,7 +48,7 @@ type TInitialState = {
 	resetPasswordError: null;
 };
 
-const initialState: TInitialState = {
+export const initialState: TInitialState = {
 	forgotPasswordLoading: false,
 	forgotPasswordError: null,
 	resetPasswordLoading: false,

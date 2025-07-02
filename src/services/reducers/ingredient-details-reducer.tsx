@@ -9,22 +9,22 @@ interface IIngredientDetailsState {
 }
 
 // Начальное состояние
-const initialState: IIngredientDetailsState = {
+export const initialState: IIngredientDetailsState = {
 	selectedIngredient: null,
 };
 
 // Типы экшенов
-type TSetSelectedIngredientAction = {
+export type TSetSelectedIngredientAction = {
 	type: typeof SET_SELECTED_INGREDIENT;
 	payload: TIngredient;
 };
 
-type TClearSelectedIngredientAction = {
+export type TClearSelectedIngredientAction = {
 	type: typeof CLEAR_SELECTED_INGREDIENT;
 };
 
 // Объединённый тип всех экшенов
-type TIngredientDetailsActions =
+export type TIngredientDetailsActions =
 	| TSetSelectedIngredientAction
 	| TClearSelectedIngredientAction;
 

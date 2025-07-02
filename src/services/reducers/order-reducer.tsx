@@ -5,7 +5,7 @@ import {
 	SET_ORDER_ERROR,
 } from '../actions/order-actions';
 
-type TOrder = {
+export type TOrder = {
 	number: number;
 };
 
@@ -32,19 +32,19 @@ type TSetOrderError = {
 	payload: string | null;
 };
 
-type TOrderTypes =
+export type TOrderTypes =
 	| TSetOrderData
 	| TClearOrderData
 	| TSetOrderLoading
 	| TSetOrderError;
 
 type TInitialState = {
-	orderData: null;
+	orderData: null | TOrderData;
 	loading: boolean;
 	error: null;
 };
 
-const initialState: TInitialState = {
+export const initialState: TInitialState = {
 	orderData: null, // Данные заказа
 	loading: false, // Состояние загрузки
 	error: null, // Ошибка

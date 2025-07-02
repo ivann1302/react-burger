@@ -63,7 +63,7 @@ type TProfileOrdersState = {
 	connectionStatus: 'idle' | 'connecting' | 'connected' | 'error';
 };
 
-const initialState: TProfileOrdersState = {
+export const initialState: TProfileOrdersState = {
 	wsConnected: false,
 	orders: [],
 	error: undefined,
