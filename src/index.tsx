@@ -12,7 +12,7 @@ const root = createRoot(domNode);
 root.render(
 	<StrictMode>
 		<DndProvider backend={HTML5Backend}>
-			<Router>
+			<Router basename={process.env.PUBLIC_URL}>
 				<App />
 			</Router>
 		</DndProvider>
