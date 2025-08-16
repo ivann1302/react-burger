@@ -96,5 +96,17 @@ module.exports = {
 		new webpack.EnvironmentPlugin({
 			NODE_ENV: 'development', // значение по умолчанию 'development' если переменная process.env.NODE_ENV не передана
 		}),
+		new webpack.DefinePlugin({
+			'process.env': JSON.stringify({
+				...process.env,
+				PUBLIC_URL: ''
+			}),
+			'process': JSON.stringify({
+				env: {
+					NODE_ENV: process.env.NODE_ENV || 'development',
+					PUBLIC_URL: ''
+				}
+			})
+		}),
 	],
 };
