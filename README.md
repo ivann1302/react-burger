@@ -1,7 +1,6 @@
-
+```markdown
 ![Screencast from 20 09 2025 11_34_30](https://github.com/user-attachments/assets/d433a98d-ed76-4de6-a0ad-d66490cd61c4)
 
-```markdown
 # Stellar Burger
 
 Интерактивное веб-приложение для оформления заказов бургеров с динамической лентой заказов и drag-and-drop интерфейсом.
