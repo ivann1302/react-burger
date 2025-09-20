@@ -1,3 +1,6 @@
+
+![Screencast from 20 09 2025 11_34_30](https://github.com/user-attachments/assets/d433a98d-ed76-4de6-a0ad-d66490cd61c4)
+
 ```markdown
 # Stellar Burger
 
@@ -14,8 +17,6 @@ cd react-burger
 npm install
 npm run start
 ```
-
-https://react-burger-emv9.vercel.app/
 
 ### 🧪 Тестирование
 
