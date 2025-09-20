@@ -1,4 +1,4 @@
-![Демонстрация работы приложения](Demo.gif)
+![Демонстрация работы приложения](BurgerDemo.gif)
 
 ```markdown
 # Stellar Burger
