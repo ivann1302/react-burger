@@ -1,4 +1,4 @@
-Демо проекта (https://github.com/user-attachments/assets/d433a98d-ed76-4de6-a0ad-d66490cd61c4)
+![Демонстрация работы приложения](Demo.gif)
 
 ```markdown
 # Stellar Burger
